@@ -7,14 +7,20 @@ export type WooProduct = {
     id: number;
     name: string;
     slug: string;
-    price: string; // Woo zwraca string
+    price: string;
     images?: { src: string }[];
 };
 
-export type ProductCardDTO = {
+export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+
+export type ProductDTO = {
     id: number;
-    name: string;
     slug: string;
+    title: string;
     price: number;
+    level: Level;
+    type: string;
+    pages: number;
+    format: "PDF" | "PDF+online";
     imageUrl?: string;
 };
