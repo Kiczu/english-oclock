@@ -40,5 +40,22 @@ export const theme = createTheme({
                 root: { borderRadius: 22 },
             },
         },
+        MuiCssBaseline: {
+            styleOverrides: {
+                html: { overflowX: "hidden" },
+                body: {
+                    overflowX: "hidden",
+                    backgroundColor: "#F5EDE9",
+                    backgroundImage: `
+          linear-gradient(rgba(55, 67, 115, 0.10) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55, 67, 115, 0.10) 1px, transparent 1px)
+        `,
+                    backgroundSize: "48px 48px",
+                    backgroundPosition: "0 0",
+                    backgroundRepeat: "repeat",
+                    backgroundAttachment: "fixed",
+                },
+            },
+        },
     },
 });

@@ -11,12 +11,19 @@ const nav = [
   { href: "/kontakt", label: "Kontakt" },
 ];
 
-export default function Header() {
+const Header = ({ hidden }: { hidden?: boolean }) => {
   return (
     <AppBar
-      position="sticky"
+      position="fixed"
       elevation={0}
-      sx={{ bgcolor: "background.paper", color: "text.primary" }}
+      sx={{
+        bgcolor: "background.paper",
+        color: "text.primary",
+        transition: "transform 300ms ease, opacity 300ms ease",
+        transform: hidden ? "translateY(-110%)" : "translateY(0)",
+        opacity: hidden ? 0 : 1,
+        pointerEvents: hidden ? "none" : "auto",
+      }}
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters sx={{ py: 1, gap: 2 }}>
@@ -54,4 +61,6 @@ export default function Header() {
       </Container>
     </AppBar>
   );
-}
+};
+
+export default Header;
