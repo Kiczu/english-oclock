@@ -1,5 +1,4 @@
-import Footer from "./components/layout/Footer";
-import Header from "./components/layout/Header";
+import LayoutShell from "./components/layout/LayoutShell";
 import ThemeRegistry from "./theme/ThemeRegistry";
 
 export const metadata = {
@@ -12,9 +11,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="pl">
       <body>
         <ThemeRegistry>
-          <Header />
-          {children}
-          <Footer />
+          <LayoutShell>{children}</LayoutShell>
         </ThemeRegistry>
       </body>
     </html>
