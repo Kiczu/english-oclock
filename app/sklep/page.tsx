@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import { Container, Typography, Grid } from "@mui/material";
-import { ProductCardDTO } from "../types/commerce";
+import { ProductDTO } from "@/app/types/commerce";
 
 const ShopPage = () => {
-  const [products, setProducts] = React.useState<ProductCardDTO[]>([]);
+  const [products, setProducts] = React.useState<ProductDTO[]>([]);
 
   React.useEffect(() => {
     fetch("/api/products?perPage=24&page=1")
@@ -24,7 +24,7 @@ const ShopPage = () => {
         {products.map((p) => (
           <Grid key={p.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
             <div style={{ padding: 16, borderRadius: 16, background: "white" }}>
-              <strong>{p.name}</strong>
+              <strong>{p.slug}</strong>
               <div>{p.price} zł</div>
             </div>
           </Grid>

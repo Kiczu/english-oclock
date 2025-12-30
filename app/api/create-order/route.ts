@@ -1,8 +1,7 @@
-import { WC_BASE_URL } from "@/app/lib/env";
+import { WC_BASE_URL, WC_ENABLED } from "@/app/lib/env";
 import wooFetch from "@/app/lib/woo";
 import { CartItemInput } from "@/app/types/commerce";
 import { NextResponse } from "next/server";
-
 
 export const runtime = "nodejs";
 
@@ -27,9 +26,15 @@ const assertValidItems = (items: CartItemInput[]) => {
         if (!Number.isInteger(it.productId) || it.productId <= 0) throw new Error("Invalid productId");
         if (!Number.isInteger(it.quantity) || it.quantity <= 0 || it.quantity > 99) throw new Error("Invalid quantity");
     }
-}
+};
 
-const POST = async (req: Request) => {
+export async function POST(req: Request) {
+    if (!WC_ENABLED) {
+        return NextResponse.json(
+            { error: "WooCommerce is not configured" },
+            { status: 503 }
+        );
+    }
     try {
         const body = (await req.json()) as CreateOrderBody;
 
@@ -64,16 +69,10 @@ const POST = async (req: Request) => {
             body: JSON.stringify(orderPayload),
         });
 
-        const checkoutUrl =
-            `${WC_BASE_URL}/checkout/order-pay/${order.id}/?pay_for_order=true&key=${order.order_key}`;
+        const checkoutUrl = `${WC_BASE_URL}/checkout/order-pay/${order.id}/?pay_for_order=true&key=${order.order_key}`;
 
         return NextResponse.json({ checkoutUrl });
     } catch (e: any) {
-        return NextResponse.json(
-            { error: e?.message ?? "Unknown error" },
-            { status: 400 }
-        );
+        return NextResponse.json({ error: e?.message ?? "Unknown error" }, { status: 400 });
     }
 }
-
-export default { POST };

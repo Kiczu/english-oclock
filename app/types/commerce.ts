@@ -24,3 +24,12 @@ export type ProductDTO = {
     format: "PDF" | "PDF+online";
     imageUrl?: string;
 };
+
+export type ProductListItemDTO = {
+    id: number;
+    slug: string;
+    title: string;
+    price: number;
+    imageUrl?: string;
+};
+
