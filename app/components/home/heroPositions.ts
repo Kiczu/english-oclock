@@ -1,4 +1,6 @@
-type ResponsiveNumber = { xs: number; md: number };
+import type { Breakpoint } from "@mui/material/styles";
+
+type ResponsiveNumber = Partial<Record<Breakpoint, number>>;
 
 export type CircleDef = {
     color: string;
@@ -57,42 +59,42 @@ export const heroLayout = {
 
     movers: {
         bus: {
-            left: { xs: 10, md: 30 },
-            bottom: { xs: 24, md: 80 },
-            width: { xs: 190, md: 420 },
+            left: { xs: 10, md: 30, lg: 30, xl: 30, },
+            bottom: { xs: 24, md: 60, lg: 80, xl: 80, },
+            width: { xs: 230, md: 280, lg: 420, xl: 420, },
             zIndex: 6,
         },
         guard: {
-            right: { xs: 10, md: 50 },
-            bottom: { xs: 34, md: 70 },
-            width: { xs: 120, md: 200 },
+            right: { xs: 10, md: 50, lg: 50, xl: 50, },
+            bottom: { xs: 34, md: 70, lg: 70, xl: 70, },
+            width: { xs: 120, md: 160, lg: 200, xl: 200, },
             zIndex: 7,
         },
     },
 
     decor: {
         flag: {
-            left: { xs: -120, md: -80 },
-            top: { xs: 70, md: 0 },
-            width: { xs: 550, md: 580 },
+            left: { xs: -180, md: -150, lg: -100, xl: -100 },
+            top: { xs: -70, md: -70, lg: -50, xl: -50 },
+            width: { xs: 400, md: 420, lg: 400, xl: 580 },
             zIndex: 3,
         },
         ben: {
-            right: { xs: -10, md: 250 },
-            bottom: { xs: 0, md: -10 },
-            width: { xs: 320, md: 350 },
+            right: { xs: -70, md: -70, lg: 220, xl: 250 },
+            bottom: { xs: -20, md: -20, lg: -30, xl: -10 },
+            width: { xs: 0, md: 250, lg: 300, xl: 350 },
             zIndex: 4,
         },
         crown: {
-            right: { xs: 140, md: 520 },
-            top: { xs: 70, md: 30 },
-            width: { xs: 150, md: 200 },
+            right: { xs: 10, md: 150, lg: 450, xl: 520 },
+            top: { xs: 100, md: 50, lg: 40, xl: 30 },
+            width: { xs: 130, md: 130, lg: 130, xl: 200 },
             zIndex: 5,
         },
         arrowDecor: {
-            left: { xs: 110, md: 450 },
-            top: { xs: 40, md: 50 },
-            width: { xs: 160, md: 210 },
+            left: { xs: 0, md: 380, lg: 400, xl: 450 },
+            top: { xs: 0, md: 30, lg: 40, xl: 50 },
+            width: { xs: 0, md: 180, lg: 200, xl: 210 },
             zIndex: 6,
         },
     },
