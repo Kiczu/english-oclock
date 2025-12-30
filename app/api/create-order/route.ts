@@ -1,4 +1,4 @@
-import { WC_BASE_URL } from "@/app/lib/env";
+import { WC_BASE_URL, WC_ENABLED } from "@/app/lib/env";
 import wooFetch from "@/app/lib/woo";
 import { CartItemInput } from "@/app/types/commerce";
 import { NextResponse } from "next/server";
@@ -29,6 +29,12 @@ const assertValidItems = (items: CartItemInput[]) => {
 };
 
 export async function POST(req: Request) {
+    if (!WC_ENABLED) {
+        return NextResponse.json(
+            { error: "WooCommerce is not configured" },
+            { status: 503 }
+        );
+    }
     try {
         const body = (await req.json()) as CreateOrderBody;
 

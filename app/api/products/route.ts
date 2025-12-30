@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import wooFetch from "@/app/lib/woo";
 import { ProductListItemDTO, WooProduct } from "@/app/types/commerce";
+import { WC_ENABLED } from "@/app/lib/env";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,12 @@ const toListItemDTO = (p: WooProduct): ProductListItemDTO => ({
 });
 
 export async function GET(req: Request) {
+    if (!WC_ENABLED) {
+        return NextResponse.json(
+            { error: "WooCommerce is not configured" },
+            { status: 503 }
+        );
+    }
     const { searchParams } = new URL(req.url);
     const perPage = Number(searchParams.get("perPage") ?? 24);
     const page = Number(searchParams.get("page") ?? 1);
