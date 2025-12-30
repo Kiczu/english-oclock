@@ -1,20 +1,25 @@
 import { NextResponse } from "next/server";
 import wooFetch from "@/app/lib/woo";
-import { ProductCardDTO, WooProduct } from "@/app/types/commerce";
+import { ProductListItemDTO, WooProduct } from "@/app/types/commerce";
+import { WC_ENABLED } from "@/app/lib/env";
 
 export const runtime = "nodejs";
 
-const toDTO = (p: WooProduct): ProductCardDTO => {
-    return {
-        id: p.id,
-        name: p.name,
-        slug: p.slug,
-        price: Number(p.price || 0),
-        imageUrl: p.images?.[0]?.src,
-    };
-}
+const toListItemDTO = (p: WooProduct): ProductListItemDTO => ({
+    id: p.id,
+    slug: p.slug,
+    title: p.name,
+    price: Number(p.price || 0),
+    imageUrl: p.images?.[0]?.src,
+});
 
-const GET = async (req: Request) => {
+export async function GET(req: Request) {
+    if (!WC_ENABLED) {
+        return NextResponse.json(
+            { error: "WooCommerce is not configured" },
+            { status: 503 }
+        );
+    }
     const { searchParams } = new URL(req.url);
     const perPage = Number(searchParams.get("perPage") ?? 24);
     const page = Number(searchParams.get("page") ?? 1);
@@ -27,7 +32,5 @@ const GET = async (req: Request) => {
         { next: { revalidate: 300 } }
     );
 
-    return NextResponse.json(products.map(toDTO));
+    return NextResponse.json(products.map(toListItemDTO));
 }
-
-export default { GET };

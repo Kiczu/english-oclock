@@ -1,9 +1,11 @@
-export const requiredEnv = (name: string): string => {
+const optEnv = (name: string): string | undefined => {
     const v = process.env[name];
-    if (!v) throw new Error(`Missing env: ${name}`);
-    return v;
-}
+    return v && v.trim().length ? v : undefined;
+};
 
-export const WC_BASE_URL = requiredEnv("WC_BASE_URL").replace(/\/$/, "");
-export const WC_CONSUMER_KEY = requiredEnv("WC_CONSUMER_KEY");
-export const WC_CONSUMER_SECRET = requiredEnv("WC_CONSUMER_SECRET");
+export const WC_BASE_URL = (optEnv("WC_BASE_URL") ?? "").replace(/\/$/, "");
+export const WC_CONSUMER_KEY = optEnv("WC_CONSUMER_KEY") ?? "";
+export const WC_CONSUMER_SECRET = optEnv("WC_CONSUMER_SECRET") ?? "";
+
+export const WC_ENABLED =
+    Boolean(WC_BASE_URL && WC_CONSUMER_KEY && WC_CONSUMER_SECRET);
