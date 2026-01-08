@@ -1,38 +1,43 @@
-import makeMockProducts from "@/app/lib/mockProducts";
-import { Container, Grid, Stack, Typography } from "@mui/material";
+"use client";
+
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import ProductCard from "../product/ProductCard";
+import { bestsellersMock } from "@/app/lib/product.mock";
+import { getVariant } from "@/app/helpers/productCard";
 
-const BestSellersSection = () => {
-  const products = makeMockProducts(12);
-
+const BestsellersSection = () => {
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }} id="bestsellery">
-      <Stack
-        direction="row"
-        alignItems="baseline"
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
-      >
+    <Box component="section" sx={{ py: { xs: 6, md: 10 } }}>
+      <Stack spacing={1.5} sx={{ mb: 4 }}>
         <Typography
-          variant="h4"
+          variant="h3"
           sx={{ fontWeight: 900, color: "primary.main" }}
         >
-          Bestsellery
+          Bestsellers
         </Typography>
-        <Typography sx={{ opacity: 0.7 }}>
+        <Typography sx={{ opacity: 0.8 }}>
           Najczęściej wybierane materiały
         </Typography>
       </Stack>
 
-      <Grid container spacing={2}>
-        {products.map((p) => (
-          <Grid key={p.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <ProductCard product={p} />
+      <Grid container spacing={3}>
+        {bestsellersMock.map((p) => (
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={p.id}>
+            <ProductCard
+              id={p.id}
+              href={`/shop/${p.slug}`}
+              title={p.title}
+              priceLabel={p.priceLabel}
+              variant={getVariant(p)}
+              onPrimaryAction={() => {
+                window.location.href = `https://shop.twojadomena.pl/?add-to-cart=${p.id}`;
+              }}
+            />
           </Grid>
         ))}
       </Grid>
-    </Container>
+    </Box>
   );
 };
 
-export default BestSellersSection;
+export default BestsellersSection;
