@@ -57,8 +57,8 @@ export const productsMock: ProductUI[] = [
         slug: "phrasal-verbs-pack",
         title: "Phrasal Verbs Pack",
         subtitle: "Zadania + przykłady w kontekście",
-        priceLabel: "29 zł",
-        isBestseller: true,
+        priceLabel: "0 zł",
+        // isFree: true,
         category: "self",
         level: "B1",
         format: "worksheet",
@@ -70,7 +70,7 @@ export const productsMock: ProductUI[] = [
         title: "Worksheet Bundle (A2–B1)",
         subtitle: "Zestaw kart pracy do regularnej nauki",
         priceLabel: "39 zł",
-        isBestseller: true,
+        // isBestseller: true,
         category: "student",
         level: "B1",
         format: "bundle",
@@ -95,6 +95,7 @@ export const productsMock: ProductUI[] = [
         subtitle: "Słownictwo pod tematy egzaminacyjne",
         priceLabel: "35 zł",
         category: "exam",
+        isBestseller: true,
         level: "B2",
         format: "worksheet",
         topics: ["exam", "vocabulary"],
@@ -105,6 +106,7 @@ export const productsMock: ProductUI[] = [
         title: "Listening Pack (A2)",
         subtitle: "Słuchanki + zadania sprawdzające",
         priceLabel: "25 zł",
+        isBestseller: true,
         category: "student",
         level: "A2",
         format: "worksheet",
@@ -125,27 +127,3 @@ export const productsMock: ProductUI[] = [
 
 export const freeProductsMock = productsMock.filter((p) => p.isFree);
 export const bestsellersMock = productsMock.filter((p) => p.isBestseller);
-
-export const categoryTilesMock = [
-    {
-        key: "student" as const,
-        title: "Dla uczniów",
-        subtitle: "Karty pracy, testy, słownictwo",
-        href: "/shop?category=student&sort=popular",
-        sticker: "🎓",
-    },
-    {
-        key: "teacher" as const,
-        title: "Dla nauczycieli",
-        subtitle: "Lekcje, gry, gotowe scenariusze",
-        href: "/shop?category=teacher&sort=popular",
-        sticker: "🧑‍🏫",
-    },
-    {
-        key: "self" as const,
-        title: "Do nauki solo",
-        subtitle: "Powtórki, gramatyka, speaking",
-        href: "/shop?category=self&sort=popular",
-        sticker: "🧠",
-    },
-] as const;
