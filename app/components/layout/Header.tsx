@@ -6,7 +6,7 @@ import { AppBar, Toolbar, Box, Button, Container } from "@mui/material";
 const nav = [
   { href: "/sklep", label: "Sklep" },
   { href: "/#bestsellery", label: "Bestsellery" },
-  { href: "/darmowe", label: "Darmowe" },
+  { href: "/free", label: "Darmowe" },
   { href: "/kategorie", label: "Kategorie" },
   { href: "/kontakt", label: "Kontakt" },
 ];
@@ -25,7 +25,7 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
         pointerEvents: hidden ? "none" : "auto",
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ py: 1, gap: 2 }}>
           <Box
             component={Link}

@@ -8,7 +8,7 @@ const HomePage = () => {
   return (
     <>
       <HeroStack />
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <div id="home-next"></div>
         <BestSellersSection />
       </Container>
