@@ -14,7 +14,7 @@ const FreeProductsSection = () => {
       products={freeProductsMock}
       cardMaxWidth={520}
       onPrimaryAction={(p) => {
-        router.push(`/shop/${p.slug}`);
+        router.push(`/sklep/${p.slug}`);
       }}
     />
   );

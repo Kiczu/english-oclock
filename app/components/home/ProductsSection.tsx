@@ -60,7 +60,7 @@ const ProductsSection = ({
             <Box sx={{ maxWidth: cardMaxWidth ?? "none", mx: "auto" }}>
               <ProductCard
                 id={p.id}
-                href={`/shop/${p.slug}`}
+                href={`/sklep/${p.slug}`}
                 title={p.title}
                 priceLabel={p.priceLabel}
                 variant={getVariant(p)}

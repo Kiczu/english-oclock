@@ -95,7 +95,7 @@ const AboutSection = () => {
 
               <Button
                 variant="text"
-                href="/shop"
+                href="/sklep"
                 sx={{
                   textTransform: "none",
                   fontWeight: 900,

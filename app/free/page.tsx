@@ -37,12 +37,12 @@ const FreePage = () => {
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={p.id}>
               <ProductCard
                 id={p.id}
-                href={`/shop/${p.slug}`}
+                href={`/sklep/${p.slug}`}
                 title={p.title}
                 priceLabel={p.priceLabel}
                 variant="free"
                 onPrimaryAction={() => {
-                  router.push(`/shop/${p.slug}`);
+                  router.push(`/sklep/${p.slug}`);
                 }}
               />
             </Grid>
