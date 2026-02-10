@@ -25,7 +25,7 @@ const BestsellersSection = () => {
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={p.id}>
             <ProductCard
               id={p.id}
-              href={`/shop/${p.slug}`}
+              href={`/sklep/${p.slug}`}
               title={p.title}
               priceLabel={p.priceLabel}
               variant={getVariant(p)}
