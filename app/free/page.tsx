@@ -11,7 +11,7 @@ const FreePage = () => {
   const router = useRouter();
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <Box sx={{ py: { xs: 6, md: 10 } }}>
         <Stack spacing={1.5} sx={{ mb: 4 }}>
           <Typography

@@ -15,7 +15,7 @@ const ShopPage = () => {
   }, []);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
+    <Container maxWidth="xl" sx={{ py: 6 }}>
       <Typography variant="h3" sx={{ mb: 3 }}>
         Sklep
       </Typography>

@@ -46,7 +46,7 @@ const ProductPage = async ({
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ pt: { xs: 10, md: 12 }, pb: 8 }}>
+    <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8 }}>
       <Stack spacing={4}>
         <Box>
           <Button href="/sklep" sx={{ fontWeight: 800 }}>
