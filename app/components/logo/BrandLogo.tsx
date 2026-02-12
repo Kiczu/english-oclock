@@ -1,0 +1,90 @@
+"use client";
+
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Box, ButtonBase, Typography } from "@mui/material";
+import { GFS_Didot, Raleway } from "next/font/google";
+
+const didot = GFS_Didot({ weight: "400", subsets: ["latin"] });
+const raleway = Raleway({ weight: ["300", "400"], subsets: ["latin"] });
+
+type BrandLogoProps = {
+  iconSize?: number;
+  gap?: number;
+  href?: string;
+  titleSize?: number;
+  subtitleSize?: number;
+  disabled?: boolean;
+};
+
+const BrandLogo = ({
+  iconSize = 66,
+  href = "/",
+  titleSize = 24,
+  subtitleSize = 14,
+  disabled = false,
+}: BrandLogoProps) => {
+  const router = useRouter();
+
+  return (
+    <ButtonBase
+      disabled={disabled}
+      onClick={() => router.push(href)}
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        textAlign: "left",
+        borderRadius: 1,
+        "&:focus-visible": {
+          outline: "2px solid",
+          outlineColor: "rgba(55, 67, 135, 0.6)",
+        },
+      }}
+      aria-label="Przejdź na stronę główną"
+    >
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "inline-flex", flexShrink: 0 }}>
+          <Image
+            src="/images/menu/logo.png"
+            alt="English o'clock"
+            width={iconSize}
+            height={iconSize}
+            priority={false}
+          />
+        </Box>
+
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography
+            className={didot.className}
+            sx={{
+              fontSize: `${titleSize}px`,
+              lineHeight: 1,
+              letterSpacing: "0.06em",
+              color: "#374387",
+              mt: "10px",
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+            }}
+          >
+            ENGLISH O&apos;CLOCK
+          </Typography>
+
+          <Typography
+            className={raleway.className}
+            sx={{
+              fontSize: `${subtitleSize}px`,
+              lineHeight: 1.1,
+              letterSpacing: "0.32em",
+              color: "#DE9A90",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Wioleta Jedziniak
+          </Typography>
+        </Box>
+      </Box>
+    </ButtonBase>
+  );
+};
+
+export default BrandLogo;

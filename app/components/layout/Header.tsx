@@ -1,7 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { AppBar, Toolbar, Box, Button, Container } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+} from "@mui/material";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import BrandLogo from "../logo/BrandLogo";
 
 const nav = [
   { href: "/sklep", label: "Sklep" },
@@ -31,12 +40,13 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
             component={Link}
             href="/"
             sx={{
-              fontWeight: 900,
-              color: "primary.main",
+              display: "inline-flex",
+              alignItems: "center",
               textDecoration: "none",
+              height: 60,
             }}
           >
-            English o&apos;clock
+            <BrandLogo />
           </Box>
 
           <Box
@@ -53,10 +63,9 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
               </Button>
             ))}
           </Box>
-
-          <Button variant="contained" color="primary">
-            Koszyk
-          </Button>
+          <IconButton aria-label="Koszyk">
+            <ShoppingCartOutlinedIcon color="primary" />
+          </IconButton>
         </Toolbar>
       </Container>
     </AppBar>
