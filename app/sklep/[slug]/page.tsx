@@ -19,11 +19,7 @@ import {
 } from "@/app/helpers/productPage";
 import { productsMock } from "@/app/lib/product.mock";
 
-const ProductPage = async ({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) => {
+const ProductPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = await params;
   const product = productsMock.find((p) => p.slug === slug);
   if (!product) notFound();
