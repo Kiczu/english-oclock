@@ -3,10 +3,11 @@
 import * as React from "react";
 import Image from "next/image";
 import { Box, Typography, useMediaQuery } from "@mui/material";
-import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import { keyframes } from "@mui/material/styles";
 import { heroAssets, heroLayout } from "./heroPositions";
 import Wave from "./Wave";
+import { didot } from "@/app/lib/fonts";
 
 const busRightToLeft = keyframes`
   0%   { transform: translate3d(160vw, 0, 0); opacity: 1; }
@@ -208,6 +209,7 @@ const HeroStack = () => {
         }}
       >
         <Typography
+          className={didot.className}
           sx={{
             fontWeight: 900,
             color: "#374373",
@@ -245,9 +247,9 @@ const HeroStack = () => {
             },
           }}
         >
-          <KeyboardArrowDownRoundedIcon
+          <KeyboardArrowDownOutlinedIcon
             sx={{
-              fontSize: 64,
+              fontSize: 62,
               color: "#374373",
               filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.12))",
             }}

@@ -3,10 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Box, ButtonBase, Typography } from "@mui/material";
-import { GFS_Didot, Raleway } from "next/font/google";
-
-const didot = GFS_Didot({ weight: "400", subsets: ["latin"] });
-const raleway = Raleway({ weight: ["300", "400"], subsets: ["latin"] });
+import { didot, raleway } from "@/app/lib/fonts";
 
 type BrandLogoProps = {
   iconSize?: number;

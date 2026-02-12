@@ -50,7 +50,13 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
           </Box>
 
           <Box
-            sx={{ display: "flex", gap: 1, flex: 1, justifyContent: "center" }}
+            sx={{
+              display: "flex",
+              gap: 1,
+              ml: "auto",
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
           >
             {nav.map((n) => (
               <Button
@@ -58,6 +64,12 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
                 component={Link}
                 href={n.href}
                 color="primary"
+                sx={{
+                  fontSize: { xs: "0.95rem", md: "1.05rem" },
+                  fontWeight: 600,
+                  px: 1.25,
+                  minWidth: "auto",
+                }}
               >
                 {n.label}
               </Button>
