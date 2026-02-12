@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Box, ButtonBase, Typography } from "@mui/material";
-import { didot, raleway } from "@/app/lib/fonts";
+import { raleway } from "@/app/lib/fonts";
 
 type BrandLogoProps = {
   iconSize?: number;
@@ -52,13 +52,17 @@ const BrandLogo = ({
 
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography
-            className={didot.className}
             sx={{
-              fontSize: `${titleSize}px`,
+              fontFamily: "var(--font-brand-display)",
+              fontSize: {
+                xs: `${Math.round(titleSize * 0.8)}px`,
+                sm: `${titleSize}px`,
+              },
+              fontWeight: 900,
               lineHeight: 1,
-              letterSpacing: "0.06em",
+              letterSpacing: { xs: "0.04em", sm: "0.06em" },
               color: "#374387",
-              mt: "10px",
+              mt: { xs: "6px", sm: "10px" },
               textTransform: "uppercase",
               whiteSpace: "nowrap",
             }}
@@ -69,9 +73,12 @@ const BrandLogo = ({
           <Typography
             className={raleway.className}
             sx={{
-              fontSize: `${subtitleSize}px`,
+              fontSize: {
+                xs: `${Math.round(subtitleSize * 0.86)}px`,
+                sm: `${subtitleSize}px`,
+              },
               lineHeight: 1.1,
-              letterSpacing: "0.32em",
+              letterSpacing: { xs: "0.2em", sm: "0.32em" },
               color: "#DE9A90",
               whiteSpace: "nowrap",
             }}

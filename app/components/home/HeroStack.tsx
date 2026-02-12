@@ -7,7 +7,6 @@ import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDown
 import { keyframes } from "@mui/material/styles";
 import { heroAssets, heroLayout } from "./heroPositions";
 import Wave from "./Wave";
-import { didot } from "@/app/lib/fonts";
 
 const busRightToLeft = keyframes`
   0%   { transform: translate3d(160vw, 0, 0); opacity: 1; }
@@ -209,8 +208,8 @@ const HeroStack = () => {
         }}
       >
         <Typography
-          className={didot.className}
           sx={{
+            fontFamily: "var(--font-brand-display)",
             fontWeight: 900,
             color: "#374373",
             fontSize: { xs: 34, md: 56 },
