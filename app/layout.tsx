@@ -1,4 +1,5 @@
 import LayoutShell from "./components/layout/LayoutShell";
+import { didot, raleway } from "./lib/fonts";
 import ThemeRegistry from "./theme/ThemeRegistry";
 
 export const metadata = {
@@ -9,7 +10,7 @@ export const metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="pl">
-      <body>
+      <body className={`${raleway.className} ${raleway.variable} ${didot.variable}`}>
         <ThemeRegistry>
           <LayoutShell>{children}</LayoutShell>
         </ThemeRegistry>
