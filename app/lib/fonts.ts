@@ -1,6 +1,6 @@
-import { GFS_Didot, Raleway } from "next/font/google";
+import { Raleway, Merriweather } from "next/font/google";
 
-export const didot = GFS_Didot({
+export const merriweather = Merriweather({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-brand-display",

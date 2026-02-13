@@ -1,5 +1,5 @@
 import LayoutShell from "./components/layout/LayoutShell";
-import { didot, raleway } from "./lib/fonts";
+import { merriweather, raleway } from "./lib/fonts";
 import ThemeRegistry from "./theme/ThemeRegistry";
 
 export const metadata = {
@@ -10,7 +10,9 @@ export const metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="pl">
-      <body className={`${raleway.className} ${raleway.variable} ${didot.variable}`}>
+      <body
+        className={`${raleway.className} ${raleway.variable} ${merriweather.variable}`}
+      >
         <ThemeRegistry>
           <LayoutShell>{children}</LayoutShell>
         </ThemeRegistry>
