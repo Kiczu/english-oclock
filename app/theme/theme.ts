@@ -25,9 +25,9 @@ export const theme = createTheme({
     typography: {
         fontFamily:
             "var(--font-brand-body), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
-        h1: { fontFamily: "var(--font-brand-display)", fontWeight: 800 },
-        h2: { fontFamily: "var(--font-brand-display)", fontWeight: 800 },
-        h3: { fontFamily: "var(--font-brand-display)", fontWeight: 800 },
+        h1: { fontFamily: "var(--font-brand-display)", fontWeight: 900 },
+        h2: { fontFamily: "var(--font-brand-display)", fontWeight: 900 },
+        h3: { fontFamily: "var(--font-brand-display)", fontWeight: 900 },
         h4: { fontFamily: "var(--font-brand-display)", fontWeight: 700 },
         h5: { fontFamily: "var(--font-brand-display)", fontWeight: 700 },
         h6: { fontFamily: "var(--font-brand-display)", fontWeight: 700 },
