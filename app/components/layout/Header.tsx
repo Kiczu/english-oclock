@@ -14,6 +14,7 @@ import {
   ListItemButton,
   ListItemText,
   Divider,
+  Typography,
 } from "@mui/material";
 import { keyframes } from "@mui/material/styles";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -37,9 +38,15 @@ const closeIconIn = keyframes`
 
 const Header = ({ hidden }: { hidden?: boolean }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
 
   const toggleMobileMenu = () => setMobileOpen((prev) => !prev);
   const closeMobileMenu = () => setMobileOpen(false);
+  const openCartDrawer = () => {
+    setMobileOpen(false);
+    setCartOpen(true);
+  };
+  const closeCartDrawer = () => setCartOpen(false);
 
   return (
     <>
@@ -106,7 +113,7 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
                 gap: 0.5,
               }}
             >
-              <IconButton aria-label="Koszyk">
+              <IconButton aria-label="Koszyk" onClick={openCartDrawer}>
                 <ShoppingCartOutlinedIcon color="primary" />
               </IconButton>
               <IconButton
@@ -176,6 +183,21 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
             </ListItemButton>
           ))}
           <Divider sx={{ my: 1.5 }} />
+          <ListItemButton onClick={openCartDrawer} sx={{ borderRadius: 2 }}>
+            <ListItemText
+              primary="Koszyk"
+              slotProps={{
+                primary: {
+                  sx: {
+                    color: "primary.main",
+                    fontSize: "1.05rem",
+                    fontWeight: 900,
+                  },
+                },
+              }}
+            />
+          </ListItemButton>
+          <Divider sx={{ my: 1.5 }} />
           <ListItemButton
             component={Link}
             href="/"
@@ -197,8 +219,58 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
           </ListItemButton>
         </List>
       </Drawer>
+
+      <Drawer
+        anchor="right"
+        open={cartOpen}
+        onClose={closeCartDrawer}
+        sx={{
+          "& .MuiDrawer-paper": {
+            width: { xs: "100%", sm: 380 },
+            maxWidth: "100vw",
+            bgcolor: colors.stickerBackground,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            p: 2,
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ color: "primary.main", fontWeight: 900, letterSpacing: "0.03em" }}
+          >
+            Koszyk
+          </Typography>
+          <IconButton aria-label="Zamknij koszyk" onClick={closeCartDrawer}>
+            <CloseRoundedIcon color="primary" />
+          </IconButton>
+        </Box>
+
+        <Divider />
+
+        <Box sx={{ p: 3, display: "grid", gap: 2 }}>
+          <Typography sx={{ color: "primary.main", fontWeight: 700 }}>
+            Twój koszyk jest pusty.
+          </Typography>
+          <Button
+            component={Link}
+            href="/sklep"
+            variant="contained"
+            onClick={closeCartDrawer}
+            sx={{ alignSelf: "start", px: 2.5, py: 1 }}
+          >
+            Przejdź do sklepu
+          </Button>
+        </Box>
+      </Drawer>
     </>
   );
 };
 
 export default Header;
+
