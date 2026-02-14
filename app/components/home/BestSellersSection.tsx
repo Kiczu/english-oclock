@@ -2,18 +2,29 @@
 
 import ProductsSection from "./ProductsSection";
 import { bestsellersMock } from "@/app/lib/product.mock";
+import { useCart } from "@/app/context/CartContext";
 
 const BestsellersSection = () => {
+  const { addItem, openCart } = useCart();
+
   return (
     <ProductsSection
       title="Bestsellers"
-      subtitle="Najczęściej wybierane materiały"
+      subtitle="Najczesciej wybierane materialy"
       products={bestsellersMock}
       onPrimaryAction={(p) => {
-        window.location.href = `https://shop.twojadomena.pl/?add-to-cart=${p.id}`;
+        addItem({
+          id: p.id,
+          slug: p.slug,
+          title: p.title,
+          priceLabel: p.priceLabel,
+          isFree: p.isFree,
+        });
+        openCart();
       }}
     />
   );
 };
 
 export default BestsellersSection;
+

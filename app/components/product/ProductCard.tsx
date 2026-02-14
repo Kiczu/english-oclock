@@ -39,7 +39,7 @@ const ProductCard = ({
   const badge =
     variant === "free" ? "FREE" : variant === "bestseller" ? "TOP" : undefined;
 
-  const cta = primaryLabel ?? (variant === "free" ? "Pobierz" : "Kup teraz");
+  const cta = primaryLabel ?? (variant === "free" ? "Pobierz" : "Do koszyka");
 
   const frameInset = 3;
   const safePadding = 45;

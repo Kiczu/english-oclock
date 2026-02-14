@@ -1,37 +1,23 @@
 import { notFound } from "next/navigation";
-import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Divider,
-  Grid,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Chip, Container, Divider, Grid, Stack, Typography } from "@mui/material";
 
 import ProductGallery from "@/app/components/product/ProductGallery";
+import AddToCartButton from "@/app/components/product/AddToCartButton";
 import { getVariant } from "@/app/helpers/productCard";
-import {
-  isWooProduct,
-  normalizeMock,
-  normalizeWoo,
-} from "@/app/helpers/productPage";
+import { isWooProduct, normalizeMock, normalizeWoo } from "@/app/helpers/productPage";
 import { productsMock } from "@/app/lib/product.mock";
 
-const ProductPage = async ({ params }: { params: { slug: string } }) => {
+const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
   const product = productsMock.find((p) => p.slug === slug);
   if (!product) notFound();
 
-  const mapped = isWooProduct(product)
-    ? normalizeWoo(product)
-    : normalizeMock(product);
+  const mapped = isWooProduct(product) ? normalizeWoo(product) : normalizeMock(product);
   const variant = getVariant(mapped);
   const topics = mapped.tags.slice(0, 4);
 
   const priceLabel = mapped.priceLabel;
-  const ctaLabel = mapped.isFree ? "Pobierz za darmo" : "Kup teraz";
+  const ctaLabel = mapped.isFree ? "Pobierz za darmo" : "Do koszyka";
   const secondaryHref = mapped.isFree ? "/free" : "/sklep";
   const secondaryLabel = mapped.isFree ? "Zobacz darmowe" : "Wroc do sklepu";
 
@@ -46,7 +32,7 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
       <Stack spacing={4}>
         <Box>
           <Button href="/sklep" sx={{ fontWeight: 800 }}>
-            &lt;- Wroc do sklepu
+            {"<- Wroc do sklepu"}
           </Button>
         </Box>
 
@@ -58,44 +44,24 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={2}>
               <Stack spacing={0.5}>
-                <Typography
-                  variant="h3"
-                  sx={{ fontWeight: 900, color: "primary.main" }}
-                >
+                <Typography variant="h3" sx={{ fontWeight: 900, color: "primary.main" }}>
                   {mapped.title}
                 </Typography>
-                {mapped.subtitle ? (
-                  <Typography sx={{ opacity: 0.75 }}>
-                    {mapped.subtitle}
-                  </Typography>
-                ) : null}
+                {mapped.subtitle ? <Typography sx={{ opacity: 0.75 }}>{mapped.subtitle}</Typography> : null}
               </Stack>
 
               <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-                {variant === "free" ? (
-                  <Chip label="FREE" size="small" sx={{ fontWeight: 800 }} />
-                ) : null}
-                {variant === "bestseller" ? (
-                  <Chip label="TOP" size="small" sx={{ fontWeight: 800 }} />
-                ) : null}
-                {mapped.level ? (
-                  <Chip label={`Poziom ${mapped.level}`} size="small" />
-                ) : null}
-                {mapped.formatLabel ? (
-                  <Chip label={mapped.formatLabel} size="small" />
-                ) : null}
-                {mapped.categoryLabel ? (
-                  <Chip label={mapped.categoryLabel} size="small" />
-                ) : null}
+                {variant === "free" ? <Chip label="FREE" size="small" sx={{ fontWeight: 800 }} /> : null}
+                {variant === "bestseller" ? <Chip label="TOP" size="small" sx={{ fontWeight: 800 }} /> : null}
+                {mapped.level ? <Chip label={`Poziom ${mapped.level}`} size="small" /> : null}
+                {mapped.formatLabel ? <Chip label={mapped.formatLabel} size="small" /> : null}
+                {mapped.categoryLabel ? <Chip label={mapped.categoryLabel} size="small" /> : null}
                 {topics.map((t) => (
                   <Chip key={t} label={t} size="small" />
                 ))}
               </Stack>
 
-              <Typography
-                variant="h4"
-                sx={{ fontWeight: 900, color: "secondary.main" }}
-              >
+              <Typography variant="h4" sx={{ fontWeight: 900, color: "secondary.main" }}>
                 {priceLabel}
               </Typography>
 
@@ -105,13 +71,19 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
               </Typography>
 
               <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap" }}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  sx={{ px: 4, fontWeight: 900, color: "#fff" }}
-                >
-                  {ctaLabel}
-                </Button>
+                {mapped.isFree ? (
+                  <Button variant="contained" color="secondary" sx={{ px: 4, fontWeight: 900, color: "#fff" }}>
+                    {ctaLabel}
+                  </Button>
+                ) : (
+                  <AddToCartButton
+                    id={mapped.id}
+                    slug={mapped.slug}
+                    title={mapped.title}
+                    priceLabel={mapped.priceLabel}
+                    label={ctaLabel}
+                  />
+                )}
                 <Button href={secondaryHref} variant="outlined">
                   {secondaryLabel}
                 </Button>
@@ -135,3 +107,4 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
 };
 
 export default ProductPage;
+
