@@ -15,13 +15,19 @@ import {
   ListItemText,
   Divider,
   Typography,
+  Badge,
+  Stack,
 } from "@mui/material";
 import { keyframes } from "@mui/material/styles";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import BrandLogo from "../logo/BrandLogo";
 import { colors } from "@/app/theme/colors";
+import { useCart } from "@/app/context/CartContext";
 
 const nav = [
   { href: "/sklep", label: "Sklep" },
@@ -38,15 +44,28 @@ const closeIconIn = keyframes`
 
 const Header = ({ hidden }: { hidden?: boolean }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  const {
+    items,
+    totalItems,
+    totalAmount,
+    isCartOpen,
+    openCart,
+    closeCart,
+    incrementItem,
+    decrementItem,
+    removeItem,
+    clearCart,
+  } = useCart();
 
   const toggleMobileMenu = () => setMobileOpen((prev) => !prev);
   const closeMobileMenu = () => setMobileOpen(false);
-  const openCartDrawer = () => {
-    setMobileOpen(false);
-    setCartOpen(true);
+
+  const openCartFromMobileMenu = () => {
+    closeMobileMenu();
+    openCart();
   };
-  const closeCartDrawer = () => setCartOpen(false);
+
+  const totalAmountLabel = `${totalAmount.toFixed(2).replace(".", ",")} zl`;
 
   return (
     <>
@@ -113,11 +132,13 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
                 gap: 0.5,
               }}
             >
-              <IconButton aria-label="Koszyk" onClick={openCartDrawer}>
-                <ShoppingCartOutlinedIcon color="primary" />
+              <IconButton aria-label="Koszyk" onClick={openCart}>
+                <Badge badgeContent={totalItems} color="secondary">
+                  <ShoppingCartOutlinedIcon color="primary" />
+                </Badge>
               </IconButton>
               <IconButton
-                aria-label="Otwórz menu"
+                aria-label="Otworz menu"
                 onClick={toggleMobileMenu}
                 sx={{ display: { xs: "inline-flex", md: "none" } }}
               >
@@ -132,6 +153,7 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
         anchor="right"
         open={mobileOpen}
         onClose={closeMobileMenu}
+        ModalProps={{ disableScrollLock: true }}
         sx={{
           display: { xs: "block", md: "none" },
           "& .MuiDrawer-paper": {
@@ -183,7 +205,7 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
             </ListItemButton>
           ))}
           <Divider sx={{ my: 1.5 }} />
-          <ListItemButton onClick={openCartDrawer} sx={{ borderRadius: 2 }}>
+          <ListItemButton onClick={openCartFromMobileMenu} sx={{ borderRadius: 2 }}>
             <ListItemText
               primary="Koszyk"
               slotProps={{
@@ -205,7 +227,7 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
             sx={{ borderRadius: 2 }}
           >
             <ListItemText
-              primary="Strona główna"
+              primary="Strona glowna"
               slotProps={{
                 primary: {
                   sx: {
@@ -222,13 +244,15 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
 
       <Drawer
         anchor="right"
-        open={cartOpen}
-        onClose={closeCartDrawer}
+        open={isCartOpen}
+        onClose={closeCart}
+        ModalProps={{ disableScrollLock: true }}
         sx={{
           "& .MuiDrawer-paper": {
-            width: { xs: "100%", sm: 380 },
+            width: { xs: "100%", sm: 420 },
             maxWidth: "100vw",
             bgcolor: colors.stickerBackground,
+            display: "flex",
           },
         }}
       >
@@ -244,33 +268,131 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 900, letterSpacing: "0.03em" }}
           >
-            Koszyk
+            Koszyk ({totalItems})
           </Typography>
-          <IconButton aria-label="Zamknij koszyk" onClick={closeCartDrawer}>
+          <IconButton aria-label="Zamknij koszyk" onClick={closeCart}>
             <CloseRoundedIcon color="primary" />
           </IconButton>
         </Box>
 
         <Divider />
 
-        <Box sx={{ p: 3, display: "grid", gap: 2 }}>
-          <Typography sx={{ color: "primary.main", fontWeight: 700 }}>
-            Twój koszyk jest pusty.
-          </Typography>
-          <Button
-            component={Link}
-            href="/sklep"
-            variant="contained"
-            onClick={closeCartDrawer}
-            sx={{ alignSelf: "start", px: 2.5, py: 1 }}
-          >
-            Przejdź do sklepu
-          </Button>
-        </Box>
+        {items.length === 0 ? (
+          <Box sx={{ p: 3, display: "grid", gap: 2 }}>
+            <Typography sx={{ color: "primary.main", fontWeight: 700 }}>
+              Twoj koszyk jest pusty.
+            </Typography>
+            <Button
+              component={Link}
+              href="/sklep"
+              variant="contained"
+              onClick={closeCart}
+              sx={{ alignSelf: "start", px: 2.5, py: 1 }}
+            >
+              Przejdz do sklepu
+            </Button>
+          </Box>
+        ) : (
+          <>
+            <List sx={{ p: 0 }}>
+              {items.map((item) => (
+                <Box
+                  key={item.id}
+                  sx={{
+                    px: 2,
+                    py: 1.5,
+                    borderBottom: "1px dashed rgba(55,67,135,0.24)",
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between" gap={1.5}>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        component={Link}
+                        href={`/sklep/${item.slug}`}
+                        onClick={closeCart}
+                        sx={{
+                          textDecoration: "none",
+                          color: "primary.main",
+                          fontWeight: 800,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {item.title}
+                      </Typography>
+                      <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                        {item.priceLabel}
+                      </Typography>
+                    </Box>
+                    <IconButton
+                      aria-label="Usun z koszyka"
+                      onClick={() => removeItem(item.id)}
+                      size="small"
+                    >
+                      <DeleteOutlineRoundedIcon sx={{ color: "primary.main" }} />
+                    </IconButton>
+                  </Stack>
+
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ mt: 1.25 }}
+                  >
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                      <IconButton
+                        aria-label="Zmniejsz ilosc"
+                        onClick={() => decrementItem(item.id)}
+                        size="small"
+                      >
+                        <RemoveRoundedIcon fontSize="small" color="primary" />
+                      </IconButton>
+                      <Typography sx={{ minWidth: 20, textAlign: "center", fontWeight: 700 }}>
+                        {item.quantity}
+                      </Typography>
+                      <IconButton
+                        aria-label="Zwieksz ilosc"
+                        onClick={() => incrementItem(item.id)}
+                        size="small"
+                      >
+                        <AddRoundedIcon fontSize="small" color="primary" />
+                      </IconButton>
+                    </Stack>
+                  </Stack>
+                </Box>
+              ))}
+            </List>
+
+            <Box sx={{ p: 2, mt: "auto" }}>
+              <Divider sx={{ mb: 2 }} />
+              <Stack direction="row" justifyContent="space-between" sx={{ mb: 2 }}>
+                <Typography sx={{ fontWeight: 700, color: "primary.main" }}>Razem</Typography>
+                <Typography sx={{ fontWeight: 900, color: "primary.main" }}>
+                  {totalAmountLabel}
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={1}>
+                <Button variant="outlined" onClick={clearCart} sx={{ flex: 1 }}>
+                  Wyczysc
+                </Button>
+                <Button
+                  component={Link}
+                  href="/sklep"
+                  variant="contained"
+                  onClick={closeCart}
+                  sx={{ flex: 1 }}
+                >
+                  Do sklepu
+                </Button>
+              </Stack>
+            </Box>
+          </>
+        )}
       </Drawer>
     </>
   );
 };
 
 export default Header;
-
