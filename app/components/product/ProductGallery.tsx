@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { Box, Stack, Typography } from "@mui/material";
-import type { ProductGalleryItem } from "@/app/lib/product.mock";
+import type { ShopProduct } from "@/app/types/commerce";
 import { hash01, roughFrameA, roughFrameB } from "@/app/helpers/productCard";
 
 type ProductGalleryProps = {
-  items: ProductGalleryItem[];
+  items: ShopProduct["gallery"];
   title: string;
 };
 

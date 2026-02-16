@@ -4,9 +4,11 @@ import * as React from "react";
 
 export type CartProduct = {
   id: string;
+  wooProductId?: number;
   slug: string;
   title: string;
   priceLabel: string;
+  unitPrice?: number;
   isFree?: boolean;
 };
 
@@ -32,7 +34,10 @@ const STORAGE_KEY = "english-oclock-cart";
 
 const CartContext = React.createContext<CartContextValue | null>(null);
 
-const parsePrice = (priceLabel: string, isFree?: boolean) => {
+const parsePrice = (priceLabel: string, isFree?: boolean, unitPrice?: number) => {
+  if (typeof unitPrice === "number" && Number.isFinite(unitPrice)) {
+    return Math.max(unitPrice, 0);
+  }
   if (isFree) return 0;
   const match = priceLabel.match(/-?\d+(?:[.,]\d+)?/);
   if (!match) return 0;
@@ -115,7 +120,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const totalAmount = React.useMemo(
     () =>
       items.reduce(
-        (sum, item) => sum + parsePrice(item.priceLabel, item.isFree) * item.quantity,
+        (sum, item) =>
+          sum + parsePrice(item.priceLabel, item.isFree, item.unitPrice) * item.quantity,
         0,
       ),
     [items],

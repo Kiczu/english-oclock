@@ -42,11 +42,6 @@ const crownDrop = keyframes`
   100% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
 `;
 
-const doodleIn = keyframes`
-  0%   { opacity: 0; transform: translate3d(-40px, -15px, 0) rotate(-6deg) scale(.92); }
-  100% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
-`;
-
 const HeroStack = () => {
   const [play, setPlay] = React.useState(false);
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
