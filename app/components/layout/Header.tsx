@@ -1,65 +1,65 @@
 "use client";
 
-import Link from "next/link";
-import { AppBar, Toolbar, Box, Button, Container } from "@mui/material";
-
-const nav = [
-  { href: "/sklep", label: "Sklep" },
-  { href: "/#bestsellery", label: "Bestsellery" },
-  { href: "/darmowe", label: "Darmowe" },
-  { href: "/kategorie", label: "Kategorie" },
-  { href: "/kontakt", label: "Kontakt" },
-];
+import { useState } from "react";
+import CartDrawer from "./header/CartDrawer";
+import HeaderBar from "./header/HeaderBar";
+import MobileMenuDrawer from "./header/MobileMenuDrawer";
+import { headerNavItems } from "./header/navItems";
+import { useCart } from "@/app/context/CartContext";
 
 const Header = ({ hidden }: { hidden?: boolean }) => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const {
+    items,
+    totalItems,
+    totalAmount,
+    isCartOpen,
+    openCart,
+    closeCart,
+    incrementItem,
+    decrementItem,
+    removeItem,
+    clearCart,
+  } = useCart();
+
+  const closeMobileMenu = () => setMobileOpen(false);
+  const openMobileMenu = () => setMobileOpen(true);
+  const openCartFromMobileMenu = () => {
+    closeMobileMenu();
+    openCart();
+  };
+
+  const totalAmountLabel = `${totalAmount.toFixed(2).replace(".", ",")} zl`;
+
   return (
-    <AppBar
-      position="fixed"
-      elevation={0}
-      sx={{
-        bgcolor: "background.paper",
-        color: "text.primary",
-        transition: "transform 300ms ease, opacity 300ms ease",
-        transform: hidden ? "translateY(-110%)" : "translateY(0)",
-        opacity: hidden ? 0 : 1,
-        pointerEvents: hidden ? "none" : "auto",
-      }}
-    >
-      <Container maxWidth="lg">
-        <Toolbar disableGutters sx={{ py: 1, gap: 2 }}>
-          <Box
-            component={Link}
-            href="/"
-            sx={{
-              fontWeight: 900,
-              color: "primary.main",
-              textDecoration: "none",
-            }}
-          >
-            English o&apos;clock
-          </Box>
+    <>
+      <HeaderBar
+        hidden={hidden}
+        navItems={headerNavItems}
+        totalItems={totalItems}
+        onOpenCart={openCart}
+        onOpenMobileMenu={openMobileMenu}
+      />
 
-          <Box
-            sx={{ display: "flex", gap: 1, flex: 1, justifyContent: "center" }}
-          >
-            {nav.map((n) => (
-              <Button
-                key={n.href}
-                component={Link}
-                href={n.href}
-                color="primary"
-              >
-                {n.label}
-              </Button>
-            ))}
-          </Box>
+      <MobileMenuDrawer
+        open={mobileOpen}
+        navItems={headerNavItems}
+        onClose={closeMobileMenu}
+        onOpenCart={openCartFromMobileMenu}
+      />
 
-          <Button variant="contained" color="primary">
-            Koszyk
-          </Button>
-        </Toolbar>
-      </Container>
-    </AppBar>
+      <CartDrawer
+        open={isCartOpen}
+        items={items}
+        totalItems={totalItems}
+        totalAmountLabel={totalAmountLabel}
+        onClose={closeCart}
+        onIncrementItem={incrementItem}
+        onDecrementItem={decrementItem}
+        onRemoveItem={removeItem}
+        onClear={clearCart}
+      />
+    </>
   );
 };
 

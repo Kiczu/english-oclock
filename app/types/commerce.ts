@@ -7,29 +7,57 @@ export type WooProduct = {
     id: number;
     name: string;
     slug: string;
-    price: string;
-    images?: { src: string }[];
+    short_description?: string;
+    description?: string;
+    price?: string;
+    regular_price?: string;
+    sale_price?: string;
+    on_sale?: boolean;
+    images?: Array<{
+        src: string;
+        alt?: string;
+        name?: string;
+    }>;
+    categories?: Array<{
+        name: string;
+    }>;
+    tags?: Array<{
+        name: string;
+    }>;
+    attributes?: Array<{
+        name: string;
+        options: string[];
+    }>;
+    meta_data?: Array<{
+        key: string;
+        value: unknown;
+    }>;
 };
 
-export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
-
-export type ProductDTO = {
-    id: number;
+export type ShopProduct = {
+    id: string;
+    wooProductId: number;
     slug: string;
     title: string;
+    subtitle?: string;
+    description?: string;
     price: number;
-    level: Level;
-    type: string;
-    pages: number;
-    format: "PDF" | "PDF+online";
-    imageUrl?: string;
+    priceLabel: string;
+    isFree: boolean;
+    isBestseller?: boolean;
+    category?: string;
+    tags: string[];
+    level?: string;
+    format?: string;
+    gallery: { src: string; label: string }[];
+    highlights?: string[];
+    includes?: string[];
 };
 
-export type ProductListItemDTO = {
-    id: number;
-    slug: string;
-    title: string;
-    price: number;
-    imageUrl?: string;
+export type ProductPageData = ShopProduct;
+
+export type ShopProductsResponseDTO = {
+    source: "mock" | "woo";
+    items: ShopProduct[];
 };
 

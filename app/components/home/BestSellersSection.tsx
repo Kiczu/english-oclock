@@ -1,38 +1,33 @@
-import makeMockProducts from "@/app/lib/mockProducts";
-import { Container, Grid, Stack, Typography } from "@mui/material";
-import ProductCard from "../product/ProductCard";
+"use client";
 
-const BestSellersSection = () => {
-  const products = makeMockProducts(12);
+import ProductsSection from "./ProductsSection";
+import { bestsellersMock } from "@/app/lib/product.mock";
+import { useCart } from "@/app/context/CartContext";
+
+const BestsellersSection = ({ id }: { id?: string }) => {
+  const { addItem, openCart } = useCart();
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }} id="bestsellery">
-      <Stack
-        direction="row"
-        alignItems="baseline"
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
-      >
-        <Typography
-          variant="h4"
-          sx={{ fontWeight: 900, color: "primary.main" }}
-        >
-          Bestsellery
-        </Typography>
-        <Typography sx={{ opacity: 0.7 }}>
-          Najczęściej wybierane materiały
-        </Typography>
-      </Stack>
-
-      <Grid container spacing={2}>
-        {products.map((p) => (
-          <Grid key={p.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <ProductCard product={p} />
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
+    <ProductsSection
+      id={id}
+      title="Bestsellers"
+      subtitle="Najczesciej wybierane materialy"
+      products={bestsellersMock}
+      onPrimaryAction={(p) => {
+        addItem({
+          id: p.id,
+          wooProductId: p.wooProductId,
+          slug: p.slug,
+          title: p.title,
+          priceLabel: p.priceLabel,
+          unitPrice: p.price,
+          isFree: p.isFree,
+        });
+        openCart();
+      }}
+    />
   );
 };
 
-export default BestSellersSection;
+export default BestsellersSection;
+

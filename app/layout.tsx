@@ -1,4 +1,6 @@
 import LayoutShell from "./components/layout/LayoutShell";
+import { CartProvider } from "./context/CartContext";
+import { merriweather, raleway } from "./lib/fonts";
 import ThemeRegistry from "./theme/ThemeRegistry";
 
 export const metadata = {
@@ -9,9 +11,13 @@ export const metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="pl">
-      <body>
+      <body
+        className={`${raleway.className} ${raleway.variable} ${merriweather.variable}`}
+      >
         <ThemeRegistry>
-          <LayoutShell>{children}</LayoutShell>
+          <CartProvider>
+            <LayoutShell>{children}</LayoutShell>
+          </CartProvider>
         </ThemeRegistry>
       </body>
     </html>

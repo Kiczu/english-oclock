@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+  <rect x="129" y="172" width="255" height="269" fill="#374387"/>
+  <rect x="129" y="172" width="34" height="18" fill="#ffffff"/>
+  <rect x="165" y="172" width="34" height="18" fill="#ffffff"/>
+  <rect x="201" y="172" width="34" height="18" fill="#ffffff"/>
+  <rect x="237" y="172" width="34" height="18" fill="#ffffff"/>
+  <rect x="273" y="172" width="34" height="18" fill="#ffffff"/>
+  <rect x="309" y="172" width="34" height="18" fill="#ffffff"/>
+  <rect x="345" y="172" width="34" height="18" fill="#ffffff"/>
+  <polygon points="256,61 348,195 164,195" fill="#374387"/>
+  <rect x="246" y="35" width="20" height="26" fill="#374387"/>
+  <rect x="182" y="213" width="148" height="11" fill="#374387"/>
+  <circle cx="256" cy="301" r="45" fill="#ffffff"/>
+  <line x1="256" y1="301" x2="256" y2="268" stroke="#374387" stroke-width="16" stroke-linecap="round"/>
+  <line x1="256" y1="301" x2="280" y2="312" stroke="#374387" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="256" cy="301" r="5" fill="#374387"/>
+</svg>

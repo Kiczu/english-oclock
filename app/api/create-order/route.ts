@@ -19,6 +19,21 @@ type WooOrderResponse = {
     order_key: string;
 };
 
+type WooOrderPayload = {
+    payment_method: string;
+    payment_method_title: string;
+    set_paid: boolean;
+    line_items: Array<{
+        product_id: number;
+        quantity: number;
+    }>;
+    billing?: {
+        email: string;
+        first_name: string;
+        last_name: string;
+    };
+};
+
 const assertValidItems = (items: CartItemInput[]) => {
     if (!Array.isArray(items) || items.length === 0) throw new Error("Cart is empty");
 
@@ -46,7 +61,7 @@ export async function POST(req: Request) {
             )
         );
 
-        const orderPayload: any = {
+        const orderPayload: WooOrderPayload = {
             payment_method: "",
             payment_method_title: "",
             set_paid: false,
@@ -72,7 +87,8 @@ export async function POST(req: Request) {
         const checkoutUrl = `${WC_BASE_URL}/checkout/order-pay/${order.id}/?pay_for_order=true&key=${order.order_key}`;
 
         return NextResponse.json({ checkoutUrl });
-    } catch (e: any) {
-        return NextResponse.json({ error: e?.message ?? "Unknown error" }, { status: 400 });
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Unknown error";
+        return NextResponse.json({ error: message }, { status: 400 });
     }
 }

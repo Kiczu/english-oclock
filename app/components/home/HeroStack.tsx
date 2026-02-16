@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Box, Typography, useMediaQuery } from "@mui/material";
-import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import { keyframes } from "@mui/material/styles";
 import { heroAssets, heroLayout } from "./heroPositions";
 import Wave from "./Wave";
@@ -39,11 +39,6 @@ const bounce = keyframes`
 const crownDrop = keyframes`
   0%   { opacity: 0; transform: translate3d(0, -180px, 0) rotate(-8deg) scale(.98); }
   75%  { opacity: 1; transform: translate3d(0, 8px, 0) rotate(2deg) scale(1); }
-  100% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
-`;
-
-const doodleIn = keyframes`
-  0%   { opacity: 0; transform: translate3d(-40px, -15px, 0) rotate(-6deg) scale(.92); }
   100% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
 `;
 
@@ -209,6 +204,7 @@ const HeroStack = () => {
       >
         <Typography
           sx={{
+            fontFamily: "var(--font-brand-display)",
             fontWeight: 900,
             color: "#374373",
             fontSize: { xs: 34, md: 56 },
@@ -245,9 +241,9 @@ const HeroStack = () => {
             },
           }}
         >
-          <KeyboardArrowDownRoundedIcon
+          <KeyboardArrowDownOutlinedIcon
             sx={{
-              fontSize: 64,
+              fontSize: 62,
               color: "#374373",
               filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.12))",
             }}
