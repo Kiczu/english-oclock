@@ -6,6 +6,7 @@ import type { ShopProduct } from "@/app/types/commerce";
 import { getVariant } from "@/app/helpers/productCard";
 
 type ProductsSectionProps = {
+  id?: string;
   title: string;
   subtitle?: string;
   products: ShopProduct[];
@@ -21,6 +22,7 @@ type ProductsSectionProps = {
 };
 
 const ProductsSection = ({
+  id,
   title,
   subtitle,
   products,
@@ -32,7 +34,11 @@ const ProductsSection = ({
   const list = typeof limit === "number" ? products.slice(0, limit) : products;
 
   return (
-    <Box component="section" sx={{ py: { xs: 6, md: 10 } }}>
+    <Box
+      component="section"
+      id={id}
+      sx={{ py: { xs: 6, md: 10 }, scrollMarginTop: { xs: 96, md: 112 } }}
+    >
       <Stack spacing={1.5} sx={{ mb: 4 }}>
         <Typography
           variant="h3"

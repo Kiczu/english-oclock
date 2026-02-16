@@ -4,11 +4,12 @@ import ProductsSection from "./ProductsSection";
 import { bestsellersMock } from "@/app/lib/product.mock";
 import { useCart } from "@/app/context/CartContext";
 
-const BestsellersSection = () => {
+const BestsellersSection = ({ id }: { id?: string }) => {
   const { addItem, openCart } = useCart();
 
   return (
     <ProductsSection
+      id={id}
       title="Bestsellers"
       subtitle="Najczesciej wybierane materialy"
       products={bestsellersMock}

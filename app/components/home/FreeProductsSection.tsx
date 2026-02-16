@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import ProductsSection from "./ProductsSection";
 import { freeProductsMock } from "@/app/lib/product.mock";
 
-const FreeProductsSection = () => {
+const FreeProductsSection = ({ id }: { id?: string }) => {
   const router = useRouter();
 
   return (
     <ProductsSection
+      id={id}
       title="Freebies"
       subtitle="Pobierz za darmo i zobacz, czy Ci siada format."
       products={freeProductsMock}
