@@ -27,7 +27,7 @@ const validate = (v: ContactValues): ContactErrors => {
   return e;
 };
 
-const ContactSection = () => {
+const ContactSection = ({ id }: { id?: string }) => {
   const [values, setValues] = useState<ContactValues>({
     name: "",
     email: "",
@@ -82,7 +82,11 @@ const ContactSection = () => {
   };
 
   return (
-    <Box component="section" sx={{ py: { xs: 6, md: 10 } }}>
+    <Box
+      component="section"
+      id={id}
+      sx={{ py: { xs: 6, md: 10 }, scrollMarginTop: { xs: 96, md: 112 } }}
+    >
       <Stack spacing={1.5} sx={{ mb: 4 }}>
         <Typography
           variant="h3"

@@ -2,9 +2,9 @@
 
 import { Box, Stack, Typography, Button } from "@mui/material";
 
-const AboutSection = () => {
+const AboutSection = ({ id }: { id?: string }) => {
   return (
-    <Box component="section">
+    <Box component="section" id={id} sx={{ scrollMarginTop: { xs: 96, md: 112 } }}>
       <Box
         sx={{
           width: { xs: "100%", md: "100%" },

@@ -1,6 +1,6 @@
 "use client";
 
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import HeroStack from "./components/home/HeroStack";
 import BestSellersSection from "./components/home/BestSellersSection";
 import FreeProductsSection from "./components/home/FreeProductsSection";
@@ -12,11 +12,12 @@ const HomePage = () => {
     <>
       <HeroStack />
       <Container maxWidth="xl">
-        <div id="home-next"></div>
-        <FreeProductsSection />
-        <BestSellersSection />
-        <AboutSection />
-        <ContactSection />
+        <Box id="home-next" />
+        <Box id="kategorie" sx={{ scrollMarginTop: { xs: 96, md: 112 } }} />
+        <FreeProductsSection id="darmowe" />
+        <BestSellersSection id="bestsellery" />
+        <AboutSection id="o-mnie" />
+        <ContactSection id="kontakt" />
       </Container>
     </>
   );
