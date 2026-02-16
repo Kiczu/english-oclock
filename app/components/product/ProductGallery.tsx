@@ -16,8 +16,6 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
     : [{ src: "/images/file.svg", label: "Podglad" }];
   const [activeIndex, setActiveIndex] = React.useState(0);
   const active = safeItems[activeIndex] ?? safeItems[0];
-  const frameSeed = hash01(`${title}-${active.src}`);
-  const frame = frameSeed > 0.5 ? roughFrameA : roughFrameB;
 
   return (
     <Stack spacing={2}>
@@ -27,23 +25,12 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
           borderRadius: 2,
           p: { xs: 3, md: 4 },
           bgcolor: "#f5efe7",
-          border: "1px solid rgba(55,67,115,0.16)",
           boxShadow: "0 20px 40px rgba(55,67,115,0.12)",
           minHeight: { xs: 260, md: 360 },
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           overflow: "hidden",
-          "&::before": {
-            content: '""',
-            pointerEvents: "none",
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `url("data:image/svg+xml,${frame}")`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "100% 100%",
-            zIndex: 0,
-          },
         }}
       >
         <Box
@@ -80,9 +67,22 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
         </Box>
       </Box>
 
-      <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap" }}>
+      <Box
+        sx={{
+          width: "100%",
+          display: "grid",
+          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+          gap: { xs: 1.5, sm: 2 },
+        }}
+      >
         {safeItems.map((item, idx) => {
           const isActive = idx === activeIndex;
+          const thumbFrameSeed = hash01(`${title}-${item.src}-${idx}`);
+          const thumbFrameBase = thumbFrameSeed > 0.5 ? roughFrameA : roughFrameB;
+          const thumbFrame = thumbFrameBase.replace(
+            'stroke-width="6"',
+            `stroke-width="${isActive ? 14 : 12}"`,
+          );
           return (
             <Box
               key={`${item.src}-${idx}`}
@@ -91,34 +91,63 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
               onClick={() => setActiveIndex(idx)}
               aria-pressed={isActive}
               sx={{
+                position: "relative",
                 cursor: "pointer",
-                borderRadius: 3,
-                border: isActive
-                  ? "2px solid rgba(240,157,133,0.9)"
-                  : "2px solid rgba(55,67,115,0.12)",
+                borderRadius: 1,
+                border: "none",
+                p: 0,
                 bgcolor: "#f5efe7",
-                width: 96,
-                height: 88,
+                width: "100%",
+                height: { xs: 136, sm: 152 },
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                overflow: "hidden",
                 boxShadow: isActive
-                  ? "0 12px 24px rgba(240,157,133,0.24)"
-                  : "0 8px 16px rgba(55,67,115,0.12)",
+                  ? "0 16px 30px rgba(240,157,133,0.32)"
+                  : "0 10px 20px rgba(55,67,115,0.15)",
                 transition: "transform 180ms ease, box-shadow 180ms ease",
                 "&:hover": { transform: "translateY(-2px)" },
+                "&::before": {
+                  content: '""',
+                  pointerEvents: "none",
+                  position: "absolute",
+                  inset: 0,
+                  backgroundImage: `url("data:image/svg+xml,${thumbFrame}")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "100% 100%",
+                  opacity: isActive ? 1 : 0.86,
+                  zIndex: 2,
+                },
+                "&::after": {
+                  content: '""',
+                  pointerEvents: "none",
+                  position: "absolute",
+                  inset: 1,
+                  backgroundImage: `url("data:image/svg+xml,${thumbFrame}")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "100% 100%",
+                  opacity: isActive ? 0.94 : 0.7,
+                  zIndex: 1,
+                },
               }}
             >
               <Box
                 component="img"
                 src={item.src}
                 alt={item.label || title}
-                sx={{ width: 36, height: 36, opacity: 0.85 }}
+                sx={{
+                  width: { xs: 58, sm: 66 },
+                  height: { xs: 58, sm: 66 },
+                  opacity: 0.88,
+                  position: "relative",
+                  zIndex: 0,
+                }}
               />
             </Box>
           );
         })}
-      </Stack>
+      </Box>
     </Stack>
   );
 };
