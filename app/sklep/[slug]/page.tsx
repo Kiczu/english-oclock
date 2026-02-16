@@ -28,7 +28,14 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
     <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8 }}>
       <Stack spacing={4}>
         <Box>
-          <Button href="/sklep" sx={{ fontWeight: 800 }}>
+          <Button
+            href="/sklep"
+            sx={{
+              fontWeight: 800,
+              fontSize: { xs: "1rem", sm: "1.1rem" },
+              textTransform: "none",
+            }}
+          >
             {"<- Wroc do sklepu"}
           </Button>
         </Box>
