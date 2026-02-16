@@ -15,9 +15,11 @@ const BestsellersSection = () => {
       onPrimaryAction={(p) => {
         addItem({
           id: p.id,
+          wooProductId: p.wooProductId,
           slug: p.slug,
           title: p.title,
           priceLabel: p.priceLabel,
+          unitPrice: p.price,
           isFree: p.isFree,
         });
         openCart();

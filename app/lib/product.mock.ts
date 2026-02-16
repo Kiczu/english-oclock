@@ -1,189 +1,203 @@
-export type ProductCategory = "student" | "teacher" | "self" | "exam";
+import { toShopProduct } from "@/app/helpers/shopProduct";
+import type { ShopProduct, WooProduct } from "@/app/types/commerce";
 
-export type ProductGalleryItem = {
-    src: string;
-    label: string;
-};
-
-export type ProductUI = {
-    id: string;
-    slug: string;
-    title: string;
-    subtitle?: string;
-    description?: string;
-    priceLabel: string;
-    isFree?: boolean;
-    isBestseller?: boolean;
-    wooId?: number;
-    category: ProductCategory;
-    topics?: string[];
-    level?: "A1" | "A2" | "B1" | "B2" | "C1";
-    format?: "worksheet" | "bundle" | "game" | "test" | "cheatsheet";
-    gallery?: ProductGalleryItem[];
-    highlights?: string[];
-    includes?: string[];
-};
-
-const defaultGallery: ProductGalleryItem[] = [
-    { src: "/images/file.svg", label: "Podglad 1" },
-    { src: "/images/file.svg", label: "Podglad 2" },
-    { src: "/images/file.svg", label: "Podglad 3" },
+const defaultImages = [
+  { src: "/images/file.svg", alt: "Podglad 1" },
+  { src: "/images/file.svg", alt: "Podglad 2" },
+  { src: "/images/file.svg", alt: "Podglad 3" },
 ];
 
-export const productsMock: ProductUI[] = [
-    {
-        id: "free-verb-cheat-sheet-a2",
-        slug: "free-verb-cheat-sheet-a2",
-        title: "Verb Cheat Sheet",
-        subtitle: "Szybka ściąga do czasowników",
-        priceLabel: "0 zł",
-        isFree: true,
-        category: "self",
-        level: "A2",
-        format: "cheatsheet",
-        topics: ["verbs", "basics"],
-        description:
-            "Zbior najwazniejszych czasownikow do szybkiego wgladu. Idealne jako sciaga przed lekcja lub sprawdzianem.",
-        gallery: defaultGallery,
-        highlights: ["Szybka sciaga", "Poziom A2", "Gotowe do druku"],
-        includes: ["PDF do druku", "Wersja czarno-biala", "Podsumowanie czasownikow"],
-    },
-    {
-        id: "free-speaking-prompts-b1",
-        slug: "free-speaking-prompts-b1",
-        title: "Speaking Prompts",
-        subtitle: "Karty do mówienia – szybkie rozgrzewki",
-        priceLabel: "0 zł",
-        isFree: true,
-        category: "student",
-        level: "B1",
-        format: "worksheet",
-        topics: ["speaking"],
-        description:
-            "Zestaw kart do rozgrzewki mowienia. Krotkie pytania i sytuacje do pracy na lekcji lub samodzielnie.",
-        gallery: defaultGallery,
-        highlights: ["Rozgrzewki speaking", "Poziom B1", "Do pracy w parach"],
-        includes: ["PDF do druku", "Instrukcja pracy", "Pytania i sytuacje"],
-    },
-    {
-        id: "free-mini-test-present-simple",
-        slug: "free-mini-test-present-simple",
-        title: "Mini Test – Present Simple",
-        subtitle: "Krótki test + odpowiedzi",
-        priceLabel: "0 zł",
-        isFree: true,
-        category: "student",
-        level: "A2",
-        format: "test",
-        topics: ["present-simple", "grammar"],
-        description:
-            "Krotki test z Present Simple + odpowiedzi. Dobry do szybkiego sprawdzenia podstaw.",
-        gallery: defaultGallery,
-        highlights: ["Szybka diagnoza", "Present Simple", "Klucz odpowiedzi"],
-        includes: ["Test", "Odpowiedzi", "Instrukcja dla ucznia"],
-    },
-    {
-        id: "phrasal-verbs-pack",
-        slug: "phrasal-verbs-pack",
-        title: "Phrasal Verbs Pack",
-        subtitle: "Zadania + przykłady w kontekście",
-        priceLabel: "0 zł",
-        // isFree: true,
-        category: "self",
-        level: "B1",
-        format: "worksheet",
-        topics: ["phrasal-verbs", "vocabulary"],
-        description:
-            "Phrasal verbs w praktycznych kontekstach. Zestaw do nauki i szybkiego powtorkowego przegladu.",
-        gallery: defaultGallery,
-        highlights: ["Kontekstowe przyklady", "Poziom B1", "Slownictwo w uzyciu"],
-        includes: ["PDF do druku", "Przyklady w kontekscie", "Cwiczenia utrwalajace"],
-    },
-    {
-        id: "worksheet-bundle-a2-b1",
-        slug: "worksheet-bundle-a2-b1",
-        title: "Worksheet Bundle (A2–B1)",
-        subtitle: "Zestaw kart pracy do regularnej nauki",
-        priceLabel: "39 zł",
-        // isBestseller: true,
-        category: "student",
-        level: "B1",
-        format: "bundle",
-        topics: ["mixed", "revision"],
-        description:
-            "Zestaw kart pracy na A2-B1. Regularne powtorki bez ukladania nowych zadan.",
-        gallery: defaultGallery,
-        highlights: ["Pakiet do regularnej nauki", "Poziom A2-B1", "Rozne typy zadan"],
-        includes: ["PDF do druku", "Roznorodne zadania", "Instrukcje"],
-    },
-    {
-        id: "teacher-lesson-starter-kit",
-        slug: "teacher-lesson-starter-kit",
-        title: "Teacher Lesson Starter Kit",
-        subtitle: "Gotowy start lekcji + materiały",
-        priceLabel: "49 zł",
-        isBestseller: true,
-        category: "teacher",
-        level: "B1",
-        format: "bundle",
-        topics: ["lesson", "classroom"],
-        description:
-            "Szybki start lekcji: krotkie aktywatory, mini zadania i pomysly na pierwsze 15 minut.",
-        gallery: defaultGallery,
-        highlights: ["Oszczedz czas", "Poziom B1", "Gotowe do lekcji"],
-        includes: ["PDF do druku", "Pomysly na warm-up", "Krotkie zadania"],
-    },
-    {
-        id: "exam-words-b2-topics",
-        slug: "exam-words-b2-topics",
-        title: "Exam Words – B2 Topics",
-        subtitle: "Słownictwo pod tematy egzaminacyjne",
-        priceLabel: "35 zł",
-        category: "exam",
-        isBestseller: true,
-        level: "B2",
-        format: "worksheet",
-        topics: ["exam", "vocabulary"],
-        description:
-            "Slownictwo egzaminacyjne pod B2. Tematyczne listy, cwiczenia i szybkie powtorki.",
-        gallery: defaultGallery,
-        highlights: ["Pod egzamin", "Poziom B2", "Tematyczne zbiory"],
-        includes: ["PDF do druku", "Listy tematyczne", "Cwiczenia utrwalajace"],
-    },
-    {
-        id: "listening-pack-a2",
-        slug: "listening-pack-a2",
-        title: "Listening Pack (A2)",
-        subtitle: "Słuchanki + zadania sprawdzające",
-        priceLabel: "25 zł",
-        isBestseller: true,
-        category: "student",
-        level: "A2",
-        format: "worksheet",
-        topics: ["listening"],
-        description:
-            "Krotkie sluchanki na A2 z zadaniami sprawdzajacymi. Idealne na lekcje i prace domowa.",
-        gallery: defaultGallery,
-        highlights: ["Sluchanie ze zrozumieniem", "Poziom A2", "Zadania sprawdzajace"],
-        includes: ["PDF do druku", "Zadania do sluchania", "Klucz odpowiedzi"],
-    },
-    {
-        id: "classroom-games-teacher-pack",
-        slug: "classroom-games-teacher-pack",
-        title: "Classroom Games – Teacher Pack",
-        subtitle: "Gry językowe na lekcje",
-        priceLabel: "45 zł",
-        category: "teacher",
-        level: "B1",
-        format: "game",
-        topics: ["games", "classroom"],
-        description:
-            "Pakiet gier na lekcje angielskiego. Szybkie, proste zasady i material gotowy do uzycia.",
-        gallery: defaultGallery,
-        highlights: ["Gry na lekcje", "Poziom B1", "Integracja grupy"],
-        includes: ["PDF do druku", "Instrukcje gier", "Karty do wyciecia"],
-    },
+const withMetaList = (key: string, values: string[]) => ({
+  key,
+  value: JSON.stringify(values),
+});
+
+export const productsMock: WooProduct[] = [
+  {
+    id: 101,
+    name: "Verb Cheat Sheet",
+    slug: "free-verb-cheat-sheet-a2",
+    short_description: "Szybka sciaga do czasownikow",
+    description:
+      "Zbior najwazniejszych czasownikow do szybkiego wgladu. Idealne jako sciaga przed lekcja lub sprawdzianem.",
+    price: "0",
+    images: defaultImages,
+    categories: [{ name: "Samodzielna nauka" }],
+    tags: [{ name: "verbs" }, { name: "basics" }],
+    attributes: [
+      { name: "Poziom", options: ["A2"] },
+      { name: "Format", options: ["Cheatsheet"] },
+    ],
+    meta_data: [
+      withMetaList("_highlights", ["Szybka sciaga", "Poziom A2", "Gotowe do druku"]),
+      withMetaList("_includes", ["PDF do druku", "Wersja czarno-biala", "Podsumowanie czasownikow"]),
+    ],
+  },
+  {
+    id: 102,
+    name: "Speaking Prompts",
+    slug: "free-speaking-prompts-b1",
+    short_description: "Karty do mowienia - szybkie rozgrzewki",
+    description:
+      "Zestaw kart do rozgrzewki mowienia. Krotkie pytania i sytuacje do pracy na lekcji lub samodzielnie.",
+    price: "0",
+    images: defaultImages,
+    categories: [{ name: "Dla ucznia" }],
+    tags: [{ name: "speaking" }],
+    attributes: [
+      { name: "Poziom", options: ["B1"] },
+      { name: "Format", options: ["Worksheet"] },
+    ],
+    meta_data: [
+      withMetaList("_highlights", ["Rozgrzewki speaking", "Poziom B1", "Do pracy w parach"]),
+      withMetaList("_includes", ["PDF do druku", "Instrukcja pracy", "Pytania i sytuacje"]),
+    ],
+  },
+  {
+    id: 103,
+    name: "Mini Test - Present Simple",
+    slug: "free-mini-test-present-simple",
+    short_description: "Krotki test + odpowiedzi",
+    description:
+      "Krotki test z Present Simple + odpowiedzi. Dobry do szybkiego sprawdzenia podstaw.",
+    price: "0",
+    images: defaultImages,
+    categories: [{ name: "Dla ucznia" }],
+    tags: [{ name: "present-simple" }, { name: "grammar" }],
+    attributes: [
+      { name: "Poziom", options: ["A2"] },
+      { name: "Format", options: ["Test"] },
+    ],
+    meta_data: [
+      withMetaList("_highlights", ["Szybka diagnoza", "Present Simple", "Klucz odpowiedzi"]),
+      withMetaList("_includes", ["Test", "Odpowiedzi", "Instrukcja dla ucznia"]),
+    ],
+  },
+  {
+    id: 104,
+    name: "Phrasal Verbs Pack",
+    slug: "phrasal-verbs-pack",
+    short_description: "Zadania + przyklady w kontekscie",
+    description:
+      "Phrasal verbs w praktycznych kontekstach. Zestaw do nauki i szybkiego powtorkowego przegladu.",
+    price: "29",
+    images: defaultImages,
+    categories: [{ name: "Samodzielna nauka" }],
+    tags: [{ name: "phrasal-verbs" }, { name: "vocabulary" }],
+    attributes: [
+      { name: "Poziom", options: ["B1"] },
+      { name: "Format", options: ["Worksheet"] },
+    ],
+    meta_data: [
+      withMetaList("_highlights", ["Kontekstowe przyklady", "Poziom B1", "Slownictwo w uzyciu"]),
+      withMetaList("_includes", ["PDF do druku", "Przyklady w kontekscie", "Cwiczenia utrwalajace"]),
+    ],
+  },
+  {
+    id: 105,
+    name: "Worksheet Bundle (A2-B1)",
+    slug: "worksheet-bundle-a2-b1",
+    short_description: "Zestaw kart pracy do regularnej nauki",
+    description:
+      "Zestaw kart pracy na A2-B1. Regularne powtorki bez ukladania nowych zadan.",
+    price: "39",
+    images: defaultImages,
+    categories: [{ name: "Dla ucznia" }],
+    tags: [{ name: "mixed" }, { name: "revision" }],
+    attributes: [
+      { name: "Poziom", options: ["B1"] },
+      { name: "Format", options: ["Bundle"] },
+    ],
+    meta_data: [
+      withMetaList("_highlights", ["Pakiet do regularnej nauki", "Poziom A2-B1", "Rozne typy zadan"]),
+      withMetaList("_includes", ["PDF do druku", "Roznorodne zadania", "Instrukcje"]),
+    ],
+  },
+  {
+    id: 106,
+    name: "Teacher Lesson Starter Kit",
+    slug: "teacher-lesson-starter-kit",
+    short_description: "Gotowy start lekcji + materialy",
+    description:
+      "Szybki start lekcji: krotkie aktywatory, mini zadania i pomysly na pierwsze 15 minut.",
+    price: "49",
+    images: defaultImages,
+    categories: [{ name: "Dla nauczyciela" }],
+    tags: [{ name: "lesson" }, { name: "classroom" }, { name: "bestseller" }],
+    attributes: [
+      { name: "Poziom", options: ["B1"] },
+      { name: "Format", options: ["Bundle"] },
+    ],
+    meta_data: [
+      { key: "_custom_badge", value: "bestseller" },
+      withMetaList("_highlights", ["Oszczedz czas", "Poziom B1", "Gotowe do lekcji"]),
+      withMetaList("_includes", ["PDF do druku", "Pomysly na warm-up", "Krotkie zadania"]),
+    ],
+  },
+  {
+    id: 107,
+    name: "Exam Words - B2 Topics",
+    slug: "exam-words-b2-topics",
+    short_description: "Slownictwo pod tematy egzaminacyjne",
+    description:
+      "Slownictwo egzaminacyjne pod B2. Tematyczne listy, cwiczenia i szybkie powtorki.",
+    price: "35",
+    images: defaultImages,
+    categories: [{ name: "Egzamin" }],
+    tags: [{ name: "exam" }, { name: "vocabulary" }, { name: "bestseller" }],
+    attributes: [
+      { name: "Poziom", options: ["B2"] },
+      { name: "Format", options: ["Worksheet"] },
+    ],
+    meta_data: [
+      { key: "_custom_badge", value: "bestseller" },
+      withMetaList("_highlights", ["Pod egzamin", "Poziom B2", "Tematyczne zbiory"]),
+      withMetaList("_includes", ["PDF do druku", "Listy tematyczne", "Cwiczenia utrwalajace"]),
+    ],
+  },
+  {
+    id: 108,
+    name: "Listening Pack (A2)",
+    slug: "listening-pack-a2",
+    short_description: "Sluchanki + zadania sprawdzajace",
+    description:
+      "Krotkie sluchanki na A2 z zadaniami sprawdzajacymi. Idealne na lekcje i prace domowa.",
+    price: "25",
+    images: defaultImages,
+    categories: [{ name: "Dla ucznia" }],
+    tags: [{ name: "listening" }, { name: "bestseller" }],
+    attributes: [
+      { name: "Poziom", options: ["A2"] },
+      { name: "Format", options: ["Worksheet"] },
+    ],
+    meta_data: [
+      { key: "_custom_badge", value: "bestseller" },
+      withMetaList("_highlights", ["Sluchanie ze zrozumieniem", "Poziom A2", "Zadania sprawdzajace"]),
+      withMetaList("_includes", ["PDF do druku", "Zadania do sluchania", "Klucz odpowiedzi"]),
+    ],
+  },
+  {
+    id: 109,
+    name: "Classroom Games - Teacher Pack",
+    slug: "classroom-games-teacher-pack",
+    short_description: "Gry jezykowe na lekcje",
+    description:
+      "Pakiet gier na lekcje angielskiego. Szybkie, proste zasady i material gotowy do uzycia.",
+    price: "45",
+    images: defaultImages,
+    categories: [{ name: "Dla nauczyciela" }],
+    tags: [{ name: "games" }, { name: "classroom" }],
+    attributes: [
+      { name: "Poziom", options: ["B1"] },
+      { name: "Format", options: ["Game"] },
+    ],
+    meta_data: [
+      withMetaList("_highlights", ["Gry na lekcje", "Poziom B1", "Integracja grupy"]),
+      withMetaList("_includes", ["PDF do druku", "Instrukcje gier", "Karty do wyciecia"]),
+    ],
+  },
 ];
 
-export const freeProductsMock = productsMock.filter((p) => p.isFree);
-export const bestsellersMock = productsMock.filter((p) => p.isBestseller);
+export const shopProductsMock: ShopProduct[] = productsMock.map(toShopProduct);
+export const freeProductsMock = shopProductsMock.filter((product) => product.isFree);
+export const bestsellersMock = shopProductsMock.filter((product) => product.isBestseller);

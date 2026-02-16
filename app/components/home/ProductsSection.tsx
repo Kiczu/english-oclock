@@ -2,13 +2,13 @@
 
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import ProductCard from "../product/ProductCard";
-import type { ProductUI } from "@/app/lib/product.mock";
+import type { ShopProduct } from "@/app/types/commerce";
 import { getVariant } from "@/app/helpers/productCard";
 
 type ProductsSectionProps = {
   title: string;
   subtitle?: string;
-  products: ProductUI[];
+  products: ShopProduct[];
   columns?: {
     xs?: number;
     sm?: number;
@@ -17,7 +17,7 @@ type ProductsSectionProps = {
   };
   limit?: number;
   cardMaxWidth?: number;
-  onPrimaryAction?: (product: ProductUI) => void;
+  onPrimaryAction?: (product: ShopProduct) => void;
 };
 
 const ProductsSection = ({

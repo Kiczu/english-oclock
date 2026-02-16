@@ -4,15 +4,12 @@ import { Box, Button, Chip, Container, Divider, Grid, Stack, Typography } from "
 import ProductGallery from "@/app/components/product/ProductGallery";
 import AddToCartButton from "@/app/components/product/AddToCartButton";
 import { getVariant } from "@/app/helpers/productCard";
-import { isWooProduct, normalizeMock, normalizeWoo } from "@/app/helpers/productPage";
-import { productsMock } from "@/app/lib/product.mock";
+import { getShopProductBySlug } from "@/app/lib/shopProducts.server";
 
 const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
-  const product = productsMock.find((p) => p.slug === slug);
-  if (!product) notFound();
-
-  const mapped = isWooProduct(product) ? normalizeWoo(product) : normalizeMock(product);
+  const mapped = await getShopProductBySlug(slug);
+  if (!mapped) notFound();
   const variant = getVariant(mapped);
   const topics = mapped.tags.slice(0, 4);
 
@@ -23,7 +20,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
 
   const highlights = mapped.highlights ?? [
     mapped.level ? `Poziom ${mapped.level}` : "Rozne poziomy",
-    mapped.formatLabel ?? "PDF do druku",
+    mapped.format ?? "PDF do druku",
     mapped.isFree ? "Darmowy dostep" : "Natychmiastowy dostep",
   ];
 
@@ -54,8 +51,8 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 {variant === "free" ? <Chip label="FREE" size="small" sx={{ fontWeight: 800 }} /> : null}
                 {variant === "bestseller" ? <Chip label="TOP" size="small" sx={{ fontWeight: 800 }} /> : null}
                 {mapped.level ? <Chip label={`Poziom ${mapped.level}`} size="small" /> : null}
-                {mapped.formatLabel ? <Chip label={mapped.formatLabel} size="small" /> : null}
-                {mapped.categoryLabel ? <Chip label={mapped.categoryLabel} size="small" /> : null}
+                {mapped.format ? <Chip label={mapped.format} size="small" /> : null}
+                {mapped.category ? <Chip label={mapped.category} size="small" /> : null}
                 {topics.map((t) => (
                   <Chip key={t} label={t} size="small" />
                 ))}
@@ -78,9 +75,12 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 ) : (
                   <AddToCartButton
                     id={mapped.id}
+                    wooProductId={mapped.wooProductId}
                     slug={mapped.slug}
                     title={mapped.title}
                     priceLabel={mapped.priceLabel}
+                    unitPrice={mapped.price}
+                    isFree={mapped.isFree}
                     label={ctaLabel}
                   />
                 )}
