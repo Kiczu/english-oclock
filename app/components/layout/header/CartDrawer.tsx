@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   Box,
@@ -41,6 +42,61 @@ const CartDrawer = ({
   onRemoveItem,
   onClear,
 }: CartDrawerProps) => {
+  const [checkoutPending, setCheckoutPending] = React.useState(false);
+  const [checkoutError, setCheckoutError] = React.useState<string | null>(null);
+
+  const handleCheckout = async () => {
+    setCheckoutError(null);
+
+    const orderItems = items
+      .map((item) => {
+        const productIdFromItem =
+          typeof item.wooProductId === "number" && Number.isInteger(item.wooProductId)
+            ? item.wooProductId
+            : Number(item.id);
+        const isValidProductId = Number.isInteger(productIdFromItem) && productIdFromItem > 0;
+        if (!isValidProductId) return null;
+
+        return {
+          productId: productIdFromItem,
+          quantity: item.quantity,
+        };
+      })
+      .filter((item): item is { productId: number; quantity: number } => Boolean(item));
+
+    if (orderItems.length === 0) {
+      setCheckoutError("Brak produktow do rozliczenia.");
+      return;
+    }
+
+    setCheckoutPending(true);
+
+    try {
+      const response = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: orderItems }),
+      });
+      const payload = (await response.json()) as { checkoutUrl?: string; error?: string };
+
+      if (!response.ok || !payload.checkoutUrl) {
+        throw new Error(payload.error || "Nie udalo sie przygotowac platnosci.");
+      }
+
+      onClose();
+      window.location.assign(payload.checkoutUrl);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Nieznany blad checkoutu.";
+      setCheckoutError(message);
+    } finally {
+      setCheckoutPending(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (!open) setCheckoutError(null);
+  }, [open]);
+
   return (
     <Drawer
       anchor="right"
@@ -177,16 +233,15 @@ const CartDrawer = ({
               <Button variant="outlined" onClick={onClear} sx={{ flex: 1 }}>
                 Wyczysc
               </Button>
-              <Button
-                component={Link}
-                href="/sklep"
-                variant="contained"
-                onClick={onClose}
-                sx={{ flex: 1 }}
-              >
-                Do sklepu
+              <Button variant="contained" onClick={handleCheckout} sx={{ flex: 1 }} disabled={checkoutPending}>
+                {checkoutPending ? "Przetwarzanie..." : "Do kasy"}
               </Button>
             </Stack>
+            {checkoutError ? (
+              <Typography variant="body2" sx={{ mt: 1.5, color: "error.main" }}>
+                {checkoutError}
+              </Typography>
+            ) : null}
           </Box>
         </>
       )}

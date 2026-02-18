@@ -100,7 +100,7 @@ const ShopPage = () => {
         >
           Sklep
         </Typography>
-        <Typography sx={{ opacity: 0.8, maxWidth: 720 }}>
+        <Typography sx={{ opacity: 0.8 }}>
           Wybierz materialy po temacie, poziomie i formacie. Mozesz szybko
           przefiltrowac darmowe lub platne produkty.
         </Typography>
