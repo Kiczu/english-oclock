@@ -27,8 +27,10 @@ export const productGalleryStyles = {
     },
   }),
   mainImage: (hasImage: boolean) => ({
-    width: hasImage ? { xs: "90%", sm: "70%", md: "60%" } : { xs: 140, md: 180 },
-    height: hasImage ? "94%" : { xs: 140, md: 180 },
+    width: hasImage
+      ? { xs: "90%", sm: "70%", md: "60%" }
+      : { xs: 140, sm: 160, md: 180 },
+    height: hasImage ? "94%" : { xs: 140, sm: 160, md: 180 },
     objectFit: "contain",
     opacity: hasImage ? 0.98 : 0.85,
     position: "relative",

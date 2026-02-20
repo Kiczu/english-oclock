@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import ProductCard from "../product/ProductCard";
+import ProductCard from "../../product/ProductCard";
 import type { ShopProduct } from "@/app/types/commerce";
 import { getVariant } from "@/app/helpers/productCard";
 import { productsSectionStyles } from "./ProductsSection.styles";
