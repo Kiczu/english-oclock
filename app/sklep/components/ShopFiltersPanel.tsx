@@ -13,8 +13,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { colors } from "@/app/theme/colors";
 import type { ShopFilterOptions, ShopFilters } from "../types";
+import { shopFiltersPanelStyles } from "./ShopFiltersPanel.styles";
 
 type ShopFiltersPanelProps = {
   filters: ShopFilters;
@@ -45,13 +45,7 @@ const ShopFiltersPanel = ({
 }: ShopFiltersPanelProps) => {
   return (
     <Box
-      sx={{
-        p: { xs: 2, md: 2.5 },
-        borderRadius: 3,
-        border: "1px solid rgba(55,67,135,0.22)",
-        bgcolor: colors.stickerBackground,
-        mb: 4,
-      }}
+      sx={shopFiltersPanelStyles.panel}
     >
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
@@ -115,23 +109,13 @@ const ShopFiltersPanel = ({
 
         <Grid
           size={{ xs: 12, sm: 6, lg: 4 }}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: { xs: "flex-start", lg: "flex-end" },
-          }}
+          sx={shopFiltersPanelStyles.priceFilterGridItem}
         >
           <Stack
             direction="row"
             spacing={1.5}
             useFlexGap
-            sx={{
-              width: "100%",
-              height: "100%",
-              alignItems: "center",
-              justifyContent: { xs: "flex-start", lg: "flex-end" },
-              flexWrap: "wrap",
-            }}
+            sx={shopFiltersPanelStyles.priceFilterStack}
           >
             <Chip
               label="Wszystkie"
@@ -159,23 +143,23 @@ const ShopFiltersPanel = ({
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ mt: 2, gap: 1, flexWrap: "wrap" }}
+        sx={shopFiltersPanelStyles.summaryRow}
       >
         <Stack
           direction="row"
           spacing={1.5}
-          sx={{ alignItems: "center", flexWrap: "wrap" }}
+          sx={shopFiltersPanelStyles.summaryLeftStack}
         >
-          <Typography sx={{ fontWeight: 700, color: "primary.main" }}>
+          <Typography sx={shopFiltersPanelStyles.resultsLabel}>
             Wyniki: {resultsCount}
           </Typography>
           {source ? (
             <Stack
               direction="row"
               spacing={1}
-              sx={{ alignItems: "center", flexWrap: "wrap" }}
+              sx={shopFiltersPanelStyles.sourceStack}
             >
-              <Typography variant="body2" sx={{ opacity: 0.75 }}>
+              <Typography variant="body2" sx={shopFiltersPanelStyles.sourceLabel}>
                 Zrodlo danych: {source === "woo" ? "WooCommerce" : "mock"}
               </Typography>
             </Stack>
@@ -183,7 +167,7 @@ const ShopFiltersPanel = ({
         </Stack>
 
         {hasActiveFilters ? (
-          <Button variant="text" onClick={onClear} sx={{ fontWeight: 800 }}>
+          <Button variant="text" onClick={onClear} sx={shopFiltersPanelStyles.clearButton}>
             Wyczysc filtry
           </Button>
         ) : null}

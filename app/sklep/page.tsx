@@ -16,6 +16,7 @@ import {
 } from "./helpers/filters";
 import { fetchShopProducts } from "./services/fetchShopProducts";
 import type { ShopFilters } from "./types";
+import { shopPageStyles } from "./page.styles";
 
 const toErrorMessage = (error: unknown) => {
   if (error instanceof Error) return error.message;
@@ -98,15 +99,12 @@ const ShopPage = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ pt: { xs: 14, md: 16 }, pb: 7 }}>
-      <Stack spacing={1.5} sx={{ mb: 4 }}>
-        <Typography
-          variant="h2"
-          sx={{ fontWeight: 900, color: "primary.main" }}
-        >
+    <Container maxWidth="xl" sx={shopPageStyles.container}>
+      <Stack spacing={1.5} sx={shopPageStyles.headingStack}>
+        <Typography variant="h2" sx={shopPageStyles.title}>
           Sklep
         </Typography>
-        <Typography sx={{ opacity: 0.8 }}>
+        <Typography sx={shopPageStyles.subtitle}>
           Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
           przefiltrowac darmowe lub platne produkty.
         </Typography>
