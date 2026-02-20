@@ -25,7 +25,6 @@ type ShopFiltersPanelProps = {
   onQueryChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
   onLevelChange: (value: string) => void;
-  onFormatChange: (value: string) => void;
   onPriceChange: (value: ShopFilters["price"]) => void;
   onClear: () => void;
 };
@@ -41,7 +40,6 @@ const ShopFiltersPanel = ({
   onQueryChange,
   onCategoryChange,
   onLevelChange,
-  onFormatChange,
   onPriceChange,
   onClear,
 }: ShopFiltersPanelProps) => {
@@ -115,32 +113,25 @@ const ShopFiltersPanel = ({
           </FormControl>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, lg: 2 }}>
-          <FormControl fullWidth>
-            <InputLabel id="shop-format-label">Format</InputLabel>
-            <Select
-              MenuProps={selectMenuProps}
-              labelId="shop-format-label"
-              label="Format"
-              value={filters.format}
-              onChange={(event) => onFormatChange(event.target.value)}
-            >
-              <MenuItem value="all">Wszystkie</MenuItem>
-              {options.formats.map((item) => (
-                <MenuItem key={item} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, lg: 2 }}>
+        <Grid
+          size={{ xs: 12, sm: 6, lg: 4 }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "flex-start", lg: "flex-end" },
+          }}
+        >
           <Stack
             direction="row"
             spacing={1.5}
             useFlexGap
-            sx={{ height: "100%", alignItems: "center", flexWrap: "wrap" }}
+            sx={{
+              width: "100%",
+              height: "100%",
+              alignItems: "center",
+              justifyContent: { xs: "flex-start", lg: "flex-end" },
+              flexWrap: "wrap",
+            }}
           >
             <Chip
               label="Wszystkie"

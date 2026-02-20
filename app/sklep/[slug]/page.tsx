@@ -20,7 +20,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
 
   const highlights = mapped.highlights ?? [
     mapped.level ? `Poziom ${mapped.level}` : "Rozne poziomy",
-    mapped.format ?? "PDF do druku",
+    "Material cyfrowy",
     mapped.isFree ? "Darmowy dostep" : "Natychmiastowy dostep",
   ];
 
@@ -41,11 +41,11 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
         </Box>
 
         <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, md: 5 }}>
             <ProductGallery items={mapped.gallery} title={mapped.title} />
           </Grid>
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, md: 7 }}>
             <Stack spacing={2}>
               <Stack spacing={0.5}>
                 <Typography variant="h3" sx={{ fontWeight: 900, color: "primary.main" }}>
@@ -58,8 +58,9 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 {variant === "free" ? <Chip label="FREE" size="small" sx={{ fontWeight: 800 }} /> : null}
                 {variant === "bestseller" ? <Chip label="TOP" size="small" sx={{ fontWeight: 800 }} /> : null}
                 {mapped.level ? <Chip label={`Poziom ${mapped.level}`} size="small" /> : null}
-                {mapped.format ? <Chip label={mapped.format} size="small" /> : null}
-                {mapped.category ? <Chip label={mapped.category} size="small" /> : null}
+                {mapped.categories.map((category) => (
+                  <Chip key={category} label={category} size="small" />
+                ))}
                 {topics.map((t) => (
                   <Chip key={t} label={t} size="small" />
                 ))}

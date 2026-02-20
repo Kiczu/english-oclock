@@ -27,6 +27,7 @@ const ShopPage = () => {
   const { addItem, openCart } = useCart();
 
   const [products, setProducts] = useState<ShopProduct[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [source, setSource] = useState<"mock" | "woo" | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,10 +43,12 @@ const ShopPage = () => {
       try {
         const payload = await fetchShopProducts(controller.signal);
         setProducts(payload.items ?? []);
+        setCategories(payload.categories ?? []);
         setSource(payload.source ?? null);
       } catch (loadError) {
         if (controller.signal.aborted) return;
         setProducts([]);
+        setCategories([]);
         setSource(null);
         setError(toErrorMessage(loadError));
       } finally {
@@ -60,7 +63,10 @@ const ShopPage = () => {
     return () => controller.abort();
   }, []);
 
-  const options = useMemo(() => getFilterOptions(products), [products]);
+  const options = useMemo(
+    () => getFilterOptions(products, categories),
+    [products, categories],
+  );
   const filteredProducts = useMemo(
     () => filterProducts(products, filters),
     [products, filters],
@@ -101,7 +107,7 @@ const ShopPage = () => {
           Sklep
         </Typography>
         <Typography sx={{ opacity: 0.8 }}>
-          Wybierz materialy po temacie, poziomie i formacie. Mozesz szybko
+          Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
           przefiltrowac darmowe lub platne produkty.
         </Typography>
       </Stack>
@@ -115,7 +121,6 @@ const ShopPage = () => {
         onQueryChange={(value) => updateFilters({ query: value })}
         onCategoryChange={(value) => updateFilters({ category: value })}
         onLevelChange={(value) => updateFilters({ level: value })}
-        onFormatChange={(value) => updateFilters({ format: value })}
         onPriceChange={(value) => updateFilters({ price: value })}
         onClear={clearFilters}
       />

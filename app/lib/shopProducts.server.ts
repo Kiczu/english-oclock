@@ -1,10 +1,14 @@
 import "server-only";
 
-import { toShopProduct } from "@/app/helpers/shopProduct";
+import { isShopCategoryVisible, toShopProduct } from "@/app/helpers/shopProduct";
 import { productsMock } from "@/app/lib/product.mock";
 import wooFetch from "@/app/lib/woo";
 import { WC_ENABLED } from "@/app/lib/env";
-import type { ShopProduct, WooProduct } from "@/app/types/commerce";
+import type {
+  ShopProduct,
+  WooProduct,
+  WooProductCategory,
+} from "@/app/types/commerce";
 
 type ShopSourceMode = "auto" | "woo" | "mock";
 type ShopResolvedSource = "woo" | "mock";
@@ -19,6 +23,7 @@ type GetShopProductsOptions = {
 type ShopProductsResult = {
   source: ShopResolvedSource;
   items: ShopProduct[];
+  categories: string[];
 };
 
 const clampPositiveInt = (value: number, min: number, max: number) =>
@@ -29,9 +34,26 @@ const paginate = <T>(items: T[], page: number, perPage: number) => {
   return items.slice(from, from + perPage);
 };
 
+const sortValues = (values: string[]) =>
+  values.sort((a, b) => a.localeCompare(b, "pl", { sensitivity: "base" }));
+
+const getMockCategories = () =>
+  sortValues(
+    Array.from(
+      new Set(
+        productsMock
+          .flatMap((product) => product.categories ?? [])
+          .filter((category) => isShopCategoryVisible(category))
+          .map((category) => category.name?.trim())
+          .filter((value): value is string => Boolean(value)),
+      ),
+    ),
+  );
+
 const getMockProducts = (page: number, perPage: number): ShopProductsResult => ({
   source: "mock",
   items: paginate(productsMock, page, perPage).map(toShopProduct),
+  categories: getMockCategories(),
 });
 
 const fetchWooProducts = async (page: number, perPage: number): Promise<ShopProduct[]> => {
@@ -67,6 +89,42 @@ const fetchAllWooProducts = async (perPage: number): Promise<ShopProduct[]> => {
   return items;
 };
 
+const getCategoriesFromItems = (items: ShopProduct[]) =>
+  sortValues(
+    Array.from(
+      new Set(
+        items
+          .flatMap((item) => item.categories)
+          .map((category) => category.trim())
+          .filter(Boolean),
+      ),
+    ),
+  );
+
+const fetchWooCategories = async (): Promise<string[]> => {
+  const names: string[] = [];
+
+  for (let page = 1; page <= 200; page += 1) {
+    const categories = await wooFetch<WooProductCategory[]>(
+      `/wp-json/wc/v3/products/categories?hide_empty=false&per_page=100&page=${page}`,
+      { next: { revalidate: 300 } },
+    );
+
+    names.push(
+      ...categories
+        .filter((category) => isShopCategoryVisible(category))
+        .map((category) => category.name?.trim())
+        .filter((value): value is string => Boolean(value)),
+    );
+
+    if (categories.length < 100) {
+      break;
+    }
+  }
+
+  return sortValues(Array.from(new Set(names)));
+};
+
 const fetchWooProductBySlug = async (slug: string): Promise<ShopProduct | null> => {
   const products = await wooFetch<WooProduct[]>(
     `/wp-json/wc/v3/products?status=publish&slug=${encodeURIComponent(slug)}&per_page=1`,
@@ -91,7 +149,7 @@ export const getShopProducts = async (
 
   if (source === "mock") {
     return all
-      ? { source: "mock", items: productsMock.map(toShopProduct) }
+      ? { source: "mock", items: productsMock.map(toShopProduct), categories: getMockCategories() }
       : getMockProducts(safePage, safePerPage);
   }
 
@@ -103,7 +161,9 @@ export const getShopProducts = async (
     const items = all
       ? await fetchAllWooProducts(safePerPage)
       : await fetchWooProducts(safePage, safePerPage);
-    return { source: "woo", items };
+    const categories =
+      (await fetchWooCategories().catch(() => null)) ?? getCategoriesFromItems(items);
+    return { source: "woo", items, categories };
   }
 
   if (WC_ENABLED) {
@@ -111,14 +171,16 @@ export const getShopProducts = async (
       const items = all
         ? await fetchAllWooProducts(safePerPage)
         : await fetchWooProducts(safePage, safePerPage);
-      return { source: "woo", items };
+      const categories =
+        (await fetchWooCategories().catch(() => null)) ?? getCategoriesFromItems(items);
+      return { source: "woo", items, categories };
     } catch {
       // Auto mode falls back to mock.
     }
   }
 
   return all
-    ? { source: "mock", items: productsMock.map(toShopProduct) }
+    ? { source: "mock", items: productsMock.map(toShopProduct), categories: getMockCategories() }
     : getMockProducts(safePage, safePerPage);
 };
 
