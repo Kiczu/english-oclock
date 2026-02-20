@@ -4,10 +4,14 @@ import { Box, Stack, Typography, Button } from "@mui/material";
 
 const AboutSection = ({ id }: { id?: string }) => {
   return (
-    <Box component="section" id={id} sx={{ scrollMarginTop: { xs: 96, md: 112 } }}>
+    <Box
+      component="section"
+      id={id}
+      sx={{ scrollMarginTop: { xs: 96, md: 112 } }}
+    >
       <Box
         sx={{
-          width: { xs: "100%", md: "100%" },
+          width: "100%",
           maxWidth: 1600,
           mx: "auto",
           px: { xs: 2, sm: 3, md: 0 },
@@ -23,8 +27,8 @@ const AboutSection = ({ id }: { id?: string }) => {
             position: "relative",
             borderRadius: 3,
             overflow: "hidden",
-            aspectRatio: "3 / 4",
-            width: { xs: "100%", sm: 360, md: 470 },
+            aspectRatio: { xs: "1 / 1", md: "3 / 4" },
+            width: { xs: "50%", sm: "60%", md: "40%", lg: "30%" },
             flex: "0 0 auto",
           }}
         >
@@ -33,7 +37,7 @@ const AboutSection = ({ id }: { id?: string }) => {
             src="/images/about-me.png"
             alt="English o'clock"
             sx={{
-              width: "100%",
+              width: { xs: "100%", md: "80%", lg: "100%" },
               height: "100%",
               objectFit: "cover",
             }}
@@ -55,9 +59,10 @@ const AboutSection = ({ id }: { id?: string }) => {
                 lineHeight: 1.65,
               }}
             >
-              English o’clock to materiały do nauki angielskiego, które da się
-              zrobić w realnym czasie — bez szkolnej waty i bez „przerabiania na
-              później”.
+              Cześć! Mam na imię Wiola i od ponad 10 lat uczę języka
+              angielskiego. Tworzę materiały edukacyjne zarówno dla nauczycieli,
+              jak i dla uczniów, którzy chcą uczyć się samodzielnie. Na co dzień
+              aktywnie uczę, więc wiem, czego potrzebują uczniowie.
             </Typography>
 
             <Typography
@@ -67,11 +72,21 @@ const AboutSection = ({ id }: { id?: string }) => {
                 lineHeight: 1.65,
               }}
             >
-              Tworzę krótkie, konkretne paczki PDF — do samodzielnej nauki, na
-              lekcje i jako szybkie powtórki. Najpierw sprawdzasz darmówki,
-              potem decydujesz.
+              Ukończyłam filologię angielską, a moją pasją jest kultura Wielkiej
+              Brytanii - dlatego angielski to dla mnie coś więcej niż tylko
+              przedmiot. Stawiam na nieszablonowe, praktyczne materiały, które
+              realnie pomagają w nauce.
             </Typography>
-
+            <Typography
+              sx={{
+                opacity: 0.85,
+                fontSize: { xs: 16, md: 18 },
+                lineHeight: 1.65,
+              }}
+            >
+              Jeśli szukasz materiałów, które oszczędzają czas i dają efekty,
+              jesteś w dobrym miejscu!
+            </Typography>
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={2}

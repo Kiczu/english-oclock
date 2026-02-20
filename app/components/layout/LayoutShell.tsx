@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
+import { Box } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -24,11 +25,13 @@ const LayoutShell = ({ children }: { children: React.ReactNode }) => {
   }, [isHome]);
 
   return (
-    <>
+    <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <Header hidden={hideHeader} />
-      {children}
+      <Box component="main" sx={{ flex: 1, minHeight: 0 }}>
+        {children}
+      </Box>
       <Footer />
-    </>
+    </Box>
   );
 };
 

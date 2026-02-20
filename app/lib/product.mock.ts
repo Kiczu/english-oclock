@@ -24,10 +24,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Samodzielna nauka" }],
     tags: [{ name: "verbs" }, { name: "basics" }],
-    attributes: [
-      { name: "Poziom", options: ["A2"] },
-      { name: "Format", options: ["Cheatsheet"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["A2"] }],
     meta_data: [
       withMetaList("_highlights", ["Szybka sciaga", "Poziom A2", "Gotowe do druku"]),
       withMetaList("_includes", ["PDF do druku", "Wersja czarno-biala", "Podsumowanie czasownikow"]),
@@ -44,10 +41,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Dla ucznia" }],
     tags: [{ name: "speaking" }],
-    attributes: [
-      { name: "Poziom", options: ["B1"] },
-      { name: "Format", options: ["Worksheet"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["B1"] }],
     meta_data: [
       withMetaList("_highlights", ["Rozgrzewki speaking", "Poziom B1", "Do pracy w parach"]),
       withMetaList("_includes", ["PDF do druku", "Instrukcja pracy", "Pytania i sytuacje"]),
@@ -64,10 +58,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Dla ucznia" }],
     tags: [{ name: "present-simple" }, { name: "grammar" }],
-    attributes: [
-      { name: "Poziom", options: ["A2"] },
-      { name: "Format", options: ["Test"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["A2"] }],
     meta_data: [
       withMetaList("_highlights", ["Szybka diagnoza", "Present Simple", "Klucz odpowiedzi"]),
       withMetaList("_includes", ["Test", "Odpowiedzi", "Instrukcja dla ucznia"]),
@@ -84,10 +75,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Samodzielna nauka" }],
     tags: [{ name: "phrasal-verbs" }, { name: "vocabulary" }],
-    attributes: [
-      { name: "Poziom", options: ["B1"] },
-      { name: "Format", options: ["Worksheet"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["B1"] }],
     meta_data: [
       withMetaList("_highlights", ["Kontekstowe przyklady", "Poziom B1", "Slownictwo w uzyciu"]),
       withMetaList("_includes", ["PDF do druku", "Przyklady w kontekscie", "Cwiczenia utrwalajace"]),
@@ -104,10 +92,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Dla ucznia" }],
     tags: [{ name: "mixed" }, { name: "revision" }],
-    attributes: [
-      { name: "Poziom", options: ["B1"] },
-      { name: "Format", options: ["Bundle"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["B1"] }],
     meta_data: [
       withMetaList("_highlights", ["Pakiet do regularnej nauki", "Poziom A2-B1", "Rozne typy zadan"]),
       withMetaList("_includes", ["PDF do druku", "Roznorodne zadania", "Instrukcje"]),
@@ -124,10 +109,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Dla nauczyciela" }],
     tags: [{ name: "lesson" }, { name: "classroom" }, { name: "bestseller" }],
-    attributes: [
-      { name: "Poziom", options: ["B1"] },
-      { name: "Format", options: ["Bundle"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["B1"] }],
     meta_data: [
       { key: "_custom_badge", value: "bestseller" },
       withMetaList("_highlights", ["Oszczedz czas", "Poziom B1", "Gotowe do lekcji"]),
@@ -145,10 +127,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Egzamin" }],
     tags: [{ name: "exam" }, { name: "vocabulary" }, { name: "bestseller" }],
-    attributes: [
-      { name: "Poziom", options: ["B2"] },
-      { name: "Format", options: ["Worksheet"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["B2"] }],
     meta_data: [
       { key: "_custom_badge", value: "bestseller" },
       withMetaList("_highlights", ["Pod egzamin", "Poziom B2", "Tematyczne zbiory"]),
@@ -166,10 +145,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Dla ucznia" }],
     tags: [{ name: "listening" }, { name: "bestseller" }],
-    attributes: [
-      { name: "Poziom", options: ["A2"] },
-      { name: "Format", options: ["Worksheet"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["A2"] }],
     meta_data: [
       { key: "_custom_badge", value: "bestseller" },
       withMetaList("_highlights", ["Sluchanie ze zrozumieniem", "Poziom A2", "Zadania sprawdzajace"]),
@@ -187,10 +163,7 @@ export const productsMock: WooProduct[] = [
     images: defaultImages,
     categories: [{ name: "Dla nauczyciela" }],
     tags: [{ name: "games" }, { name: "classroom" }],
-    attributes: [
-      { name: "Poziom", options: ["B1"] },
-      { name: "Format", options: ["Game"] },
-    ],
+    attributes: [{ name: "Poziom", options: ["B1"] }],
     meta_data: [
       withMetaList("_highlights", ["Gry na lekcje", "Poziom B1", "Integracja grupy"]),
       withMetaList("_includes", ["PDF do druku", "Instrukcje gier", "Karty do wyciecia"]),
@@ -201,3 +174,5 @@ export const productsMock: WooProduct[] = [
 export const shopProductsMock: ShopProduct[] = productsMock.map(toShopProduct);
 export const freeProductsMock = shopProductsMock.filter((product) => product.isFree);
 export const bestsellersMock = shopProductsMock.filter((product) => product.isBestseller);
+
+

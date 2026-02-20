@@ -20,8 +20,12 @@ export const fetchShopProducts = async (
   const payload = (await response.json()) as ShopProductsResponseDTO | ShopProduct[];
 
   if (Array.isArray(payload)) {
-    return { source: "mock", items: payload };
+    return { source: "mock", items: payload, categories: [] };
   }
 
-  return { source: payload.source, items: payload.items ?? [] };
+  return {
+    source: payload.source,
+    items: payload.items ?? [],
+    categories: payload.categories ?? [],
+  };
 };
