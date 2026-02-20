@@ -4,6 +4,7 @@ import { Box, Grid, Stack, Typography } from "@mui/material";
 import ProductCard from "../product/ProductCard";
 import type { ShopProduct } from "@/app/types/commerce";
 import { getVariant } from "@/app/helpers/productCard";
+import { productsSectionStyles } from "./ProductsSection.styles";
 
 type ProductsSectionProps = {
   id?: string;
@@ -37,18 +38,15 @@ const ProductsSection = ({
     <Box
       component="section"
       id={id}
-      sx={{ py: { xs: 6, md: 10 }, scrollMarginTop: { xs: 96, md: 112 } }}
+      sx={productsSectionStyles.section}
     >
-      <Stack spacing={1.5} sx={{ mb: 4 }}>
-        <Typography
-          variant="h3"
-          sx={{ fontWeight: 900, color: "primary.main" }}
-        >
+      <Stack spacing={1.5} sx={productsSectionStyles.headingStack}>
+        <Typography variant="h3" sx={productsSectionStyles.title}>
           {title}
         </Typography>
 
         {subtitle ? (
-          <Typography sx={{ opacity: 0.8 }}>{subtitle}</Typography>
+          <Typography sx={productsSectionStyles.subtitle}>{subtitle}</Typography>
         ) : null}
       </Stack>
 
@@ -63,7 +61,7 @@ const ProductsSection = ({
               lg: columns.lg,
             }}
           >
-            <Box sx={{ maxWidth: cardMaxWidth ?? "none", mx: "auto" }}>
+            <Box sx={productsSectionStyles.cardWrap(cardMaxWidth)}>
               <ProductCard
                 id={p.id}
                 href={`/sklep/${p.slug}`}
