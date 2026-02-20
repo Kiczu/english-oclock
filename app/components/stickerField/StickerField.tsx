@@ -52,8 +52,8 @@ const StickerField = ({
       ? roughTextareaWideA_Thick
       : roughTextareaWideB_Thick
     : useA
-    ? roughInputWideA_Thick
-    : roughInputWideB_Thick;
+      ? roughInputWideA_Thick
+      : roughInputWideB_Thick;
 
   const describedBy = error ? `${id}-error` : undefined;
 
