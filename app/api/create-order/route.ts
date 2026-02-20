@@ -1,4 +1,4 @@
-import { WC_BASE_URL, WC_ENABLED } from "@/app/lib/env";
+import { WC_BASE_URL, WC_CHECKOUT_BASE_PATH, WC_ENABLED } from "@/app/lib/env";
 import wooFetch from "@/app/lib/woo";
 import { CartItemInput } from "@/app/types/commerce";
 import { NextResponse } from "next/server";
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
             body: JSON.stringify(orderPayload),
         });
 
-        const checkoutUrl = `${WC_BASE_URL}/checkout/order-pay/${order.id}/?pay_for_order=true&key=${order.order_key}`;
+        const checkoutUrl = `${WC_BASE_URL}${WC_CHECKOUT_BASE_PATH}/order-pay/${order.id}/?pay_for_order=true&key=${order.order_key}`;
 
         return NextResponse.json({ checkoutUrl });
     } catch (error: unknown) {

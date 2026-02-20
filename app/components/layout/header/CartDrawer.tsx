@@ -72,7 +72,7 @@ const CartDrawer = ({
     setCheckoutPending(true);
 
     try {
-      const response = await fetch("/api/create-order", {
+      const response = await fetch("/api/checkout-url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: orderItems }),
@@ -80,7 +80,7 @@ const CartDrawer = ({
       const payload = (await response.json()) as { checkoutUrl?: string; error?: string };
 
       if (!response.ok || !payload.checkoutUrl) {
-        throw new Error(payload.error || "Nie udalo sie przygotowac platnosci.");
+        throw new Error(payload.error || "Nie udalo sie przygotowac checkoutu.");
       }
 
       onClose();
