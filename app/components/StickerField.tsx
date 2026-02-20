@@ -7,6 +7,7 @@ import {
   roughTextareaWideA_Thick,
   roughTextareaWideB_Thick,
 } from "@/app/helpers/stickerField";
+import { stickerFieldStyles } from "./StickerField.styles";
 
 type FieldName = "name" | "email" | "message";
 
@@ -57,42 +58,9 @@ const StickerField = ({
   const describedBy = error ? `${id}-error` : undefined;
 
   return (
-    <Box sx={{ display: "grid", gap: 1 }}>
-      <Box
-        sx={{
-          position: "relative",
-          background: "#f5efe7",
-          borderRadius: 2,
-          boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
-          overflow: "hidden",
-          aspectRatio: multiline ? "1200 / 280" : "1200 / 110",
-
-          "&::before": {
-            content: '""',
-            pointerEvents: "none",
-            position: "absolute",
-            inset: 0.5,
-            backgroundImage: `url("data:image/svg+xml,${frame}")`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "100% 100%",
-            backgroundPosition: "center",
-            transform: "translateX(-3px)",
-            zIndex: 0,
-          },
-        }}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 1,
-            display: "flex",
-            alignItems: multiline ? "stretch" : "center",
-            px: 5,
-            pt: multiline ? 5 : 0,
-            pb: multiline ? 3 : 0,
-          }}
-        >
+    <Box sx={stickerFieldStyles.root}>
+      <Box sx={stickerFieldStyles.frameBox(Boolean(multiline), frame)}>
+        <Box sx={stickerFieldStyles.inputWrap(Boolean(multiline))}>
           <InputBase
             value={value}
             multiline={multiline}
@@ -102,34 +70,13 @@ const StickerField = ({
             onBlur={() => onBlur?.(name)}
             aria-invalid={!!error}
             aria-describedby={describedBy}
-            sx={{
-              width: "100%",
-              fontWeight: 700,
-              fontSize: 18,
-              color: "rgba(18,28,56,0.95)",
-
-              "& textarea": {
-                lineHeight: 1.6,
-                resize: "none",
-                paddingTop: "38px",
-                boxSizing: "border-box",
-              },
-
-              "& input::placeholder, & textarea::placeholder": {
-                color: "rgba(18,28,56,0.45)",
-                fontWeight: 700,
-                opacity: 1,
-              },
-            }}
+            sx={stickerFieldStyles.inputBase}
           />
         </Box>
       </Box>
 
       {error ? (
-        <Typography
-          id={`${id}-error`}
-          sx={{ fontSize: 13, fontWeight: 700, color: "#c24b4b", pl: 1 }}
-        >
+        <Typography id={`${id}-error`} sx={stickerFieldStyles.errorText}>
           {error}
         </Typography>
       ) : null}
