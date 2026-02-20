@@ -11,7 +11,7 @@ const FreeProductsSection = ({ id }: { id?: string }) => {
     <ProductsSection
       id={id}
       title="Freebies"
-      subtitle="Pobierz za darmo i zobacz, czy Ci siada format."
+      subtitle="Pobierz za darmo i sprawdz, czy to dla Ciebie."
       products={freeProductsMock}
       cardMaxWidth={520}
       onPrimaryAction={(p) => {

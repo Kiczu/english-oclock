@@ -18,16 +18,16 @@ const FreePage = () => {
             variant="h2"
             sx={{ fontWeight: 900, color: "primary.main" }}
           >
-            Darmowe materiały
+            Darmowe materialy
           </Typography>
 
           <Typography sx={{ opacity: 0.8, maxWidth: 720 }}>
-            Wszystkie darmówki w jednym miejscu. Kliknij i sprawdź format – bez
+            Wszystkie darmowki w jednym miejscu. Kliknij i sprawdz produkt - bez
             koszyka, bez konta.
           </Typography>
           <Link href="/" style={{ textDecoration: "none" }}>
             <Typography sx={{ fontWeight: 800, color: "primary.main" }}>
-              ← Wróć na stronę główną
+              {"<- Wroc na strone glowna"}
             </Typography>
           </Link>
         </Stack>
