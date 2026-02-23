@@ -43,13 +43,7 @@ export const aboutSectionStyles = {
     pt: 1,
   },
   primaryButton: {
-    backgroundColor: "#F09D85",
-    borderRadius: 999,
-    textTransform: "none",
-    fontWeight: 900,
-    px: 3,
-    boxShadow: "none",
-    "&:hover": { backgroundColor: "#F09D85" },
+    px: { xs: 3.5, md: 4.25 },
   },
   secondaryButton: {
     textTransform: "none",

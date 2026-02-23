@@ -16,7 +16,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
 
   const priceLabel = mapped.priceLabel;
   const ctaLabel = mapped.isFree ? "Pobierz za darmo" : "Do koszyka";
-  const secondaryHref = mapped.isFree ? "/free" : "/sklep";
+  const secondaryHref = mapped.isFree ? "/sklep?price=free" : "/sklep";
   const secondaryLabel = mapped.isFree ? "Zobacz darmowe" : "Wroc do sklepu";
 
   const highlights = mapped.highlights ?? [

@@ -36,7 +36,6 @@ const ShopPageContent = () => {
 
   const [products, setProducts] = useState<ShopProduct[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
-  const [source, setSource] = useState<"woo" | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<ShopFilters>(() => ({
@@ -55,12 +54,10 @@ const ShopPageContent = () => {
         const payload = await fetchShopProducts(controller.signal);
         setProducts(payload.items ?? []);
         setCategories(payload.categories ?? []);
-        setSource(payload.source ?? null);
       } catch (loadError) {
         if (controller.signal.aborted) return;
         setProducts([]);
         setCategories([]);
-        setSource(null);
         setError(toErrorMessage(loadError));
       } finally {
         if (!controller.signal.aborted) {
@@ -136,7 +133,6 @@ const ShopPageContent = () => {
         filters={filters}
         options={options}
         resultsCount={filteredProducts.length}
-        source={source}
         hasActiveFilters={filtersActive}
         onQueryChange={(value) => updateFilters({ query: value })}
         onCategoryChange={(value) => updateFilters({ category: value })}

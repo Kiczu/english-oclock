@@ -140,17 +140,13 @@ const ProductCard = ({
           </Typography>
           <Button
             variant="contained"
+            color="secondary"
             onClick={(e) => {
               e.preventDefault();
               onPrimaryAction?.();
             }}
             sx={{
-              backgroundColor: "#F09D85",
-              borderRadius: 999,
-              textTransform: "none",
-              fontWeight: 900,
-              px: 2.4,
-              boxShadow: "none",
+              px: 2.9,
               minWidth: 120,
             }}
           >

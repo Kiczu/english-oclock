@@ -24,6 +24,7 @@ export const shopFiltersPanelStyles = {
     mt: 2,
     gap: 1,
     flexWrap: "wrap",
+    minHeight: 40,
   },
   summaryLeftStack: {
     alignItems: "center",
@@ -33,14 +34,12 @@ export const shopFiltersPanelStyles = {
     fontWeight: 700,
     color: "primary.main",
   },
-  sourceStack: {
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-  sourceLabel: {
-    opacity: 0.75,
-  },
   clearButton: {
     fontWeight: 800,
+    minWidth: 126,
+  },
+  clearButtonHidden: {
+    visibility: "hidden",
+    pointerEvents: "none",
   },
 } as const;

@@ -20,7 +20,6 @@ type ShopFiltersPanelProps = {
   filters: ShopFilters;
   options: ShopFilterOptions;
   resultsCount: number;
-  source: "woo" | null;
   hasActiveFilters: boolean;
   onQueryChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
@@ -35,7 +34,6 @@ const ShopFiltersPanel = ({
   filters,
   options,
   resultsCount,
-  source,
   hasActiveFilters,
   onQueryChange,
   onCategoryChange,
@@ -145,32 +143,22 @@ const ShopFiltersPanel = ({
         alignItems="center"
         sx={shopFiltersPanelStyles.summaryRow}
       >
-        <Stack
-          direction="row"
-          spacing={1.5}
-          sx={shopFiltersPanelStyles.summaryLeftStack}
-        >
+        <Stack direction="row" spacing={1.5} sx={shopFiltersPanelStyles.summaryLeftStack}>
           <Typography sx={shopFiltersPanelStyles.resultsLabel}>
             Wyniki: {resultsCount}
           </Typography>
-          {source ? (
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={shopFiltersPanelStyles.sourceStack}
-            >
-              <Typography variant="body2" sx={shopFiltersPanelStyles.sourceLabel}>
-                Zrodlo danych: WooCommerce
-              </Typography>
-            </Stack>
-          ) : null}
         </Stack>
 
-        {hasActiveFilters ? (
-          <Button variant="text" onClick={onClear} sx={shopFiltersPanelStyles.clearButton}>
-            Wyczysc filtry
-          </Button>
-        ) : null}
+        <Button
+          variant="text"
+          onClick={onClear}
+          sx={[
+            shopFiltersPanelStyles.clearButton,
+            !hasActiveFilters && shopFiltersPanelStyles.clearButtonHidden,
+          ]}
+        >
+          Wyczysc filtry
+        </Button>
       </Stack>
     </Box>
   );

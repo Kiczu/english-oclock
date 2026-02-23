@@ -50,10 +50,13 @@ export const stickerFieldStyles = {
       opacity: 1,
     },
   },
-  errorText: {
+  errorText: (hasError: boolean) => ({
     fontSize: 13,
+    lineHeight: 1.3,
     fontWeight: 700,
     color: "#c24b4b",
     pl: 1,
-  },
+    minHeight: "1.1em",
+    visibility: hasError ? "visible" : "hidden",
+  }),
 } as const;

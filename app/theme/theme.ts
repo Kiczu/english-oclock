@@ -37,6 +37,20 @@ export const theme = createTheme({
         MuiButton: {
             styleOverrides: {
                 root: { borderRadius: 16 },
+                containedSecondary: {
+                    borderRadius: 999,
+                    fontWeight: 900,
+                    fontSize: "1rem",
+                    lineHeight: 1.1,
+                    paddingInline: "1.55rem",
+                    paddingBlock: "0.72rem",
+                    boxShadow: "none",
+                    color: colors.white,
+                    "&:hover": {
+                        backgroundColor: colors.coral,
+                        boxShadow: "none",
+                    },
+                },
             },
         },
         MuiCard: {

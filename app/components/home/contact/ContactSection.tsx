@@ -137,16 +137,11 @@ const ContactSection = ({ id }: { id?: string }) => {
 
             <Button
               variant="contained"
+              color="secondary"
               disabled={isSubmitting}
               sx={{
-                backgroundColor: "#F09D85",
-                borderRadius: 999,
-                textTransform: "none",
-                fontWeight: 900,
                 px: 3,
-                boxShadow: "none",
                 alignSelf: "flex-start",
-                "&:hover": { backgroundColor: "#F09D85" },
               }}
               onClick={handleSubmit}
             >

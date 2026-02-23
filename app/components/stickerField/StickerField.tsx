@@ -55,7 +55,7 @@ const StickerField = ({
       ? roughInputWideA_Thick
       : roughInputWideB_Thick;
 
-  const describedBy = error ? `${id}-error` : undefined;
+  const describedBy = `${id}-error`;
 
   return (
     <Box sx={stickerFieldStyles.root}>
@@ -75,11 +75,13 @@ const StickerField = ({
         </Box>
       </Box>
 
-      {error ? (
-        <Typography id={`${id}-error`} sx={stickerFieldStyles.errorText}>
-          {error}
-        </Typography>
-      ) : null}
+      <Typography
+        id={`${id}-error`}
+        aria-live="polite"
+        sx={stickerFieldStyles.errorText(Boolean(error))}
+      >
+        {error ?? "\u00A0"}
+      </Typography>
     </Box>
   );
 };
