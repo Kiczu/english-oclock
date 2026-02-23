@@ -69,7 +69,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                   "Praktyczny material do nauki angielskiego. Gotowy do druku i natychmiastowego uzycia."}
               </Typography>
 
-              <Stack direction="row" spacing={2} sx={productPageStyles.actionsRow}>
+              <Stack direction="row" spacing={{ xs: 1.25, sm: 2 }} useFlexGap sx={productPageStyles.actionsRow}>
                 {mapped.isFree ? (
                   <Button variant="contained" color="secondary" sx={productPageStyles.freeActionButton}>
                     {ctaLabel}

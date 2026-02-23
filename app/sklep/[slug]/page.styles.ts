@@ -30,6 +30,8 @@ export const productPageStyles = {
   },
   actionsRow: {
     flexWrap: "wrap",
+    alignItems: "center",
+    rowGap: { xs: 1.25, sm: 0 },
   },
   freeActionButton: {
     px: 4,
