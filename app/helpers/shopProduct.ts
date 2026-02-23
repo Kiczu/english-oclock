@@ -45,6 +45,16 @@ const getMetaUrl = (product: WooProduct, keys: string[]) => {
   return undefined;
 };
 
+const isLikelyProtectedWooDownloadUrl = (value: string) =>
+  /(?:[?&](download_file|order|email|key|uid)=)|(?:\/wp-json\/)|(?:\/wc-api\/)|(?:\/woocommerce_uploads\/)|(?:\/wc-uploads\/)|(?:\/protected\/)/i.test(
+    value,
+  );
+
+const pickPublicWooDownloadUrl = (product: WooProduct) =>
+  (product.downloads ?? [])
+    .map((entry) => (typeof entry.file === "string" ? entry.file.trim() : ""))
+    .find((value) => Boolean(value) && !isLikelyProtectedWooDownloadUrl(value));
+
 const parseMetaList = (value?: string) => {
   if (!value) return undefined;
 
@@ -110,14 +120,14 @@ export const toShopProduct = (product: WooProduct): ShopProduct => {
     .filter((entry) => isShopCategoryVisible(entry))
     .map((entry) => entry.name?.trim())
     .filter((value): value is string => Boolean(value));
-  const downloadFromWoo = product.downloads?.[0]?.file?.trim();
+  const downloadFromWoo = pickPublicWooDownloadUrl(product);
   const downloadFromMeta = getMetaUrl(product, [
     "_free_pdf_url",
     "_download_url",
     "free_pdf_url",
     "download_url",
   ]);
-  const freeDownloadUrl = downloadFromWoo || downloadFromMeta;
+  const freeDownloadUrl = downloadFromMeta || downloadFromWoo;
 
   return {
     id: String(product.id),

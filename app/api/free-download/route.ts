@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getShopProductBySlug } from "@/app/lib/shopProducts.server";
+import { WC_BASE_URL } from "@/app/lib/env";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,39 @@ const isHttpUrl = (value: string) => {
   } catch {
     return false;
   }
+};
+
+const toDownloadFileName = (slug: string, url: string) => {
+  try {
+    const parsed = new URL(url);
+    const fromPath = decodeURIComponent(parsed.pathname.split("/").pop() ?? "").trim();
+    if (fromPath) return fromPath;
+  } catch {
+    // Ignore and fallback to slug.
+  }
+
+  return `${slug}.pdf`;
+};
+
+const normalizeSourceUrl = (value: string) => {
+  try {
+    const parsed = new URL(value);
+
+    if (parsed.hostname === "drive.google.com") {
+      const filePathMatch = parsed.pathname.match(/^\/file\/d\/([^/]+)\//);
+      const fileIdFromPath = filePathMatch?.[1];
+      const fileIdFromQuery = parsed.searchParams.get("id")?.trim();
+      const fileId = fileIdFromPath || fileIdFromQuery;
+
+      if (fileId) {
+        return `https://drive.google.com/uc?export=download&id=${encodeURIComponent(fileId)}`;
+      }
+    }
+  } catch {
+    // Fallback to original value.
+  }
+
+  return value;
 };
 
 export async function GET(req: Request) {
@@ -56,9 +90,41 @@ export async function GET(req: Request) {
       );
     }
 
-    const response = NextResponse.redirect(product.freeDownloadUrl, 302);
-    response.headers.set("Cache-Control", "no-store");
-    return response;
+    const sourceUrl = normalizeSourceUrl(product.freeDownloadUrl);
+    const sourceResponse = await fetch(sourceUrl, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/pdf,*/*",
+        ...(WC_BASE_URL ? { Referer: `${WC_BASE_URL}/` } : {}),
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+      },
+      redirect: "follow",
+    });
+
+    if (!sourceResponse.ok || !sourceResponse.body) {
+      return NextResponse.json(
+        { error: `Source file request failed (${sourceResponse.status})` },
+        { status: sourceResponse.status || 502 },
+      );
+    }
+
+    const fileName = toDownloadFileName(product.slug, sourceUrl);
+    const contentType = sourceResponse.headers.get("content-type") || "application/pdf";
+
+    const headers = new Headers();
+    headers.set("Content-Type", contentType);
+    headers.set(
+      "Content-Disposition",
+      `inline; filename="${fileName.replace(/"/g, "")}"`,
+    );
+    headers.set("Cache-Control", "no-store");
+    headers.set("X-Robots-Tag", "noindex, nofollow");
+
+    return new NextResponse(sourceResponse.body, {
+      status: 200,
+      headers,
+    });
   } catch (error) {
     const message = toErrorMessage(error);
     const status = message === "WooCommerce is not configured" ? 503 : 502;

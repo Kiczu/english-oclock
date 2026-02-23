@@ -78,6 +78,8 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                       variant="contained"
                       color="secondary"
                       href={freeDownloadHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       sx={productPageStyles.freeActionButton}
                     >
                       {ctaLabel}
