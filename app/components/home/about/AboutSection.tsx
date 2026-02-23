@@ -46,7 +46,7 @@ const AboutSection = ({ id }: { id?: string }) => {
               spacing={2}
               sx={aboutSectionStyles.actionsRow}
             >
-              <Button variant="contained" href="/free" sx={aboutSectionStyles.primaryButton}>
+              <Button variant="contained" href="/sklep?price=free" sx={aboutSectionStyles.primaryButton}>
                 Zobacz darmowe materialy
               </Button>
 

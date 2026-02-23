@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Stack, Typography } from "@mui/material";
 import { useCart } from "@/app/context/CartContext";
 import type { ShopProduct } from "@/app/types/commerce";
@@ -23,8 +23,14 @@ const toErrorMessage = (error: unknown) => {
   return "Nie udalo sie pobrac listy produktow.";
 };
 
+const toPriceFilterFromQuery = (value: string | null): ShopFilters["price"] => {
+  if (value === "free" || value === "paid") return value;
+  return "all";
+};
+
 const ShopPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { addItem, openCart } = useCart();
 
   const [products, setProducts] = useState<ShopProduct[]>([]);
@@ -32,7 +38,10 @@ const ShopPage = () => {
   const [source, setSource] = useState<"mock" | "woo" | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<ShopFilters>(() => defaultFilters());
+  const [filters, setFilters] = useState<ShopFilters>(() => ({
+    ...defaultFilters(),
+    price: toPriceFilterFromQuery(searchParams.get("price")),
+  }));
 
   useEffect(() => {
     const controller = new AbortController();
@@ -63,6 +72,18 @@ const ShopPage = () => {
 
     return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    const nextPrice = toPriceFilterFromQuery(searchParams.get("price"));
+    setFilters((prev) =>
+      prev.price === nextPrice
+        ? prev
+        : {
+            ...prev,
+            price: nextPrice,
+          },
+    );
+  }, [searchParams]);
 
   const options = useMemo(
     () => getFilterOptions(products, categories),
