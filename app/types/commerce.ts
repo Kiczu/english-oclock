@@ -64,7 +64,7 @@ export type ShopProduct = {
 export type ProductPageData = ShopProduct;
 
 export type ShopProductsResponseDTO = {
-    source: "mock" | "woo";
+    source: "woo";
     items: ShopProduct[];
     categories?: string[];
 };

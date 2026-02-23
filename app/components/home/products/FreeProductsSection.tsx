@@ -2,9 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import ProductsSection from "./ProductsSection";
-import { freeProductsMock } from "@/app/lib/product.mock";
+import type { ShopProduct } from "@/app/types/commerce";
 
-const FreeProductsSection = ({ id }: { id?: string }) => {
+type FreeProductsSectionProps = {
+  id?: string;
+  products: ShopProduct[];
+};
+
+const FreeProductsSection = ({ id, products }: FreeProductsSectionProps) => {
   const router = useRouter();
 
   return (
@@ -12,7 +17,7 @@ const FreeProductsSection = ({ id }: { id?: string }) => {
       id={id}
       title="Freebies"
       subtitle="Pobierz za darmo i sprawdz, czy to dla Ciebie."
-      products={freeProductsMock}
+      products={products}
       cardMaxWidth={520}
       onPrimaryAction={(p) => {
         router.push(`/sklep/${p.slug}`);

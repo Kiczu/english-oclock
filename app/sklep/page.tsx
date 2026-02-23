@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Stack, Typography } from "@mui/material";
 import { useCart } from "@/app/context/CartContext";
 import type { ShopProduct } from "@/app/types/commerce";
 import ShopFiltersPanel from "./components/ShopFiltersPanel";
 import ShopProductsGrid from "./components/ShopProductsGrid";
+import ShopProductsSkeleton from "./components/ShopProductsSkeleton";
 import ShopStateNotice from "./components/ShopStateNotice";
 import {
   defaultFilters,
@@ -23,16 +24,25 @@ const toErrorMessage = (error: unknown) => {
   return "Nie udalo sie pobrac listy produktow.";
 };
 
-const ShopPage = () => {
+const toPriceFilterFromQuery = (value: string | null): ShopFilters["price"] => {
+  if (value === "free" || value === "paid") return value;
+  return "all";
+};
+
+const ShopPageContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { addItem, openCart } = useCart();
 
   const [products, setProducts] = useState<ShopProduct[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
-  const [source, setSource] = useState<"mock" | "woo" | null>(null);
+  const [source, setSource] = useState<"woo" | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<ShopFilters>(() => defaultFilters());
+  const [filters, setFilters] = useState<ShopFilters>(() => ({
+    ...defaultFilters(),
+    price: toPriceFilterFromQuery(searchParams.get("price")),
+  }));
 
   useEffect(() => {
     const controller = new AbortController();
@@ -63,6 +73,18 @@ const ShopPage = () => {
 
     return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    const nextPrice = toPriceFilterFromQuery(searchParams.get("price"));
+    setFilters((prev) =>
+      prev.price === nextPrice
+        ? prev
+        : {
+            ...prev,
+            price: nextPrice,
+          },
+    );
+  }, [searchParams]);
 
   const options = useMemo(
     () => getFilterOptions(products, categories),
@@ -123,7 +145,7 @@ const ShopPage = () => {
         onClear={clearFilters}
       />
 
-      {loading ? <ShopStateNotice title="Ladowanie produktow..." /> : null}
+      {loading ? <ShopProductsSkeleton count={9} /> : null}
 
       {!loading && error ? (
         <ShopStateNotice
@@ -134,8 +156,12 @@ const ShopPage = () => {
 
       {!loading && !error && filteredProducts.length === 0 ? (
         <ShopStateNotice
-          title="Brak produktow dla wybranych filtrow."
-          description="Sprobuj zmienic poziom lub usunac czesc filtrow."
+          title={filtersActive ? "Brak produktow dla wybranych filtrow." : "Brak produktow."}
+          description={
+            filtersActive
+              ? "Sprobuj zmienic poziom lub usunac czesc filtrow."
+              : "Nie znaleziono produktow w WooCommerce."
+          }
         />
       ) : null}
 
@@ -148,5 +174,26 @@ const ShopPage = () => {
     </Container>
   );
 };
+
+const ShopPageFallback = () => (
+  <Container maxWidth="xl" sx={shopPageStyles.container}>
+    <Stack spacing={1.5} sx={shopPageStyles.headingStack}>
+      <Typography variant="h2" sx={shopPageStyles.title}>
+        Sklep
+      </Typography>
+      <Typography sx={shopPageStyles.subtitle}>
+        Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
+        przefiltrowac darmowe lub platne produkty.
+      </Typography>
+    </Stack>
+    <ShopProductsSkeleton count={9} />
+  </Container>
+);
+
+const ShopPage = () => (
+  <Suspense fallback={<ShopPageFallback />}>
+    <ShopPageContent />
+  </Suspense>
+);
 
 export default ShopPage;

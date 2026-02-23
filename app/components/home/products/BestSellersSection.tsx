@@ -1,10 +1,15 @@
 "use client";
 
 import ProductsSection from "./ProductsSection";
-import { bestsellersMock } from "@/app/lib/product.mock";
 import { useCart } from "@/app/context/CartContext";
+import type { ShopProduct } from "@/app/types/commerce";
 
-const BestsellersSection = ({ id }: { id?: string }) => {
+type BestsellersSectionProps = {
+  id?: string;
+  products: ShopProduct[];
+};
+
+const BestsellersSection = ({ id, products }: BestsellersSectionProps) => {
   const { addItem, openCart } = useCart();
 
   return (
@@ -12,7 +17,7 @@ const BestsellersSection = ({ id }: { id?: string }) => {
       id={id}
       title="Bestsellers"
       subtitle="Najczesciej wybierane materialy"
-      products={bestsellersMock}
+      products={products}
       onPrimaryAction={(p) => {
         addItem({
           id: p.id,
