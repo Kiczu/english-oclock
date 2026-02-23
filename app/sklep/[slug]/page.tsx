@@ -18,6 +18,8 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
   const ctaLabel = mapped.isFree ? "Pobierz za darmo" : "Do koszyka";
   const secondaryHref = mapped.isFree ? "/sklep?price=free" : "/sklep";
   const secondaryLabel = mapped.isFree ? "Zobacz darmowe" : "Wroc do sklepu";
+  const freeDownloadHref = `/api/free-download?slug=${encodeURIComponent(mapped.slug)}`;
+  const isFreeDownloadAvailable = mapped.isFree && Boolean(mapped.freeDownloadUrl);
 
   const highlights = mapped.highlights ?? [
     mapped.level ? `Poziom ${mapped.level}` : "Rozne poziomy",
@@ -71,9 +73,22 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
 
               <Stack direction="row" spacing={{ xs: 1.25, sm: 2 }} useFlexGap sx={productPageStyles.actionsRow}>
                 {mapped.isFree ? (
-                  <Button variant="contained" color="secondary" sx={productPageStyles.freeActionButton}>
-                    {ctaLabel}
-                  </Button>
+                  isFreeDownloadAvailable ? (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      href={freeDownloadHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={productPageStyles.freeActionButton}
+                    >
+                      {ctaLabel}
+                    </Button>
+                  ) : (
+                    <Button variant="contained" color="secondary" disabled sx={productPageStyles.freeActionButton}>
+                      Plik chwilowo niedostepny
+                    </Button>
+                  )
                 ) : (
                   <AddToCartButton
                     id={mapped.id}

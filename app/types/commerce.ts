@@ -7,12 +7,18 @@ export type WooProduct = {
     id: number;
     name: string;
     slug: string;
+    downloadable?: boolean;
     short_description?: string;
     description?: string;
     price?: string;
     regular_price?: string;
     sale_price?: string;
     on_sale?: boolean;
+    downloads?: Array<{
+        id?: string;
+        name?: string;
+        file?: string;
+    }>;
     images?: Array<{
         src: string;
         alt?: string;
@@ -57,6 +63,7 @@ export type ShopProduct = {
     tags: string[];
     level?: string;
     gallery: { src: string; label: string }[];
+    freeDownloadUrl?: string;
     highlights?: string[];
     includes?: string[];
 };
