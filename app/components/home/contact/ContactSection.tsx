@@ -2,7 +2,7 @@
 
 import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
-import StickerField from "../StickerField";
+import StickerField from "../../stickerField/StickerField";
 
 export type ContactValues = {
   name: string;

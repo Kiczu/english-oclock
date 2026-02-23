@@ -1,11 +1,11 @@
 "use client";
 
 import { Box, Container } from "@mui/material";
-import HeroStack from "./components/home/HeroStack";
-import BestSellersSection from "./components/home/BestSellersSection";
-import FreeProductsSection from "./components/home/FreeProductsSection";
-import AboutSection from "./components/home/AboutSection";
-import ContactSection from "./components/home/ContactSection";
+import HeroStack from "./components/home/hero/HeroStack";
+import BestSellersSection from "./components/home/products/BestSellersSection";
+import FreeProductsSection from "./components/home/products/FreeProductsSection";
+import AboutSection from "./components/home/about/AboutSection";
+import ContactSection from "./components/home/contact/ContactSection";
 
 const HomePage = () => {
   return (

@@ -5,6 +5,7 @@ import ProductGallery from "@/app/components/product/ProductGallery";
 import AddToCartButton from "@/app/components/product/AddToCartButton";
 import { getVariant } from "@/app/helpers/productCard";
 import { getShopProductBySlug } from "@/app/lib/shopProducts.server";
+import { productPageStyles } from "./page.styles";
 
 const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
@@ -25,17 +26,10 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
   ];
 
   return (
-    <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8 }}>
+    <Container maxWidth="xl" sx={productPageStyles.container}>
       <Stack spacing={4}>
         <Box>
-          <Button
-            href="/sklep"
-            sx={{
-              fontWeight: 800,
-              fontSize: { xs: "1rem", sm: "1.1rem" },
-              textTransform: "none",
-            }}
-          >
+          <Button href="/sklep" sx={productPageStyles.backButton}>
             {"<- Wroc do sklepu"}
           </Button>
         </Box>
@@ -48,15 +42,15 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
           <Grid size={{ xs: 12, md: 7 }}>
             <Stack spacing={2}>
               <Stack spacing={0.5}>
-                <Typography variant="h3" sx={{ fontWeight: 900, color: "primary.main" }}>
+                <Typography variant="h3" sx={productPageStyles.title}>
                   {mapped.title}
                 </Typography>
-                {mapped.subtitle ? <Typography sx={{ opacity: 0.75 }}>{mapped.subtitle}</Typography> : null}
+                {mapped.subtitle ? <Typography sx={productPageStyles.subtitle}>{mapped.subtitle}</Typography> : null}
               </Stack>
 
-              <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-                {variant === "free" ? <Chip label="FREE" size="small" sx={{ fontWeight: 800 }} /> : null}
-                {variant === "bestseller" ? <Chip label="TOP" size="small" sx={{ fontWeight: 800 }} /> : null}
+              <Stack direction="row" spacing={1} sx={productPageStyles.chipsRow}>
+                {variant === "free" ? <Chip label="FREE" size="small" sx={productPageStyles.badgeChip} /> : null}
+                {variant === "bestseller" ? <Chip label="TOP" size="small" sx={productPageStyles.badgeChip} /> : null}
                 {mapped.level ? <Chip label={`Poziom ${mapped.level}`} size="small" /> : null}
                 {mapped.categories.map((category) => (
                   <Chip key={category} label={category} size="small" />
@@ -66,18 +60,18 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 ))}
               </Stack>
 
-              <Typography variant="h4" sx={{ fontWeight: 900, color: "secondary.main" }}>
+              <Typography variant="h4" sx={productPageStyles.price}>
                 {priceLabel}
               </Typography>
 
-              <Typography sx={{ opacity: 0.85 }}>
+              <Typography sx={productPageStyles.description}>
                 {mapped.description ??
                   "Praktyczny material do nauki angielskiego. Gotowy do druku i natychmiastowego uzycia."}
               </Typography>
 
-              <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap" }}>
+              <Stack direction="row" spacing={2} sx={productPageStyles.actionsRow}>
                 {mapped.isFree ? (
-                  <Button variant="contained" color="secondary" sx={{ px: 4, fontWeight: 900, color: "#fff" }}>
+                  <Button variant="contained" color="secondary" sx={productPageStyles.freeActionButton}>
                     {ctaLabel}
                   </Button>
                 ) : (
@@ -97,7 +91,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 </Button>
               </Stack>
 
-              <Divider sx={{ my: 1 }} />
+              <Divider sx={productPageStyles.divider} />
 
               <Stack spacing={1}>
                 {highlights.map((item) => (

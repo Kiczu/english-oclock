@@ -16,8 +16,8 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
-import { colors } from "@/app/theme/colors";
 import type { CartItem } from "@/app/context/CartContext";
+import { cartDrawerStyles } from "./CartDrawer.styles";
 
 type CartDrawerProps = {
   open: boolean;
@@ -103,27 +103,10 @@ const CartDrawer = ({
       open={open}
       onClose={onClose}
       ModalProps={{ disableScrollLock: true }}
-      sx={{
-        "& .MuiDrawer-paper": {
-          width: { xs: "100%", sm: 420 },
-          maxWidth: "100vw",
-          bgcolor: colors.stickerBackground,
-          display: "flex",
-        },
-      }}
+      sx={cartDrawerStyles.drawer}
     >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          p: 2,
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{ color: "primary.main", fontWeight: 900, letterSpacing: "0.03em" }}
-        >
+      <Box sx={cartDrawerStyles.headerRow}>
+        <Typography variant="h6" sx={cartDrawerStyles.title}>
           Koszyk ({totalItems})
         </Typography>
         <IconButton aria-label="Zamknij koszyk" onClick={onClose}>
@@ -134,60 +117,39 @@ const CartDrawer = ({
       <Divider />
 
       {items.length === 0 ? (
-        <Box sx={{ p: 3, display: "grid", gap: 2 }}>
-          <Typography sx={{ color: "primary.main", fontWeight: 700 }}>
-            Twoj koszyk jest pusty.
-          </Typography>
+        <Box sx={cartDrawerStyles.emptyState}>
+          <Typography sx={cartDrawerStyles.emptyTitle}>Twoj koszyk jest pusty.</Typography>
           <Button
             component={Link}
             href="/sklep"
             variant="contained"
             onClick={onClose}
-            sx={{ alignSelf: "start", px: 2.5, py: 1 }}
+            sx={cartDrawerStyles.emptyButton}
           >
             Przejdz do sklepu
           </Button>
         </Box>
       ) : (
         <>
-          <List sx={{ p: 0 }}>
+          <List sx={cartDrawerStyles.list}>
             {items.map((item) => (
-              <Box
-                key={item.id}
-                sx={{
-                  px: 2,
-                  py: 1.5,
-                  borderBottom: "1px dashed rgba(55,67,135,0.24)",
-                }}
-              >
+              <Box key={item.id} sx={cartDrawerStyles.item}>
                 <Stack direction="row" justifyContent="space-between" gap={1.5}>
-                  <Box sx={{ minWidth: 0 }}>
+                  <Box sx={cartDrawerStyles.itemContent}>
                     <Typography
                       component={Link}
                       href={`/sklep/${item.slug}`}
                       onClick={onClose}
-                      sx={{
-                        textDecoration: "none",
-                        color: "primary.main",
-                        fontWeight: 800,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                      }}
+                      sx={cartDrawerStyles.itemLink}
                     >
                       {item.title}
                     </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    <Typography variant="body2" sx={cartDrawerStyles.itemPrice}>
                       {item.priceLabel}
                     </Typography>
                   </Box>
-                  <IconButton
-                    aria-label="Usun z koszyka"
-                    onClick={() => onRemoveItem(item.id)}
-                    size="small"
-                  >
-                    <DeleteOutlineRoundedIcon sx={{ color: "primary.main" }} />
+                  <IconButton aria-label="Usun z koszyka" onClick={() => onRemoveItem(item.id)} size="small">
+                    <DeleteOutlineRoundedIcon sx={cartDrawerStyles.deleteIcon} />
                   </IconButton>
                 </Stack>
 
@@ -195,7 +157,7 @@ const CartDrawer = ({
                   direction="row"
                   justifyContent="space-between"
                   alignItems="center"
-                  sx={{ mt: 1.25 }}
+                  sx={cartDrawerStyles.quantityRow}
                 >
                   <Stack direction="row" alignItems="center" spacing={0.5}>
                     <IconButton
@@ -205,9 +167,7 @@ const CartDrawer = ({
                     >
                       <RemoveRoundedIcon fontSize="small" color="primary" />
                     </IconButton>
-                    <Typography sx={{ minWidth: 20, textAlign: "center", fontWeight: 700 }}>
-                      {item.quantity}
-                    </Typography>
+                    <Typography sx={cartDrawerStyles.quantityValue}>{item.quantity}</Typography>
                     <IconButton
                       aria-label="Zwieksz ilosc"
                       onClick={() => onIncrementItem(item.id)}
@@ -221,24 +181,27 @@ const CartDrawer = ({
             ))}
           </List>
 
-          <Box sx={{ p: 2, mt: "auto" }}>
-            <Divider sx={{ mb: 2 }} />
-            <Stack direction="row" justifyContent="space-between" sx={{ mb: 2 }}>
-              <Typography sx={{ fontWeight: 700, color: "primary.main" }}>Razem</Typography>
-              <Typography sx={{ fontWeight: 900, color: "primary.main" }}>
-                {totalAmountLabel}
-              </Typography>
+          <Box sx={cartDrawerStyles.footerBox}>
+            <Divider sx={cartDrawerStyles.footerDivider} />
+            <Stack direction="row" justifyContent="space-between" sx={cartDrawerStyles.totalRow}>
+              <Typography sx={cartDrawerStyles.totalLabel}>Razem</Typography>
+              <Typography sx={cartDrawerStyles.totalValue}>{totalAmountLabel}</Typography>
             </Stack>
             <Stack direction="row" spacing={1}>
-              <Button variant="outlined" onClick={onClear} sx={{ flex: 1 }}>
+              <Button variant="outlined" onClick={onClear} sx={cartDrawerStyles.actionButton}>
                 Wyczysc
               </Button>
-              <Button variant="contained" onClick={handleCheckout} sx={{ flex: 1 }} disabled={checkoutPending}>
+              <Button
+                variant="contained"
+                onClick={handleCheckout}
+                sx={cartDrawerStyles.actionButton}
+                disabled={checkoutPending}
+              >
                 {checkoutPending ? "Przetwarzanie..." : "Do kasy"}
               </Button>
             </Stack>
             {checkoutError ? (
-              <Typography variant="body2" sx={{ mt: 1.5, color: "error.main" }}>
+              <Typography variant="body2" sx={cartDrawerStyles.checkoutError}>
                 {checkoutError}
               </Typography>
             ) : null}

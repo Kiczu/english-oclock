@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Box } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
+import { layoutShellStyles } from "./LayoutShell.styles";
 
 const LayoutShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -25,9 +26,9 @@ const LayoutShell = ({ children }: { children: React.ReactNode }) => {
   }, [isHome]);
 
   return (
-    <Box sx={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+    <Box sx={layoutShellStyles.shell}>
       <Header hidden={hideHeader} />
-      <Box component="main" sx={{ flex: 1, minHeight: 0 }}>
+      <Box component="main" sx={layoutShellStyles.main}>
         {children}
       </Box>
       <Footer />
