@@ -127,7 +127,11 @@ export const toShopProduct = (product: WooProduct): ShopProduct => {
     "free_pdf_url",
     "download_url",
   ]);
-  const freeDownloadUrl = downloadFromMeta || downloadFromWoo;
+  const safeDownloadFromMeta =
+    downloadFromMeta && !isLikelyProtectedWooDownloadUrl(downloadFromMeta)
+      ? downloadFromMeta
+      : undefined;
+  const freeDownloadUrl = safeDownloadFromMeta || downloadFromWoo;
 
   return {
     id: String(product.id),
