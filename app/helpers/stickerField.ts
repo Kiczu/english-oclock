@@ -1,3 +1,5 @@
+import { roughFrameA, roughFrameB } from "./productCard";
+
 const withStrokeWidth = (encodedSvg: string, width: number) => {
   const svg = decodeURIComponent(encodedSvg);
   const patched = svg.replace(
@@ -5,6 +7,19 @@ const withStrokeWidth = (encodedSvg: string, width: number) => {
     `stroke-width="${width}"`
   );
   return encodeURIComponent(patched);
+};
+
+const withNonScalingStroke = (encodedSvg: string, width: number) => {
+  const svg = decodeURIComponent(encodedSvg);
+  const patchedWidth = svg.replace(
+    /stroke-width="[^"]*"/g,
+    `stroke-width="${width}"`
+  );
+  const withVectorEffect = patchedWidth.replace(
+    /<path\s+/g,
+    '<path vector-effect="non-scaling-stroke" '
+  );
+  return encodeURIComponent(withVectorEffect);
 };
 
 export const roughInputWideA = encodeURIComponent(`
@@ -132,3 +147,6 @@ export const roughInputWideA_Thick = withStrokeWidth(roughInputWideA, 12);
 export const roughInputWideB_Thick = withStrokeWidth(roughInputWideB, 12);
 export const roughTextareaWideA_Thick = withStrokeWidth(roughTextareaWideA, 12);
 export const roughTextareaWideB_Thick = withStrokeWidth(roughTextareaWideB, 12);
+
+export const roughInputMobileFrameA = withNonScalingStroke(roughFrameA, 8);
+export const roughInputMobileFrameB = withNonScalingStroke(roughFrameB, 8);

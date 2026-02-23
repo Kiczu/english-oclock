@@ -2,6 +2,8 @@
 
 import { Box, InputBase, Typography } from "@mui/material";
 import {
+  roughInputMobileFrameA,
+  roughInputMobileFrameB,
   roughInputWideA_Thick,
   roughInputWideB_Thick,
   roughTextareaWideA_Thick,
@@ -54,17 +56,19 @@ const StickerField = ({
     : useA
       ? roughInputWideA_Thick
       : roughInputWideB_Thick;
+  const mobileFrame = useA ? roughInputMobileFrameA : roughInputMobileFrameB;
 
   const describedBy = `${id}-error`;
 
   return (
     <Box sx={stickerFieldStyles.root}>
-      <Box sx={stickerFieldStyles.frameBox(Boolean(multiline), frame)}>
+      <Box sx={stickerFieldStyles.frameBox(Boolean(multiline), frame, mobileFrame)}>
         <Box sx={stickerFieldStyles.inputWrap(Boolean(multiline))}>
           <InputBase
             value={value}
             multiline={multiline}
             minRows={multiline ? minRows : undefined}
+            maxRows={multiline ? minRows : undefined}
             placeholder={placeholder}
             onChange={(e) => onChange(name, e.target.value)}
             onBlur={() => onBlur?.(name)}
