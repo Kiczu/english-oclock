@@ -35,7 +35,7 @@ const ShopPage = () => {
 
   const [products, setProducts] = useState<ShopProduct[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
-  const [source, setSource] = useState<"mock" | "woo" | null>(null);
+  const [source, setSource] = useState<"woo" | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<ShopFilters>(() => ({
@@ -155,8 +155,12 @@ const ShopPage = () => {
 
       {!loading && !error && filteredProducts.length === 0 ? (
         <ShopStateNotice
-          title="Brak produktow dla wybranych filtrow."
-          description="Sprobuj zmienic poziom lub usunac czesc filtrow."
+          title={filtersActive ? "Brak produktow dla wybranych filtrow." : "Brak produktow."}
+          description={
+            filtersActive
+              ? "Sprobuj zmienic poziom lub usunac czesc filtrow."
+              : "Nie znaleziono produktow w WooCommerce."
+          }
         />
       ) : null}
 

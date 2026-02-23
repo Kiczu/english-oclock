@@ -20,7 +20,7 @@ type ShopFiltersPanelProps = {
   filters: ShopFilters;
   options: ShopFilterOptions;
   resultsCount: number;
-  source: "mock" | "woo" | null;
+  source: "woo" | null;
   hasActiveFilters: boolean;
   onQueryChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
@@ -160,7 +160,7 @@ const ShopFiltersPanel = ({
               sx={shopFiltersPanelStyles.sourceStack}
             >
               <Typography variant="body2" sx={shopFiltersPanelStyles.sourceLabel}>
-                Zrodlo danych: {source === "woo" ? "WooCommerce" : "mock"}
+                Zrodlo danych: WooCommerce
               </Typography>
             </Stack>
           ) : null}

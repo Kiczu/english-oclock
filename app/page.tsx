@@ -7,7 +7,7 @@ import ContactSection from "./components/home/contact/ContactSection";
 import { getShopProducts } from "@/app/lib/shopProducts.server";
 
 const HomePage = async () => {
-  const { items } = await getShopProducts({ source: "auto", all: true, perPage: 100 });
+  const { items } = await getShopProducts({ all: true, perPage: 100 });
   const freeProducts = items.filter((product) => product.isFree);
   const bestsellerProducts = items.filter((product) => product.isBestseller);
 
