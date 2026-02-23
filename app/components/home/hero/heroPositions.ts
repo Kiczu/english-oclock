@@ -74,9 +74,9 @@ export const heroLayout = {
 
     decor: {
         flag: {
-            left: { xs: -180, md: -150, lg: -100, xl: -100 },
-            top: { xs: -70, md: -70, lg: -50, xl: -50 },
-            width: { xs: 400, md: 420, lg: 400, xl: 580 },
+            left: { xs: -150, sm: -165, md: -150, lg: -100, xl: -100 },
+            top: { xs: -108, sm: -84, md: -70, lg: -50, xl: -50 },
+            width: { xs: 332, sm: 370, md: 420, lg: 400, xl: 580 },
             zIndex: 3,
         },
         ben: {
@@ -86,9 +86,9 @@ export const heroLayout = {
             zIndex: 4,
         },
         crown: {
-            right: { xs: 10, md: 150, lg: 450, xl: 520 },
-            top: { xs: 100, md: 50, lg: 40, xl: 30 },
-            width: { xs: 130, md: 130, lg: 130, xl: 200 },
+            right: { xs: 14, sm: 12, md: 150, lg: 450, xl: 520 },
+            top: { xs: 74, sm: 90, md: 50, lg: 40, xl: 30 },
+            width: { xs: 116, sm: 124, md: 130, lg: 130, xl: 200 },
             zIndex: 5,
         },
         arrowDecor: {

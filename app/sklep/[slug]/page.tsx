@@ -5,6 +5,7 @@ import ProductGallery from "@/app/components/product/ProductGallery";
 import AddToCartButton from "@/app/components/product/AddToCartButton";
 import { getVariant } from "@/app/helpers/productCard";
 import { getShopProductBySlug } from "@/app/lib/shopProducts.server";
+import { productPageStyles } from "./page.styles";
 
 const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
@@ -15,70 +16,79 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
 
   const priceLabel = mapped.priceLabel;
   const ctaLabel = mapped.isFree ? "Pobierz za darmo" : "Do koszyka";
-  const secondaryHref = mapped.isFree ? "/free" : "/sklep";
+  const secondaryHref = mapped.isFree ? "/sklep?price=free" : "/sklep";
   const secondaryLabel = mapped.isFree ? "Zobacz darmowe" : "Wroc do sklepu";
+  const freeDownloadHref = `/api/free-download?slug=${encodeURIComponent(mapped.slug)}`;
+  const isFreeDownloadAvailable = mapped.isFree && Boolean(mapped.freeDownloadUrl);
 
   const highlights = mapped.highlights ?? [
     mapped.level ? `Poziom ${mapped.level}` : "Rozne poziomy",
-    mapped.format ?? "PDF do druku",
+    "Material cyfrowy",
     mapped.isFree ? "Darmowy dostep" : "Natychmiastowy dostep",
   ];
 
   return (
-    <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8 }}>
+    <Container maxWidth="xl" sx={productPageStyles.container}>
       <Stack spacing={4}>
         <Box>
-          <Button
-            href="/sklep"
-            sx={{
-              fontWeight: 800,
-              fontSize: { xs: "1rem", sm: "1.1rem" },
-              textTransform: "none",
-            }}
-          >
+          <Button href="/sklep" sx={productPageStyles.backButton}>
             {"<- Wroc do sklepu"}
           </Button>
         </Box>
 
         <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, md: 5 }}>
             <ProductGallery items={mapped.gallery} title={mapped.title} />
           </Grid>
 
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, md: 7 }}>
             <Stack spacing={2}>
               <Stack spacing={0.5}>
-                <Typography variant="h3" sx={{ fontWeight: 900, color: "primary.main" }}>
+                <Typography variant="h3" sx={productPageStyles.title}>
                   {mapped.title}
                 </Typography>
-                {mapped.subtitle ? <Typography sx={{ opacity: 0.75 }}>{mapped.subtitle}</Typography> : null}
+                {mapped.subtitle ? <Typography sx={productPageStyles.subtitle}>{mapped.subtitle}</Typography> : null}
               </Stack>
 
-              <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-                {variant === "free" ? <Chip label="FREE" size="small" sx={{ fontWeight: 800 }} /> : null}
-                {variant === "bestseller" ? <Chip label="TOP" size="small" sx={{ fontWeight: 800 }} /> : null}
+              <Stack direction="row" spacing={1} sx={productPageStyles.chipsRow}>
+                {variant === "free" ? <Chip label="FREE" size="small" sx={productPageStyles.badgeChip} /> : null}
+                {variant === "bestseller" ? <Chip label="TOP" size="small" sx={productPageStyles.badgeChip} /> : null}
                 {mapped.level ? <Chip label={`Poziom ${mapped.level}`} size="small" /> : null}
-                {mapped.format ? <Chip label={mapped.format} size="small" /> : null}
-                {mapped.category ? <Chip label={mapped.category} size="small" /> : null}
+                {mapped.categories.map((category) => (
+                  <Chip key={category} label={category} size="small" />
+                ))}
                 {topics.map((t) => (
                   <Chip key={t} label={t} size="small" />
                 ))}
               </Stack>
 
-              <Typography variant="h4" sx={{ fontWeight: 900, color: "secondary.main" }}>
+              <Typography variant="h4" sx={productPageStyles.price}>
                 {priceLabel}
               </Typography>
 
-              <Typography sx={{ opacity: 0.85 }}>
+              <Typography sx={productPageStyles.description}>
                 {mapped.description ??
                   "Praktyczny material do nauki angielskiego. Gotowy do druku i natychmiastowego uzycia."}
               </Typography>
 
-              <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap" }}>
+              <Stack direction="row" spacing={{ xs: 1.25, sm: 2 }} useFlexGap sx={productPageStyles.actionsRow}>
                 {mapped.isFree ? (
-                  <Button variant="contained" color="secondary" sx={{ px: 4, fontWeight: 900, color: "#fff" }}>
-                    {ctaLabel}
-                  </Button>
+                  isFreeDownloadAvailable ? (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      href={freeDownloadHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={productPageStyles.freeActionButton}
+                    >
+                      {ctaLabel}
+                    </Button>
+                  ) : (
+                    <Button variant="contained" color="secondary" disabled sx={productPageStyles.freeActionButton}>
+                      Plik chwilowo niedostepny
+                    </Button>
+                  )
                 ) : (
                   <AddToCartButton
                     id={mapped.id}
@@ -96,7 +106,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 </Button>
               </Stack>
 
-              <Divider sx={{ my: 1 }} />
+              <Divider sx={productPageStyles.divider} />
 
               <Stack spacing={1}>
                 {highlights.map((item) => (

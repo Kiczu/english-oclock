@@ -36,7 +36,7 @@ const AddToCartButton = ({
       variant="contained"
       color="secondary"
       onClick={handleClick}
-      sx={{ px: 4, fontWeight: 900, color: "#fff" }}
+      sx={{ px: 4.4, minHeight: 46 }}
     >
       {label}
     </Button>

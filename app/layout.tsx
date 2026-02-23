@@ -1,11 +1,15 @@
+import type { Metadata } from "next";
 import LayoutShell from "./components/layout/LayoutShell";
 import { CartProvider } from "./context/CartContext";
 import { merriweather, raleway } from "./lib/fonts";
 import ThemeRegistry from "./theme/ThemeRegistry";
 
-export const metadata = {
-  title: "English o'clock",
-  description: "Materiały do angielskiego A1–C2",
+export const metadata: Metadata = {
+  title: {
+    default: "It's English O'Clock",
+    template: "%s | It's English O'Clock",
+  },
+  description: "Materialy do angielskiego A1-C2",
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {

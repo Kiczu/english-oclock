@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Stack, Typography } from "@mui/material";
 import { useCart } from "@/app/context/CartContext";
 import type { ShopProduct } from "@/app/types/commerce";
 import ShopFiltersPanel from "./components/ShopFiltersPanel";
 import ShopProductsGrid from "./components/ShopProductsGrid";
+import ShopProductsSkeleton from "./components/ShopProductsSkeleton";
 import ShopStateNotice from "./components/ShopStateNotice";
 import {
   defaultFilters,
@@ -16,21 +17,31 @@ import {
 } from "./helpers/filters";
 import { fetchShopProducts } from "./services/fetchShopProducts";
 import type { ShopFilters } from "./types";
+import { shopPageStyles } from "./page.styles";
 
 const toErrorMessage = (error: unknown) => {
   if (error instanceof Error) return error.message;
   return "Nie udalo sie pobrac listy produktow.";
 };
 
-const ShopPage = () => {
+const toPriceFilterFromQuery = (value: string | null): ShopFilters["price"] => {
+  if (value === "free" || value === "paid") return value;
+  return "all";
+};
+
+const ShopPageContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { addItem, openCart } = useCart();
 
   const [products, setProducts] = useState<ShopProduct[]>([]);
-  const [source, setSource] = useState<"mock" | "woo" | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<ShopFilters>(() => defaultFilters());
+  const [filters, setFilters] = useState<ShopFilters>(() => ({
+    ...defaultFilters(),
+    price: toPriceFilterFromQuery(searchParams.get("price")),
+  }));
 
   useEffect(() => {
     const controller = new AbortController();
@@ -42,11 +53,11 @@ const ShopPage = () => {
       try {
         const payload = await fetchShopProducts(controller.signal);
         setProducts(payload.items ?? []);
-        setSource(payload.source ?? null);
+        setCategories(payload.categories ?? []);
       } catch (loadError) {
         if (controller.signal.aborted) return;
         setProducts([]);
-        setSource(null);
+        setCategories([]);
         setError(toErrorMessage(loadError));
       } finally {
         if (!controller.signal.aborted) {
@@ -60,7 +71,22 @@ const ShopPage = () => {
     return () => controller.abort();
   }, []);
 
-  const options = useMemo(() => getFilterOptions(products), [products]);
+  useEffect(() => {
+    const nextPrice = toPriceFilterFromQuery(searchParams.get("price"));
+    setFilters((prev) =>
+      prev.price === nextPrice
+        ? prev
+        : {
+            ...prev,
+            price: nextPrice,
+          },
+    );
+  }, [searchParams]);
+
+  const options = useMemo(
+    () => getFilterOptions(products, categories),
+    [products, categories],
+  );
   const filteredProducts = useMemo(
     () => filterProducts(products, filters),
     [products, filters],
@@ -92,16 +118,13 @@ const ShopPage = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ pt: { xs: 14, md: 16 }, pb: 7 }}>
-      <Stack spacing={1.5} sx={{ mb: 4 }}>
-        <Typography
-          variant="h2"
-          sx={{ fontWeight: 900, color: "primary.main" }}
-        >
+    <Container maxWidth="xl" sx={shopPageStyles.container}>
+      <Stack spacing={1.5} sx={shopPageStyles.headingStack}>
+        <Typography variant="h2" sx={shopPageStyles.title}>
           Sklep
         </Typography>
-        <Typography sx={{ opacity: 0.8, maxWidth: 720 }}>
-          Wybierz materialy po temacie, poziomie i formacie. Mozesz szybko
+        <Typography sx={shopPageStyles.subtitle}>
+          Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
           przefiltrowac darmowe lub platne produkty.
         </Typography>
       </Stack>
@@ -110,17 +133,15 @@ const ShopPage = () => {
         filters={filters}
         options={options}
         resultsCount={filteredProducts.length}
-        source={source}
         hasActiveFilters={filtersActive}
         onQueryChange={(value) => updateFilters({ query: value })}
         onCategoryChange={(value) => updateFilters({ category: value })}
         onLevelChange={(value) => updateFilters({ level: value })}
-        onFormatChange={(value) => updateFilters({ format: value })}
         onPriceChange={(value) => updateFilters({ price: value })}
         onClear={clearFilters}
       />
 
-      {loading ? <ShopStateNotice title="Ladowanie produktow..." /> : null}
+      {loading ? <ShopProductsSkeleton count={9} /> : null}
 
       {!loading && error ? (
         <ShopStateNotice
@@ -131,8 +152,12 @@ const ShopPage = () => {
 
       {!loading && !error && filteredProducts.length === 0 ? (
         <ShopStateNotice
-          title="Brak produktow dla wybranych filtrow."
-          description="Sprobuj zmienic poziom lub usunac czesc filtrow."
+          title={filtersActive ? "Brak produktow dla wybranych filtrow." : "Brak produktow."}
+          description={
+            filtersActive
+              ? "Sprobuj zmienic poziom lub usunac czesc filtrow."
+              : "Nie znaleziono produktow w WooCommerce."
+          }
         />
       ) : null}
 
@@ -145,5 +170,26 @@ const ShopPage = () => {
     </Container>
   );
 };
+
+const ShopPageFallback = () => (
+  <Container maxWidth="xl" sx={shopPageStyles.container}>
+    <Stack spacing={1.5} sx={shopPageStyles.headingStack}>
+      <Typography variant="h2" sx={shopPageStyles.title}>
+        Sklep
+      </Typography>
+      <Typography sx={shopPageStyles.subtitle}>
+        Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
+        przefiltrowac darmowe lub platne produkty.
+      </Typography>
+    </Stack>
+    <ShopProductsSkeleton count={9} />
+  </Container>
+);
+
+const ShopPage = () => (
+  <Suspense fallback={<ShopPageFallback />}>
+    <ShopPageContent />
+  </Suspense>
+);
 
 export default ShopPage;

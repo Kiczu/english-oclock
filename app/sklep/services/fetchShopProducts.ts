@@ -1,4 +1,4 @@
-import type { ShopProduct, ShopProductsResponseDTO } from "@/app/types/commerce";
+import type { ShopProductsResponseDTO } from "@/app/types/commerce";
 
 const toErrorMessage = async (response: Response) => {
   const payload = (await response.json().catch(() => null)) as { error?: string } | null;
@@ -17,11 +17,11 @@ export const fetchShopProducts = async (
     throw new Error(await toErrorMessage(response));
   }
 
-  const payload = (await response.json()) as ShopProductsResponseDTO | ShopProduct[];
+  const payload = (await response.json()) as ShopProductsResponseDTO;
 
-  if (Array.isArray(payload)) {
-    return { source: "mock", items: payload };
-  }
-
-  return { source: payload.source, items: payload.items ?? [] };
+  return {
+    source: payload.source,
+    items: payload.items ?? [],
+    categories: payload.categories ?? [],
+  };
 };

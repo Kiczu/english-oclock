@@ -19,7 +19,7 @@ export function clamp(n: number, min: number, max: number) {
 }
 
 export const roughFrameA = encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" preserveAspectRatio="none">
   <path d="M20 18
            C60 6, 120 8, 150 12
            C190 18, 260 8, 282 22
@@ -35,7 +35,7 @@ export const roughFrameA = encodeURIComponent(`
 `);
 
 export const roughFrameB = encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" preserveAspectRatio="none">
   <path d="M26 20
            C58 10, 112 4, 150 12
            C196 22, 252 6, 280 26

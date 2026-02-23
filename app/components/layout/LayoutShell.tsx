@@ -2,8 +2,10 @@
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
+import { Box } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
+import { layoutShellStyles } from "./LayoutShell.styles";
 
 const LayoutShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -24,11 +26,13 @@ const LayoutShell = ({ children }: { children: React.ReactNode }) => {
   }, [isHome]);
 
   return (
-    <>
+    <Box sx={layoutShellStyles.shell}>
       <Header hidden={hideHeader} />
-      {children}
+      <Box component="main" sx={layoutShellStyles.main}>
+        {children}
+      </Box>
       <Footer />
-    </>
+    </Box>
   );
 };
 

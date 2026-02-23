@@ -7,19 +7,27 @@ export type WooProduct = {
     id: number;
     name: string;
     slug: string;
+    downloadable?: boolean;
     short_description?: string;
     description?: string;
     price?: string;
     regular_price?: string;
     sale_price?: string;
     on_sale?: boolean;
+    downloads?: Array<{
+        id?: string;
+        name?: string;
+        file?: string;
+    }>;
     images?: Array<{
         src: string;
         alt?: string;
         name?: string;
     }>;
     categories?: Array<{
+        id?: number;
         name: string;
+        slug?: string;
     }>;
     tags?: Array<{
         name: string;
@@ -34,6 +42,12 @@ export type WooProduct = {
     }>;
 };
 
+export type WooProductCategory = {
+    id: number;
+    name: string;
+    slug?: string;
+};
+
 export type ShopProduct = {
     id: string;
     wooProductId: number;
@@ -45,11 +59,11 @@ export type ShopProduct = {
     priceLabel: string;
     isFree: boolean;
     isBestseller?: boolean;
-    category?: string;
+    categories: string[];
     tags: string[];
     level?: string;
-    format?: string;
     gallery: { src: string; label: string }[];
+    freeDownloadUrl?: string;
     highlights?: string[];
     includes?: string[];
 };
@@ -57,7 +71,8 @@ export type ShopProduct = {
 export type ProductPageData = ShopProduct;
 
 export type ShopProductsResponseDTO = {
-    source: "mock" | "woo";
+    source: "woo";
     items: ShopProduct[];
+    categories?: string[];
 };
 

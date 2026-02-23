@@ -13,19 +13,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { colors } from "@/app/theme/colors";
 import type { ShopFilterOptions, ShopFilters } from "../types";
+import { shopFiltersPanelStyles } from "./ShopFiltersPanel.styles";
 
 type ShopFiltersPanelProps = {
   filters: ShopFilters;
   options: ShopFilterOptions;
   resultsCount: number;
-  source: "mock" | "woo" | null;
   hasActiveFilters: boolean;
   onQueryChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
   onLevelChange: (value: string) => void;
-  onFormatChange: (value: string) => void;
   onPriceChange: (value: ShopFilters["price"]) => void;
   onClear: () => void;
 };
@@ -36,24 +34,16 @@ const ShopFiltersPanel = ({
   filters,
   options,
   resultsCount,
-  source,
   hasActiveFilters,
   onQueryChange,
   onCategoryChange,
   onLevelChange,
-  onFormatChange,
   onPriceChange,
   onClear,
 }: ShopFiltersPanelProps) => {
   return (
     <Box
-      sx={{
-        p: { xs: 2, md: 2.5 },
-        borderRadius: 3,
-        border: "1px solid rgba(55,67,135,0.22)",
-        bgcolor: colors.stickerBackground,
-        mb: 4,
-      }}
+      sx={shopFiltersPanelStyles.panel}
     >
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
@@ -115,32 +105,15 @@ const ShopFiltersPanel = ({
           </FormControl>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, lg: 2 }}>
-          <FormControl fullWidth>
-            <InputLabel id="shop-format-label">Format</InputLabel>
-            <Select
-              MenuProps={selectMenuProps}
-              labelId="shop-format-label"
-              label="Format"
-              value={filters.format}
-              onChange={(event) => onFormatChange(event.target.value)}
-            >
-              <MenuItem value="all">Wszystkie</MenuItem>
-              {options.formats.map((item) => (
-                <MenuItem key={item} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, lg: 2 }}>
+        <Grid
+          size={{ xs: 12, sm: 6, lg: 4 }}
+          sx={shopFiltersPanelStyles.priceFilterGridItem}
+        >
           <Stack
             direction="row"
             spacing={1.5}
             useFlexGap
-            sx={{ height: "100%", alignItems: "center", flexWrap: "wrap" }}
+            sx={shopFiltersPanelStyles.priceFilterStack}
           >
             <Chip
               label="Wszystkie"
@@ -168,34 +141,24 @@ const ShopFiltersPanel = ({
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ mt: 2, gap: 1, flexWrap: "wrap" }}
+        sx={shopFiltersPanelStyles.summaryRow}
       >
-        <Stack
-          direction="row"
-          spacing={1.5}
-          sx={{ alignItems: "center", flexWrap: "wrap" }}
-        >
-          <Typography sx={{ fontWeight: 700, color: "primary.main" }}>
+        <Stack direction="row" spacing={1.5} sx={shopFiltersPanelStyles.summaryLeftStack}>
+          <Typography sx={shopFiltersPanelStyles.resultsLabel}>
             Wyniki: {resultsCount}
           </Typography>
-          {source ? (
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{ alignItems: "center", flexWrap: "wrap" }}
-            >
-              <Typography variant="body2" sx={{ opacity: 0.75 }}>
-                Zrodlo danych: {source === "woo" ? "WooCommerce" : "mock"}
-              </Typography>
-            </Stack>
-          ) : null}
         </Stack>
 
-        {hasActiveFilters ? (
-          <Button variant="text" onClick={onClear} sx={{ fontWeight: 800 }}>
-            Wyczysc filtry
-          </Button>
-        ) : null}
+        <Button
+          variant="text"
+          onClick={onClear}
+          sx={[
+            shopFiltersPanelStyles.clearButton,
+            !hasActiveFilters && shopFiltersPanelStyles.clearButtonHidden,
+          ]}
+        >
+          Wyczysc filtry
+        </Button>
       </Stack>
     </Box>
   );

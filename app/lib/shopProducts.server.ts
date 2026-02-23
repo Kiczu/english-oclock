@@ -1,38 +1,31 @@
 import "server-only";
 
-import { toShopProduct } from "@/app/helpers/shopProduct";
-import { productsMock } from "@/app/lib/product.mock";
+import { isShopCategoryVisible, toShopProduct } from "@/app/helpers/shopProduct";
 import wooFetch from "@/app/lib/woo";
 import { WC_ENABLED } from "@/app/lib/env";
-import type { ShopProduct, WooProduct } from "@/app/types/commerce";
-
-type ShopSourceMode = "auto" | "woo" | "mock";
-type ShopResolvedSource = "woo" | "mock";
+import type {
+  ShopProduct,
+  WooProduct,
+  WooProductCategory,
+} from "@/app/types/commerce";
 
 type GetShopProductsOptions = {
-  source?: ShopSourceMode;
   page?: number;
   perPage?: number;
   all?: boolean;
 };
 
 type ShopProductsResult = {
-  source: ShopResolvedSource;
+  source: "woo";
   items: ShopProduct[];
+  categories: string[];
 };
 
 const clampPositiveInt = (value: number, min: number, max: number) =>
   Math.min(Math.max(Number.isFinite(value) ? Math.floor(value) : min, min), max);
 
-const paginate = <T>(items: T[], page: number, perPage: number) => {
-  const from = (page - 1) * perPage;
-  return items.slice(from, from + perPage);
-};
-
-const getMockProducts = (page: number, perPage: number): ShopProductsResult => ({
-  source: "mock",
-  items: paginate(productsMock, page, perPage).map(toShopProduct),
-});
+const sortValues = (values: string[]) =>
+  values.sort((a, b) => a.localeCompare(b, "pl", { sensitivity: "base" }));
 
 const fetchWooProducts = async (page: number, perPage: number): Promise<ShopProduct[]> => {
   const products = await wooFetch<WooProduct[]>(
@@ -67,6 +60,42 @@ const fetchAllWooProducts = async (perPage: number): Promise<ShopProduct[]> => {
   return items;
 };
 
+const getCategoriesFromItems = (items: ShopProduct[]) =>
+  sortValues(
+    Array.from(
+      new Set(
+        items
+          .flatMap((item) => item.categories)
+          .map((category) => category.trim())
+          .filter(Boolean),
+      ),
+    ),
+  );
+
+const fetchWooCategories = async (): Promise<string[]> => {
+  const names: string[] = [];
+
+  for (let page = 1; page <= 200; page += 1) {
+    const categories = await wooFetch<WooProductCategory[]>(
+      `/wp-json/wc/v3/products/categories?hide_empty=false&per_page=100&page=${page}`,
+      { next: { revalidate: 300 } },
+    );
+
+    names.push(
+      ...categories
+        .filter((category) => isShopCategoryVisible(category))
+        .map((category) => category.name?.trim())
+        .filter((value): value is string => Boolean(value)),
+    );
+
+    if (categories.length < 100) {
+      break;
+    }
+  }
+
+  return sortValues(Array.from(new Set(names)));
+};
+
 const fetchWooProductBySlug = async (slug: string): Promise<ShopProduct | null> => {
   const products = await wooFetch<WooProduct[]>(
     `/wp-json/wc/v3/products?status=publish&slug=${encodeURIComponent(slug)}&per_page=1`,
@@ -76,76 +105,29 @@ const fetchWooProductBySlug = async (slug: string): Promise<ShopProduct | null> 
   return products[0] ? toShopProduct(products[0]) : null;
 };
 
-const getMockProductBySlug = (slug: string): ShopProduct | null => {
-  const product = productsMock.find((item) => item.slug === slug);
-  return product ? toShopProduct(product) : null;
-};
-
 export const getShopProducts = async (
   options: GetShopProductsOptions = {},
 ): Promise<ShopProductsResult> => {
-  const source = options.source ?? "auto";
   const safePage = clampPositiveInt(options.page ?? 1, 1, 9999);
   const safePerPage = clampPositiveInt(options.perPage ?? 24, 1, 100);
   const all = options.all ?? false;
 
-  if (source === "mock") {
-    return all
-      ? { source: "mock", items: productsMock.map(toShopProduct) }
-      : getMockProducts(safePage, safePerPage);
+  if (!WC_ENABLED) {
+    throw new Error("WooCommerce is not configured");
   }
 
-  if (source === "woo") {
-    if (!WC_ENABLED) {
-      throw new Error("WooCommerce is not configured");
-    }
-
-    const items = all
-      ? await fetchAllWooProducts(safePerPage)
-      : await fetchWooProducts(safePage, safePerPage);
-    return { source: "woo", items };
-  }
-
-  if (WC_ENABLED) {
-    try {
-      const items = all
-        ? await fetchAllWooProducts(safePerPage)
-        : await fetchWooProducts(safePage, safePerPage);
-      return { source: "woo", items };
-    } catch {
-      // Auto mode falls back to mock.
-    }
-  }
-
-  return all
-    ? { source: "mock", items: productsMock.map(toShopProduct) }
-    : getMockProducts(safePage, safePerPage);
+  const items = all
+    ? await fetchAllWooProducts(safePerPage)
+    : await fetchWooProducts(safePage, safePerPage);
+  const categories =
+    (await fetchWooCategories().catch(() => null)) ?? getCategoriesFromItems(items);
+  return { source: "woo", items, categories };
 };
 
-export const getShopProductBySlug = async (
-  slug: string,
-  source: ShopSourceMode = "auto",
-): Promise<ShopProduct | null> => {
-  if (source === "mock") {
-    return getMockProductBySlug(slug);
+export const getShopProductBySlug = async (slug: string): Promise<ShopProduct | null> => {
+  if (!WC_ENABLED) {
+    throw new Error("WooCommerce is not configured");
   }
 
-  if (source === "woo") {
-    if (!WC_ENABLED) {
-      throw new Error("WooCommerce is not configured");
-    }
-
-    return fetchWooProductBySlug(slug);
-  }
-
-  if (WC_ENABLED) {
-    try {
-      const wooProduct = await fetchWooProductBySlug(slug);
-      if (wooProduct) return wooProduct;
-    } catch {
-      // Auto mode falls back to mock.
-    }
-  }
-
-  return getMockProductBySlug(slug);
+  return fetchWooProductBySlug(slug);
 };

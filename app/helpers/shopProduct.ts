@@ -29,6 +29,32 @@ const getMetaString = (product: WooProduct, key: string) => {
   return undefined;
 };
 
+const getMetaUrl = (product: WooProduct, keys: string[]) => {
+  for (const key of keys) {
+    const rawValue = product.meta_data?.find((entry) => entry.key === key)?.value;
+    if (typeof rawValue === "string" && rawValue.trim()) return rawValue.trim();
+    if (
+      rawValue &&
+      typeof rawValue === "object" &&
+      "url" in rawValue &&
+      typeof (rawValue as { url?: unknown }).url === "string"
+    ) {
+      return (rawValue as { url: string }).url.trim();
+    }
+  }
+  return undefined;
+};
+
+const isLikelyProtectedWooDownloadUrl = (value: string) =>
+  /(?:[?&](download_file|order|email|key|uid)=)|(?:\/wp-json\/)|(?:\/wc-api\/)|(?:\/woocommerce_uploads\/)|(?:\/wc-uploads\/)|(?:\/protected\/)/i.test(
+    value,
+  );
+
+const pickPublicWooDownloadUrl = (product: WooProduct) =>
+  (product.downloads ?? [])
+    .map((entry) => (typeof entry.file === "string" ? entry.file.trim() : ""))
+    .find((value) => Boolean(value) && !isLikelyProtectedWooDownloadUrl(value));
+
 const parseMetaList = (value?: string) => {
   if (!value) return undefined;
 
@@ -56,6 +82,26 @@ const toTagLabel = (tagName: string) =>
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
 
+const normalizeCategoryValue = (value?: string) =>
+  (value ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+const hiddenCategoryNames = new Set(["bez kategorii", "uncategorized"]);
+const hiddenCategorySlugs = new Set(["bez-kategorii", "uncategorized"]);
+
+export const isShopCategoryVisible = (category: { name?: string; slug?: string }) => {
+  const normalizedName = normalizeCategoryValue(category.name);
+  const normalizedSlug = normalizeCategoryValue(category.slug);
+
+  if (!normalizedName) return false;
+  if (hiddenCategoryNames.has(normalizedName)) return false;
+  if (normalizedSlug && hiddenCategorySlugs.has(normalizedSlug)) return false;
+  return true;
+};
+
 export const toShopProduct = (product: WooProduct): ShopProduct => {
   const preferredPrice = product.on_sale && product.sale_price ? product.sale_price : product.price;
   const fallbackPrice = preferredPrice || product.regular_price || product.sale_price;
@@ -70,6 +116,22 @@ export const toShopProduct = (product: WooProduct): ShopProduct => {
   const tags = (product.tags ?? [])
     .filter((tag) => tag.name.toLowerCase() !== "bestseller")
     .map((tag) => toTagLabel(tag.name));
+  const categories = (product.categories ?? [])
+    .filter((entry) => isShopCategoryVisible(entry))
+    .map((entry) => entry.name?.trim())
+    .filter((value): value is string => Boolean(value));
+  const downloadFromWoo = pickPublicWooDownloadUrl(product);
+  const downloadFromMeta = getMetaUrl(product, [
+    "_free_pdf_url",
+    "_download_url",
+    "free_pdf_url",
+    "download_url",
+  ]);
+  const safeDownloadFromMeta =
+    downloadFromMeta && !isLikelyProtectedWooDownloadUrl(downloadFromMeta)
+      ? downloadFromMeta
+      : undefined;
+  const freeDownloadUrl = safeDownloadFromMeta || downloadFromWoo;
 
   return {
     id: String(product.id),
@@ -82,14 +144,14 @@ export const toShopProduct = (product: WooProduct): ShopProduct => {
     priceLabel: toPriceLabel(price),
     isFree,
     isBestseller,
-    category: product.categories?.[0]?.name,
+    categories: Array.from(new Set(categories)),
     level: pickAttributeValue(product, ["Poziom", "Level"]),
-    format: pickAttributeValue(product, ["Format", "Type"]),
     tags,
+    freeDownloadUrl,
     gallery:
       product.images?.map((image) => ({
         src: image.src,
-        label: image.alt || image.name || "Podglad",
+        label: image.alt || "Podglad",
       })) ?? [],
     highlights: parseMetaList(getMetaString(product, "_highlights")),
     includes: parseMetaList(getMetaString(product, "_includes")),
