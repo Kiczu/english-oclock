@@ -29,6 +29,22 @@ const getMetaString = (product: WooProduct, key: string) => {
   return undefined;
 };
 
+const getMetaUrl = (product: WooProduct, keys: string[]) => {
+  for (const key of keys) {
+    const rawValue = product.meta_data?.find((entry) => entry.key === key)?.value;
+    if (typeof rawValue === "string" && rawValue.trim()) return rawValue.trim();
+    if (
+      rawValue &&
+      typeof rawValue === "object" &&
+      "url" in rawValue &&
+      typeof (rawValue as { url?: unknown }).url === "string"
+    ) {
+      return (rawValue as { url: string }).url.trim();
+    }
+  }
+  return undefined;
+};
+
 const parseMetaList = (value?: string) => {
   if (!value) return undefined;
 
@@ -94,6 +110,14 @@ export const toShopProduct = (product: WooProduct): ShopProduct => {
     .filter((entry) => isShopCategoryVisible(entry))
     .map((entry) => entry.name?.trim())
     .filter((value): value is string => Boolean(value));
+  const downloadFromWoo = product.downloads?.[0]?.file?.trim();
+  const downloadFromMeta = getMetaUrl(product, [
+    "_free_pdf_url",
+    "_download_url",
+    "free_pdf_url",
+    "download_url",
+  ]);
+  const freeDownloadUrl = downloadFromWoo || downloadFromMeta;
 
   return {
     id: String(product.id),
@@ -109,6 +133,7 @@ export const toShopProduct = (product: WooProduct): ShopProduct => {
     categories: Array.from(new Set(categories)),
     level: pickAttributeValue(product, ["Poziom", "Level"]),
     tags,
+    freeDownloadUrl,
     gallery:
       product.images?.map((image) => ({
         src: image.src,
