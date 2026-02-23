@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getShopProductBySlug } from "@/app/lib/shopProducts.server";
+import { WC_BASE_URL } from "@/app/lib/env";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,18 @@ const isHttpUrl = (value: string) => {
   } catch {
     return false;
   }
+};
+
+const toDownloadFileName = (slug: string, url: string) => {
+  try {
+    const parsed = new URL(url);
+    const fromPath = decodeURIComponent(parsed.pathname.split("/").pop() ?? "").trim();
+    if (fromPath) return fromPath;
+  } catch {
+    // Ignore and fallback to slug.
+  }
+
+  return `${slug}.pdf`;
 };
 
 export async function GET(req: Request) {
@@ -56,9 +69,37 @@ export async function GET(req: Request) {
       );
     }
 
-    const response = NextResponse.redirect(product.freeDownloadUrl, 302);
-    response.headers.set("Cache-Control", "no-store");
-    return response;
+    const sourceResponse = await fetch(product.freeDownloadUrl, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/pdf,*/*",
+        ...(WC_BASE_URL ? { Referer: `${WC_BASE_URL}/` } : {}),
+      },
+      redirect: "follow",
+    });
+
+    if (!sourceResponse.ok || !sourceResponse.body) {
+      return NextResponse.json(
+        { error: `Source file request failed (${sourceResponse.status})` },
+        { status: sourceResponse.status || 502 },
+      );
+    }
+
+    const fileName = toDownloadFileName(product.slug, product.freeDownloadUrl);
+    const contentType = sourceResponse.headers.get("content-type") || "application/octet-stream";
+
+    const headers = new Headers();
+    headers.set("Content-Type", contentType);
+    headers.set(
+      "Content-Disposition",
+      `attachment; filename="${fileName.replace(/"/g, "")}"`,
+    );
+    headers.set("Cache-Control", "no-store");
+
+    return new NextResponse(sourceResponse.body, {
+      status: 200,
+      headers,
+    });
   } catch (error) {
     const message = toErrorMessage(error);
     const status = message === "WooCommerce is not configured" ? 503 : 502;
