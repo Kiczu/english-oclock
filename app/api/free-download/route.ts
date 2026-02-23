@@ -16,15 +16,7 @@ const isHttpUrl = (value: string) => {
   }
 };
 
-const toDownloadFileName = (slug: string, url: string) => {
-  try {
-    const parsed = new URL(url);
-    const fromPath = decodeURIComponent(parsed.pathname.split("/").pop() ?? "").trim();
-    if (fromPath) return fromPath;
-  } catch {
-    // Ignore and fallback to slug.
-  }
-
+const toDownloadFileName = (slug: string) => {
   return `${slug}.pdf`;
 };
 
@@ -109,14 +101,14 @@ export async function GET(req: Request) {
       );
     }
 
-    const fileName = toDownloadFileName(product.slug, sourceUrl);
+    const fileName = toDownloadFileName(product.slug);
     const contentType = sourceResponse.headers.get("content-type") || "application/pdf";
 
     const headers = new Headers();
     headers.set("Content-Type", contentType);
     headers.set(
       "Content-Disposition",
-      `inline; filename="${fileName.replace(/"/g, "")}"`,
+      `inline; filename="${fileName.replace(/"/g, "")}"; filename*=UTF-8''${encodeURIComponent(fileName)}`,
     );
     headers.set("Cache-Control", "no-store");
     headers.set("X-Robots-Tag", "noindex, nofollow");
