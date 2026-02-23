@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Stack, Typography } from "@mui/material";
 import { useCart } from "@/app/context/CartContext";
@@ -29,7 +29,7 @@ const toPriceFilterFromQuery = (value: string | null): ShopFilters["price"] => {
   return "all";
 };
 
-const ShopPage = () => {
+const ShopPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { addItem, openCart } = useCart();
@@ -174,5 +174,26 @@ const ShopPage = () => {
     </Container>
   );
 };
+
+const ShopPageFallback = () => (
+  <Container maxWidth="xl" sx={shopPageStyles.container}>
+    <Stack spacing={1.5} sx={shopPageStyles.headingStack}>
+      <Typography variant="h2" sx={shopPageStyles.title}>
+        Sklep
+      </Typography>
+      <Typography sx={shopPageStyles.subtitle}>
+        Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
+        przefiltrowac darmowe lub platne produkty.
+      </Typography>
+    </Stack>
+    <ShopProductsSkeleton count={9} />
+  </Container>
+);
+
+const ShopPage = () => (
+  <Suspense fallback={<ShopPageFallback />}>
+    <ShopPageContent />
+  </Suspense>
+);
 
 export default ShopPage;
