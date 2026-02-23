@@ -7,6 +7,7 @@ import { useCart } from "@/app/context/CartContext";
 import type { ShopProduct } from "@/app/types/commerce";
 import ShopFiltersPanel from "./components/ShopFiltersPanel";
 import ShopProductsGrid from "./components/ShopProductsGrid";
+import ShopProductsSkeleton from "./components/ShopProductsSkeleton";
 import ShopStateNotice from "./components/ShopStateNotice";
 import {
   defaultFilters,
@@ -144,7 +145,7 @@ const ShopPage = () => {
         onClear={clearFilters}
       />
 
-      {loading ? <ShopStateNotice title="Ladowanie produktow..." /> : null}
+      {loading ? <ShopProductsSkeleton count={9} /> : null}
 
       {!loading && error ? (
         <ShopStateNotice
