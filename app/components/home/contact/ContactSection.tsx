@@ -2,67 +2,70 @@
 
 import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
-import emailjs from "@emailjs/browser";
 import StickerField from "../../stickerField/StickerField";
+import ContactFaqCard from "./ContactFaqCard";
+import {
+  isContactEmailConfigured,
+  sendContactEmail,
+} from "./contactEmail.service";
+import type {
+  ContactValues,
+  FieldName,
+  SubmitStatus,
+} from "./contactForm.types";
+import { validateContactValues } from "./contactForm.validation";
 
-export type ContactValues = {
-  name: string;
-  email: string;
-  message: string;
+const EMPTY_STATUS_MESSAGE = "\u00A0";
+const SUCCESS_MESSAGE = "Dzieki! Wiadomosc poszla.";
+const ERROR_MESSAGE = "Cos nie poszlo. Sprobuj ponownie.";
+const CONFIG_ERROR_MESSAGE =
+  "Kontakt chwilowo niedostepny. Brak konfiguracji formularza.";
+
+const initialValues: ContactValues = {
+  name: "",
+  email: "",
+  message: "",
 };
 
-type ContactErrors = Partial<Record<keyof ContactValues, string>>;
-type FieldName = keyof ContactValues;
-type SubmitStatus = "idle" | "success" | "error";
-
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? "";
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? "";
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? "";
-const EMAILJS_CONFIGURED = Boolean(
-  EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY,
-);
-
-const validate = (v: ContactValues): ContactErrors => {
-  const e: ContactErrors = {};
-  const name = v.name.trim();
-  const email = v.email.trim();
-  const msg = v.message.trim();
-
-  if (name.length < 2) e.name = "Podaj imie (min. 2 znaki).";
-  if (!email.includes("@") || !email.includes(".")) {
-    e.email = "Podaj poprawny e-mail.";
-  }
-  if (msg.length < 10) e.message = "Wiadomosc jest za krotka (min. 10 znakow).";
-
-  return e;
+const initialTouched: Record<FieldName, boolean> = {
+  name: false,
+  email: false,
+  message: false,
 };
+
+const visuallyHiddenSx = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  overflow: "hidden",
+  clipPath: "inset(50%)",
+} as const;
 
 const ContactSection = ({ id }: { id?: string }) => {
-  const [values, setValues] = useState<ContactValues>({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [values, setValues] = useState<ContactValues>(initialValues);
   const [honeyPot, setHoneyPot] = useState("");
-  const [touched, setTouched] = useState<Record<FieldName, boolean>>({
-    name: false,
-    email: false,
-    message: false,
-  });
+  const [touched, setTouched] =
+    useState<Record<FieldName, boolean>>(initialTouched);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<SubmitStatus>("idle");
-  const [statusMessage, setStatusMessage] = useState<string>("\u00A0");
+  const [statusMessage, setStatusMessage] =
+    useState<string>(EMPTY_STATUS_MESSAGE);
 
-  const errors = useMemo(() => validate(values), [values]);
+  const errors = useMemo(() => validateContactValues(values), [values]);
 
-  const showError = (field: FieldName) => (touched[field] ? errors[field] : undefined);
+  const showError = (field: FieldName) =>
+    touched[field] ? errors[field] : undefined;
 
-  const handleChange = (name: FieldName, v: string) => {
-    setValues((prev) => ({ ...prev, [name]: v }));
+  const resetStatus = () => {
     if (status !== "idle") {
       setStatus("idle");
-      setStatusMessage("\u00A0");
+      setStatusMessage(EMPTY_STATUS_MESSAGE);
     }
+  };
+
+  const handleChange = (name: FieldName, value: string) => {
+    setValues((prev) => ({ ...prev, [name]: value }));
+    resetStatus();
   };
 
   const handleBlur = (name: FieldName) => {
@@ -70,49 +73,37 @@ const ContactSection = ({ id }: { id?: string }) => {
   };
 
   const handleSubmit = async () => {
-    setTouched({ name: true, email: true, message: true });
+    setTouched({ ...initialTouched, name: true, email: true, message: true });
 
-    const validationErrors = validate(values);
+    const validationErrors = validateContactValues(values);
     if (Object.keys(validationErrors).length > 0) return;
 
-    // Basic anti-spam: bots often fill hidden fields.
     if (honeyPot.trim().length > 0) {
       setStatus("success");
-      setStatusMessage("Dzieki! Wiadomosc poszla.");
+      setStatusMessage(SUCCESS_MESSAGE);
       return;
     }
 
-    if (!EMAILJS_CONFIGURED) {
+    if (!isContactEmailConfigured()) {
       setStatus("error");
-      setStatusMessage("Kontakt chwilowo niedostepny. Brak konfiguracji formularza.");
+      setStatusMessage(CONFIG_ERROR_MESSAGE);
       return;
     }
 
     setIsSubmitting(true);
     setStatus("idle");
-    setStatusMessage("\u00A0");
+    setStatusMessage(EMPTY_STATUS_MESSAGE);
 
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_name: values.name.trim(),
-          reply_to: values.email.trim(),
-          message: values.message.trim(),
-          page_url: typeof window === "undefined" ? "" : window.location.href,
-        },
-        EMAILJS_PUBLIC_KEY,
-      );
-
+      await sendContactEmail(values);
       setStatus("success");
-      setStatusMessage("Dzieki! Wiadomosc poszla.");
-      setValues({ name: "", email: "", message: "" });
-      setTouched({ name: false, email: false, message: false });
+      setStatusMessage(SUCCESS_MESSAGE);
+      setValues(initialValues);
+      setTouched(initialTouched);
       setHoneyPot("");
     } catch {
       setStatus("error");
-      setStatusMessage("Cos nie poszlo. Sprobuj ponownie.");
+      setStatusMessage(ERROR_MESSAGE);
     } finally {
       setIsSubmitting(false);
     }
@@ -125,25 +116,21 @@ const ContactSection = ({ id }: { id?: string }) => {
       sx={{ py: { xs: 6, md: 10 }, scrollMarginTop: { xs: 96, md: 112 } }}
     >
       <Stack spacing={1.5} sx={{ mb: 4 }}>
-        <Typography variant="h3" sx={{ fontWeight: 900, color: "primary.main" }}>
+        <Typography
+          variant="h3"
+          sx={{ fontWeight: 900, color: "primary.main" }}
+        >
           Kontakt
         </Typography>
-        <Typography sx={{ opacity: 0.8 }}>Masz pytanie? Napisz - odpisze.</Typography>
+        <Typography sx={{ opacity: 0.8 }}>
+          Masz pytanie? Napisz - odpisze.
+        </Typography>
       </Stack>
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 12, lg: 7 }}>
           <Stack spacing={2}>
-            <Box
-              aria-hidden="true"
-              sx={{
-                position: "absolute",
-                width: 1,
-                height: 1,
-                overflow: "hidden",
-                clipPath: "inset(50%)",
-              }}
-            >
+            <Box aria-hidden="true" sx={visuallyHiddenSx}>
               <label htmlFor="contact_company">Company</label>
               <input
                 id="contact_company"
@@ -211,42 +198,7 @@ const ContactSection = ({ id }: { id?: string }) => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 12, lg: 5 }}>
-          <Box
-            sx={{
-              borderRadius: 3,
-              background: "#f5efe7",
-              boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
-              p: 3,
-              height: "100%",
-            }}
-          >
-            <Stack spacing={2.25}>
-              <Stack spacing={1}>
-                <Typography variant="h6" sx={{ fontWeight: 900 }}>
-                  Mini FAQ
-                </Typography>
-
-                <Typography sx={{ fontWeight: 900 }}>1) Co dostaje po zakupie?</Typography>
-                <Typography sx={{ opacity: 0.85 }}>
-                  PDF do pobrania (docelowo przez WooCommerce).
-                </Typography>
-
-                <Typography sx={{ fontWeight: 900, pt: 1 }}>
-                  2) Czy darmowki sa bez konta?
-                </Typography>
-                <Typography sx={{ opacity: 0.85 }}>
-                  Tak. Docelowo klik i PDF otworzy sie w nowej karcie.
-                </Typography>
-
-                <Typography sx={{ fontWeight: 900, pt: 1 }}>
-                  3) Dla kogo sa materialy?
-                </Typography>
-                <Typography sx={{ opacity: 0.85 }}>
-                  Dla uczniow, nauczycieli i do nauki solo - wybierz kategorie.
-                </Typography>
-              </Stack>
-            </Stack>
-          </Box>
+          <ContactFaqCard />
         </Grid>
       </Grid>
     </Box>
