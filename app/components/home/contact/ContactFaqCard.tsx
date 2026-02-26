@@ -7,11 +7,11 @@ const ContactFaqCard = () => {
         borderRadius: 3,
         background: "#f5efe7",
         boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
-        p: 3,
-        height: "100%",
+        p: { xs: 2.5, md: 3 },
+        alignSelf: "flex-start",
       }}
     >
-      <Stack spacing={2.25}>
+      <Stack spacing={1.75}>
         <Stack spacing={1}>
           <Typography variant="h6" sx={{ fontWeight: 900 }}>
             Mini FAQ
