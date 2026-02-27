@@ -42,6 +42,46 @@ export const productGalleryStyles = {
     gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
     gap: { xs: 1.5, sm: 2 },
   },
+  thumbsViewport: {
+    width: "100%",
+    position: "relative",
+    overflow: "visible",
+  },
+  thumbsNavButton: (side: "left" | "right") => ({
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    zIndex: 3,
+    [side]: { xs: 8, sm: 12, md: -18 },
+    border: "1px solid",
+    borderColor: "rgba(55,67,115,0.18)",
+    backgroundColor: "rgba(255,255,255,0.64)",
+    backdropFilter: "blur(2px)",
+    "&:hover": {
+      backgroundColor: "rgba(255,255,255,0.88)",
+    },
+  }),
+  thumbsMetaStack: {
+    alignItems: "center",
+    mt: 1.5,
+  },
+  thumbsCounter: {
+    mt: 0.25,
+    fontWeight: 700,
+    color: "primary.main",
+    minWidth: 52,
+    textAlign: "center",
+  },
+  thumbsDotsRow: {
+    justifyContent: "center",
+  },
+  thumbsDot: (active: boolean) => ({
+    width: active ? 18 : 8,
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: active ? "primary.main" : "rgba(55,67,115,0.25)",
+    transition: "all 150ms ease",
+  }),
   thumbButton: (isActive: boolean, thumbFrame: string) => ({
     position: "relative",
     cursor: "pointer",
