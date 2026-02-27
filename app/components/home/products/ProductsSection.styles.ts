@@ -17,18 +17,27 @@ export const productsSectionStyles = {
     maxWidth: cardMaxWidth ?? "none",
     mx: "auto",
   }),
-  sliderControlsRow: {
-    mt: 2.5,
-    mb: 2,
-    px: { xs: 0.5, md: 1 },
+  sliderViewport: {
+    position: "relative",
+    overflow: "visible",
   },
-  sliderNavButton: {
+  sliderNavButton: (side: "left" | "right") => ({
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    zIndex: 3,
+    [side]: { xs: 6, sm: 10, md: -24, lg: -40, xl: -56 },
     border: "1px solid",
     borderColor: "rgba(55, 67, 115, 0.18)",
     backgroundColor: "rgba(255,255,255,0.55)",
+    backdropFilter: "blur(2px)",
     "&:hover": {
       backgroundColor: "rgba(255,255,255,0.82)",
     },
+  }),
+  sliderMetaStack: {
+    alignItems: "center",
+    mt: 2,
   },
   sliderCounter: {
     fontWeight: 700,
@@ -38,7 +47,7 @@ export const productsSectionStyles = {
   },
   sliderDotsRow: {
     justifyContent: "center",
-    mt: 0.5,
+    mb: 0.25,
   },
   sliderDot: (active: boolean) => ({
     width: active ? 20 : 8,
