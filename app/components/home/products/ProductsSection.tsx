@@ -66,11 +66,16 @@ const ProductsSection = ({
   );
 
   const [slideIndex, setSlideIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"next" | "prev">("next");
+  const [hasSlideInteraction, setHasSlideInteraction] = useState(false);
   const maxSlideIndex = Math.max(0, slides.length - 1);
   const activeSlideIndex = Math.min(slideIndex, maxSlideIndex);
 
   const goToSlide = (nextIndex: number) => {
     const safeIndex = Math.max(0, Math.min(maxSlideIndex, nextIndex));
+    if (safeIndex === activeSlideIndex) return;
+    setSlideDirection(safeIndex > activeSlideIndex ? "next" : "prev");
+    setHasSlideInteraction(true);
     setSlideIndex(safeIndex);
   };
 
@@ -109,9 +114,9 @@ const ProductsSection = ({
         ) : null}
 
         <Grid container spacing={3}>
-          {visibleProducts.map((product) => (
+          {visibleProducts.map((product, order) => (
             <Grid
-              key={product.id}
+              key={`${product.id}-${activeSlideIndex}`}
               size={{
                 xs: activeColumns.xs ?? 12,
                 sm: activeColumns.sm ?? 6,
@@ -119,7 +124,17 @@ const ProductsSection = ({
                 lg: activeColumns.lg,
               }}
             >
-              <Box sx={productsSectionStyles.cardWrap(cardMaxWidth)}>
+              <Box
+                sx={[
+                  productsSectionStyles.cardWrap(cardMaxWidth),
+                  productsSectionStyles.sliderCardMotion(
+                    slideDirection,
+                    hasSlideInteraction && useSlider && slides.length > 1,
+                    order,
+                    (order + activeSlideIndex) % 2 === 0 ? "left" : "right",
+                  ),
+                ]}
+              >
                 <ProductCard
                   id={product.id}
                   href={`/sklep/${product.slug}`}

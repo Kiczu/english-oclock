@@ -21,6 +21,131 @@ export const productsSectionStyles = {
     position: "relative",
     overflow: "visible",
   },
+  sliderCardMotion: (
+    direction: "next" | "prev",
+    shouldAnimate: boolean,
+    order: number,
+    swaySide: "left" | "right",
+  ) => ({
+    animation: shouldAnimate
+      ? `${direction === "next"
+          ? swaySide === "left"
+            ? "hangerCardNextLeft"
+            : "hangerCardNextRight"
+          : swaySide === "left"
+            ? "hangerCardPrevLeft"
+            : "hangerCardPrevRight"} 980ms cubic-bezier(0.18, 0.98, 0.24, 1) ${order * 170}ms both`
+      : "none",
+    transformOrigin: swaySide === "left" ? "12% 4%" : "88% 4%",
+    willChange: "transform, opacity",
+    "@media (prefers-reduced-motion: reduce)": {
+      animation: "none",
+    },
+    "@keyframes hangerCardNextLeft": {
+      "0%": {
+        opacity: 0.18,
+        transform: "translate3d(96px, 18px, 0) rotate(-9.2deg) scale(0.94)",
+      },
+      "32%": {
+        opacity: 1,
+        transform: "translate3d(-48px, -16px, 0) rotate(5.8deg) scale(1.02)",
+      },
+      "56%": {
+        opacity: 1,
+        transform: "translate3d(30px, 10px, 0) rotate(-3.6deg) scale(0.99)",
+      },
+      "74%": {
+        opacity: 1,
+        transform: "translate3d(-16px, -6px, 0) rotate(2.1deg) scale(1.01)",
+      },
+      "88%": {
+        opacity: 1,
+        transform: "translate3d(8px, 3px, 0) rotate(-0.9deg) scale(1)",
+      },
+      "100%": {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)",
+      },
+    },
+    "@keyframes hangerCardNextRight": {
+      "0%": {
+        opacity: 0.18,
+        transform: "translate3d(96px, 18px, 0) rotate(9.2deg) scale(0.94)",
+      },
+      "32%": {
+        opacity: 1,
+        transform: "translate3d(-48px, -16px, 0) rotate(-5.8deg) scale(1.02)",
+      },
+      "56%": {
+        opacity: 1,
+        transform: "translate3d(30px, 10px, 0) rotate(3.6deg) scale(0.99)",
+      },
+      "74%": {
+        opacity: 1,
+        transform: "translate3d(-16px, -6px, 0) rotate(-2.1deg) scale(1.01)",
+      },
+      "88%": {
+        opacity: 1,
+        transform: "translate3d(8px, 3px, 0) rotate(0.9deg) scale(1)",
+      },
+      "100%": {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)",
+      },
+    },
+    "@keyframes hangerCardPrevLeft": {
+      "0%": {
+        opacity: 0.18,
+        transform: "translate3d(-96px, 18px, 0) rotate(-9.2deg) scale(0.94)",
+      },
+      "32%": {
+        opacity: 1,
+        transform: "translate3d(48px, -16px, 0) rotate(5.8deg) scale(1.02)",
+      },
+      "56%": {
+        opacity: 1,
+        transform: "translate3d(-30px, 10px, 0) rotate(-3.6deg) scale(0.99)",
+      },
+      "74%": {
+        opacity: 1,
+        transform: "translate3d(16px, -6px, 0) rotate(2.1deg) scale(1.01)",
+      },
+      "88%": {
+        opacity: 1,
+        transform: "translate3d(-8px, 3px, 0) rotate(-0.9deg) scale(1)",
+      },
+      "100%": {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)",
+      },
+    },
+    "@keyframes hangerCardPrevRight": {
+      "0%": {
+        opacity: 0.18,
+        transform: "translate3d(-96px, 18px, 0) rotate(9.2deg) scale(0.94)",
+      },
+      "32%": {
+        opacity: 1,
+        transform: "translate3d(48px, -16px, 0) rotate(-5.8deg) scale(1.02)",
+      },
+      "56%": {
+        opacity: 1,
+        transform: "translate3d(-30px, 10px, 0) rotate(3.6deg) scale(0.99)",
+      },
+      "74%": {
+        opacity: 1,
+        transform: "translate3d(16px, -6px, 0) rotate(-2.1deg) scale(1.01)",
+      },
+      "88%": {
+        opacity: 1,
+        transform: "translate3d(-8px, 3px, 0) rotate(0.9deg) scale(1)",
+      },
+      "100%": {
+        opacity: 1,
+        transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)",
+      },
+    },
+  }),
   sliderNavButton: (side: "left" | "right") => ({
     position: "absolute",
     top: "50%",
