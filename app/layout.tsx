@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import LayoutShell from "./components/layout/LayoutShell";
 import { CartProvider } from "./context/CartContext";
+import { CookieConsentProvider } from "./context/CookieConsentContext";
 import { merriweather, raleway } from "./lib/fonts";
 import ThemeRegistry from "./theme/ThemeRegistry";
 
@@ -19,9 +20,11 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         className={`${raleway.className} ${raleway.variable} ${merriweather.variable}`}
       >
         <ThemeRegistry>
-          <CartProvider>
-            <LayoutShell>{children}</LayoutShell>
-          </CartProvider>
+          <CookieConsentProvider>
+            <CartProvider>
+              <LayoutShell>{children}</LayoutShell>
+            </CartProvider>
+          </CookieConsentProvider>
         </ThemeRegistry>
       </body>
     </html>
