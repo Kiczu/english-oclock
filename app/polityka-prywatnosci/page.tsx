@@ -4,7 +4,7 @@ import { Box, Container, Stack, Typography } from "@mui/material";
 export const metadata: Metadata = {
   title: "Polityka prywatności - It's English O'Clock",
   description:
-    "Polityka prywatności sklepu internetowego Its's English O'Clock.",
+    "Polityka prywatności sklepu internetowego itsenglishoclock.pl (obowiązuje od 01.03.2026).",
 };
 
 const sectionTitleSx = { color: "primary.main", fontWeight: 900 };
@@ -28,14 +28,17 @@ const PrivacyPolicyPage = () => {
       <Stack spacing={3}>
         <Stack spacing={1}>
           <Typography
-            variant="h2"
+            variant="h1"
             sx={{
               color: "primary.main",
               fontWeight: 900,
               fontSize: { xs: "2.5rem", md: "3.5rem" },
             }}
           >
-            {`${metadata.title}`}
+            Polityka prywatności
+          </Typography>
+          <Typography sx={paragraphSx}>
+            Sklep internetowy itsenglishoclock.pl, obowiązuje od 01.03.2026
           </Typography>
         </Stack>
 
@@ -48,19 +51,21 @@ const PrivacyPolicyPage = () => {
               <Typography sx={paragraphSx}>
                 Administratorem danych osobowych jest:
               </Typography>
+              <Typography sx={paragraphSx}>Wioleta Jedziniak English o&apos;clock</Typography>
+              <Typography sx={paragraphSx}>Wioleta Jedziniak</Typography>
+              <Typography sx={paragraphSx}>NIP: 9131631102</Typography>
+              <Typography sx={paragraphSx}>REGON: 389015402</Typography>
               <Typography sx={paragraphSx}>
-                [Imię i nazwisko / nazwa firmy]
+                Ciechów, ul. Słoneczna 31, 55-300 Środa Śląska
               </Typography>
-              <Typography sx={paragraphSx}>[adres]</Typography>
-              <Typography sx={paragraphSx}>NIP: [___]</Typography>
               <Typography sx={paragraphSx}>
-                e-mail kontaktowy w sprawach danych: [___]
+                e-mail kontaktowy w sprawach danych: kontakt@itsenglishoclock.pl
               </Typography>
             </li>
             <li>
               <Typography sx={paragraphSx}>
                 W sprawach związanych z ochroną danych można kontaktować się pod
-                adresem: [___].
+                adresem: kontakt@itsenglishoclock.pl.
               </Typography>
             </li>
           </Box>
@@ -116,14 +121,28 @@ const PrivacyPolicyPage = () => {
           <Box component="ol" sx={orderedListSx}>
             <li>
               <Typography sx={paragraphSx}>
-                Realizacja zamówień i dostarczanie PDF – podstawa: art. 6 ust. 1
-                lit. b RODO (wykonanie umowy).
+                Realizacja zamówień i dostarczanie treści cyfrowych (PDF) –
+                podstawa: art. 6 ust. 1 lit. b RODO (wykonanie umowy).
+              </Typography>
+            </li>
+            <li>
+              <Typography sx={paragraphSx}>
+                Obsługa płatności elektronicznych (Autopay) – art. 6 ust. 1 lit.
+                b RODO.
               </Typography>
             </li>
             <li>
               <Typography sx={paragraphSx}>
                 Obsługa reklamacji i kontaktu posprzedażowego – art. 6 ust. 1
                 lit. b oraz c RODO.
+              </Typography>
+            </li>
+            <li>
+              <Typography sx={paragraphSx}>
+                Obsługa formularza kontaktowego – art. 6 ust. 1 lit. f RODO
+                (uzasadniony interes administratora polegający na obsłudze
+                zapytań) lub art. 6 ust. 1 lit. b RODO, gdy zapytanie dotyczy
+                zawarcia umowy.
               </Typography>
             </li>
             <li>
@@ -138,19 +157,13 @@ const PrivacyPolicyPage = () => {
             </li>
             <li>
               <Typography sx={paragraphSx}>
-                Newsletter / marketing e-mail [jeśli używasz] – art. 6 ust. 1
-                lit. a RODO (zgoda).
+                Analityka i cookies opcjonalne – art. 6 ust. 1 lit. a RODO
+                (zgoda), jeśli są stosowane.
               </Typography>
             </li>
             <li>
               <Typography sx={paragraphSx}>
-                Analityka/marketing z użyciem cookies opcjonalnych – art. 6 ust.
-                1 lit. a RODO (zgoda).
-              </Typography>
-            </li>
-            <li>
-              <Typography sx={paragraphSx}>
-                Utrzymanie bezpieczeństwa serwisu i niezbędnych cookies – art. 6
+                Utrzymanie bezpieczeństwa serwisu i cookies niezbędnych – art. 6
                 ust. 1 lit. f RODO.
               </Typography>
             </li>
@@ -174,11 +187,12 @@ const PrivacyPolicyPage = () => {
                   </Typography>
                 </li>
                 <li>
-                  <Typography sx={paragraphSx}>operator płatności,</Typography>
+                  <Typography sx={paragraphSx}>operator płatności (Autopay),</Typography>
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
-                    dostawcy narzędzi analitycznych i mailingowych,
+                    dostawcy narzędzi do obsługi formularza kontaktowego i
+                    poczty elektronicznej,
                   </Typography>
                 </li>
                 <li>
@@ -210,10 +224,10 @@ const PrivacyPolicyPage = () => {
             </li>
             <li>
               <Typography sx={paragraphSx}>
-                Jeżeli dane są przekazywane poza EOG (np. narzędzia chmurowe),
-                odbywa się to wyłącznie na podstawie mechanizmów legalizujących
-                transfer (np. decyzja adekwatności, standardowe klauzule
-                umowne).
+                Jeżeli dane są przekazywane poza EOG (np. w związku z użyciem
+                narzędzi chmurowych), odbywa się to wyłącznie na podstawie
+                mechanizmów legalizujących transfer (np. decyzja adekwatności,
+                standardowe klauzule umowne).
               </Typography>
             </li>
           </Box>
@@ -227,7 +241,7 @@ const PrivacyPolicyPage = () => {
             <li>
               <Typography sx={paragraphSx}>
                 Dane związane z umową – przez czas wykonania umowy i przez okres
-                wymagany przepisami (np. podatkowymi/rachunkowymi).
+                wymagany przepisami prawa (np. podatkowymi/rachunkowymi).
               </Typography>
             </li>
             <li>
@@ -267,9 +281,7 @@ const PrivacyPolicyPage = () => {
                   <Typography sx={paragraphSx}>usunięcia danych,</Typography>
                 </li>
                 <li>
-                  <Typography sx={paragraphSx}>
-                    ograniczenia przetwarzania,
-                  </Typography>
+                  <Typography sx={paragraphSx}>ograniczenia przetwarzania,</Typography>
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>przenoszenia danych,</Typography>
@@ -281,8 +293,8 @@ const PrivacyPolicyPage = () => {
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
-                    cofnięcia zgody w dowolnym momencie (bez wpływu na zgodność
-                    z prawem wcześniejszego przetwarzania).
+                    cofnięcia zgody w dowolnym momencie (bez wpływu na zgodność z
+                    prawem wcześniejszego przetwarzania).
                   </Typography>
                 </li>
               </Box>
@@ -319,7 +331,7 @@ const PrivacyPolicyPage = () => {
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
-                    marketingowych [jeśli używasz].
+                    marketingowych (jeśli stosowane).
                   </Typography>
                 </li>
               </Box>

@@ -19,6 +19,7 @@ const FreeProductsSection = ({ id, products }: FreeProductsSectionProps) => {
       subtitle="Pobierz za darmo i sprawdz, czy to dla Ciebie."
       products={products}
       cardMaxWidth={520}
+      useSlider
       onPrimaryAction={(p) => {
         router.push(`/sklep/${p.slug}`);
       }}

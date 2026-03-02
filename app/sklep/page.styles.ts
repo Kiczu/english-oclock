@@ -13,4 +13,8 @@ export const shopPageStyles = {
   subtitle: {
     opacity: 0.8,
   },
+  paginationWrap: {
+    mt: 5,
+    alignItems: "center",
+  },
 } as const;

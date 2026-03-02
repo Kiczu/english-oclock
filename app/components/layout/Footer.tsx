@@ -1,5 +1,8 @@
+"use client";
+
 import NextLink from "next/link";
-import { Box, Container, Link, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Link, Stack, Typography } from "@mui/material";
+import { useCookieConsent } from "@/app/context/CookieConsentContext";
 
 const legalLinks = [
   { href: "/regulamin", label: "Regulamin" },
@@ -7,7 +10,14 @@ const legalLinks = [
   { href: "/#kontakt", label: "Kontakt" },
 ];
 
+const footerLinkSx = {
+  fontSize: "0.95rem",
+  opacity: 0.9,
+};
+
 const Footer = () => {
+  const { openSettings } = useCookieConsent();
+
   return (
     <Box sx={{ mt: 8, py: 6, bgcolor: "primary.main", color: "common.white" }}>
       <Container maxWidth="xl">
@@ -27,11 +37,20 @@ const Footer = () => {
               href={link.href}
               color="inherit"
               underline="hover"
-              sx={{ fontSize: "0.95rem", opacity: 0.9 }}
+              sx={footerLinkSx}
             >
               {link.label}
             </Link>
           ))}
+
+          <Button
+            variant="text"
+            color="inherit"
+            onClick={openSettings}
+            sx={{ ...footerLinkSx, p: 0, minWidth: "auto", textTransform: "none" }}
+          >
+            Ustawienia cookies
+          </Button>
         </Stack>
       </Container>
     </Box>
@@ -39,3 +58,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

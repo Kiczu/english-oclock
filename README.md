@@ -34,3 +34,30 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Contact Form (EmailJS)
+
+Contact form in `app/components/home/contact/ContactSection.tsx` uses EmailJS from the browser.
+
+Required env vars:
+
+```bash
+NEXT_PUBLIC_EMAILJS_SERVICE_ID=...
+NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=...
+NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=...
+```
+
+Template params sent to EmailJS:
+
+- `from_name`
+- `reply_to`
+- `message`
+- `page_url`
+
+Current anti-spam:
+
+- hidden honeypot field (basic bot trap)
+
+Optional next step:
+
+- Cloudflare Turnstile (recommended for stronger anti-spam).
