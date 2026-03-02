@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Box, Container, Stack, Typography } from "@mui/material";
 
 export const metadata: Metadata = {
-  title: "Its's English O'Clock - Regulamin sklepu",
-  description: "Regulamin sklepu - Its's English O'Clock",
+  title: "Regulamin sklepu internetowego - It's English O'Clock",
+  description:
+    "Regulamin sklepu internetowego itsenglishoclock.pl (obowiązuje od 01.03.2026).",
 };
 
 const sectionTitleSx = { color: "primary.main", fontWeight: 900 };
@@ -34,7 +35,10 @@ const RegulaminPage = () => {
               fontSize: { xs: "2.5rem", md: "3.5rem" },
             }}
           >
-            {`${metadata.description}`}
+            Regulamin sklepu internetowego
+          </Typography>
+          <Typography sx={paragraphSx}>
+            ITSENGLISHOCLOCK.PL (obowiązuje od dnia 01.03.2026)
           </Typography>
         </Stack>
 
@@ -46,25 +50,26 @@ const RegulaminPage = () => {
             <li>
               <Typography sx={paragraphSx}>
                 Niniejszy Regulamin określa zasady korzystania ze sklepu
-                internetowego [adres www], składania zamówień na produkty
+                internetowego dostępnego pod adresem: itsenglishoclock.pl
+                (dalej: „Sklep”), w tym zasady składania zamówień na produkty
                 cyfrowe, zawierania i wykonywania umów, a także zasady
                 reklamacji i odstąpienia od umowy.
               </Typography>
             </li>
             <li>
+              <Typography sx={paragraphSx}>Sklep prowadzony jest przez:</Typography>
+              <Typography sx={paragraphSx}>Wioleta Jedziniak English o&apos;clock</Typography>
+              <Typography sx={paragraphSx}>Wioleta Jedziniak</Typography>
+              <Typography sx={paragraphSx}>NIP: 9131631102</Typography>
+              <Typography sx={paragraphSx}>REGON: 389015402</Typography>
               <Typography sx={paragraphSx}>
-                Sklep prowadzony jest przez:
+                Adres prowadzenia działalności / adres korespondencyjny:
               </Typography>
               <Typography sx={paragraphSx}>
-                [Imię i nazwisko / nazwa firmy]
+                Ciechów, ul. Słoneczna 31, 55-300 Środa Śląska
               </Typography>
-              <Typography sx={paragraphSx}>
-                [adres prowadzenia działalności]
-              </Typography>
-              <Typography sx={paragraphSx}>NIP: [___], REGON: [___]</Typography>
-              <Typography sx={paragraphSx}>
-                e-mail: [___], tel.: [___]
-              </Typography>
+              <Typography sx={paragraphSx}>e-mail: kontakt@itsenglishoclock.pl</Typography>
+              <Typography sx={paragraphSx}>tel.: 512 457 536</Typography>
               <Typography sx={paragraphSx}>(dalej: „Sprzedawca”).</Typography>
             </li>
             <li>
@@ -104,8 +109,9 @@ const RegulaminPage = () => {
           <Box component="ol" sx={orderedListSx}>
             <li>
               <Typography sx={paragraphSx}>
-                Sklep – serwis internetowy dostępny pod adresem [___], za
-                pośrednictwem którego Klient może nabywać Produkty.
+                Sklep – serwis internetowy dostępny pod adresem
+                itsenglishoclock.pl, za pośrednictwem którego Klient może
+                nabywać Produkty.
               </Typography>
             </li>
             <li>
@@ -157,9 +163,7 @@ const RegulaminPage = () => {
                   </Typography>
                 </li>
                 <li>
-                  <Typography sx={paragraphSx}>
-                    aktywny adres e-mail,
-                  </Typography>
+                  <Typography sx={paragraphSx}>aktywny adres e-mail,</Typography>
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
@@ -196,19 +200,10 @@ const RegulaminPage = () => {
                   </Typography>
                 </li>
                 <li>
-                  <Typography sx={paragraphSx}>
-                    formularza zamówienia,
-                  </Typography>
+                  <Typography sx={paragraphSx}>formularza zamówienia,</Typography>
                 </li>
                 <li>
-                  <Typography sx={paragraphSx}>
-                    [opcjonalnie: Konta Klienta],
-                  </Typography>
-                </li>
-                <li>
-                  <Typography sx={paragraphSx}>
-                    [opcjonalnie: newslettera].
-                  </Typography>
+                  <Typography sx={paragraphSx}>formularza kontaktowego.</Typography>
                 </li>
               </Box>
             </li>
@@ -231,13 +226,8 @@ const RegulaminPage = () => {
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
-                    [opcjonalnie: w zakresie konta – na czas nieoznaczony do
-                    usunięcia konta],
-                  </Typography>
-                </li>
-                <li>
-                  <Typography sx={paragraphSx}>
-                    [opcjonalnie: newsletter – do chwili wypisania się].
+                    w zakresie formularza kontaktowego – na czas obsługi
+                    zapytania.
                   </Typography>
                 </li>
               </Box>
@@ -245,8 +235,8 @@ const RegulaminPage = () => {
             <li>
               <Typography sx={paragraphSx}>
                 Klient może złożyć reklamację usług elektronicznych na adres
-                e-mail: [___]. Reklamacja zostanie rozpatrzona w terminie do 14
-                dni.
+                e-mail: kontakt@itsenglishoclock.pl. Reklamacja zostanie
+                rozpatrzona w terminie do 14 dni.
               </Typography>
             </li>
           </Box>
@@ -269,9 +259,7 @@ const RegulaminPage = () => {
               </Typography>
               <Box component="ol" sx={alphaListSx}>
                 <li>
-                  <Typography sx={paragraphSx}>
-                    nazwę i opis materiału,
-                  </Typography>
+                  <Typography sx={paragraphSx}>nazwę i opis materiału,</Typography>
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
@@ -307,26 +295,17 @@ const RegulaminPage = () => {
             <li>
               <Typography sx={paragraphSx}>
                 Wszystkie ceny podane w Sklepie są cenami brutto (zawierają
-                podatek VAT, jeśli ma zastosowanie) i wyrażone są w PLN [lub
-                innej walucie: ___].
+                podatek VAT, jeśli ma zastosowanie) i wyrażone są wyłącznie w
+                PLN.
               </Typography>
             </li>
             <li>
               <Typography sx={paragraphSx}>
-                Klient może skorzystać z następujących metod płatności:
+                Płatności elektroniczne realizowane są za pośrednictwem systemu
+                Autopay (dalej: „Operator płatności”), zgodnie z opcjami
+                płatności udostępnionymi w danym momencie w procesie składania
+                zamówienia.
               </Typography>
-              <Box component="ol" sx={alphaListSx}>
-                <li>
-                  <Typography sx={paragraphSx}>
-                    [operator płatności: np. Przelewy24/Stripe/PayU],
-                  </Typography>
-                </li>
-                <li>
-                  <Typography sx={paragraphSx}>
-                    [BLIK / karta / szybki przelew – zgodnie z integracją].
-                  </Typography>
-                </li>
-              </Box>
             </li>
             <li>
               <Typography sx={paragraphSx}>
@@ -362,7 +341,7 @@ const RegulaminPage = () => {
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
-                    wybiera metodę płatności,
+                    wybiera metodę płatności (Autopay),
                   </Typography>
                 </li>
                 <li>
@@ -370,7 +349,8 @@ const RegulaminPage = () => {
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
-                    składa oświadczenia wymagane prawem,
+                    składa oświadczenia wymagane prawem (w tym dotyczące treści
+                    cyfrowych),
                   </Typography>
                 </li>
                 <li>
@@ -398,22 +378,10 @@ const RegulaminPage = () => {
           <Box component="ol" sx={orderedListSx}>
             <li>
               <Typography sx={paragraphSx}>
-                Dostarczenie Produktu cyfrowego następuje niezwłocznie, nie
-                później niż w terminie [___] od zaksięgowania płatności,
-                poprzez:
+                Dostarczenie Produktu cyfrowego następuje niezwłocznie po
+                zaksięgowaniu płatności, poprzez link do pobrania wysłany
+                e-mailem.
               </Typography>
-              <Box component="ol" sx={alphaListSx}>
-                <li>
-                  <Typography sx={paragraphSx}>
-                    link do pobrania wysłany e-mailem, lub
-                  </Typography>
-                </li>
-                <li>
-                  <Typography sx={paragraphSx}>
-                    udostępnienie pliku na koncie użytkownika [jeśli dotyczy].
-                  </Typography>
-                </li>
-              </Box>
             </li>
             <li>
               <Typography sx={paragraphSx}>
@@ -428,7 +396,7 @@ const RegulaminPage = () => {
             <li>
               <Typography sx={paragraphSx}>
                 W przypadku problemów z dostępem Klient powinien niezwłocznie
-                zgłosić problem na e-mail: [___].
+                zgłosić problem na e-mail: kontakt@itsenglishoclock.pl.
               </Typography>
             </li>
           </Box>
@@ -442,8 +410,8 @@ const RegulaminPage = () => {
             <li>
               <Typography sx={paragraphSx}>
                 Konsument (oraz przedsiębiorca na prawach konsumenta) może
-                odstąpić od umowy zawartej na odległość w terminie 14 dni, chyba
-                że zachodzi wyjątek wskazany w ust. 2.
+                odstąpić od umowy zawartej na odległość w terminie 14 dni,
+                chyba że zachodzi wyjątek wskazany w ust. 2.
               </Typography>
             </li>
             <li>
@@ -512,11 +480,14 @@ const RegulaminPage = () => {
               <Typography sx={paragraphSx}>Reklamację można złożyć:</Typography>
               <Box component="ol" sx={alphaListSx}>
                 <li>
-                  <Typography sx={paragraphSx}>e-mail: [___]</Typography>
+                  <Typography sx={paragraphSx}>
+                    e-mail: kontakt@itsenglishoclock.pl
+                  </Typography>
                 </li>
                 <li>
                   <Typography sx={paragraphSx}>
-                    pocztą: [adres do reklamacji]
+                    pocztą: Wioleta Jedziniak English o&apos;clock, Ciechów,
+                    ul. Słoneczna 31, 55-300 Środa Śląska
                   </Typography>
                 </li>
               </Box>
@@ -543,13 +514,6 @@ const RegulaminPage = () => {
                 niż w terminie 14 dni.
               </Typography>
             </li>
-            <li>
-              <Typography sx={paragraphSx}>
-                W razie niezgodności treści cyfrowej z umową Klient może żądać
-                doprowadzenia do zgodności, obniżenia ceny albo odstąpienia od
-                umowy – na zasadach określonych w ustawie.
-              </Typography>
-            </li>
           </Box>
         </Stack>
 
@@ -567,7 +531,7 @@ const RegulaminPage = () => {
               <Typography sx={paragraphSx}>
                 Z chwilą dostarczenia Produktu Klient otrzymuje niewyłączną,
                 niezbywalną licencję do korzystania z materiału na własny użytek
-                [edukacyjny / zawodowy] bez prawa:
+                edukacyjny bez prawa:
               </Typography>
               <Box component="ol" sx={alphaListSx}>
                 <li>
@@ -601,7 +565,8 @@ const RegulaminPage = () => {
           <Box component="ol" sx={orderedListSx}>
             <li>
               <Typography sx={paragraphSx}>
-                Administratorem danych osobowych Klientów jest Sprzedawca.
+                Administratorem danych osobowych Klientów jest Sprzedawca:
+                Wioleta Jedziniak English o&apos;clock (Wioleta Jedziniak).
               </Typography>
             </li>
             <li>
@@ -631,12 +596,6 @@ const RegulaminPage = () => {
                 Informacje o procedurach dostępne są m.in. na stronach UOKiK.
               </Typography>
             </li>
-            <li>
-              <Typography sx={paragraphSx}>
-                [Opcjonalnie] Sprzedawca informuje, że unijna platforma ODR
-                została wygaszona.
-              </Typography>
-            </li>
           </Box>
         </Stack>
 
@@ -660,7 +619,7 @@ const RegulaminPage = () => {
             </li>
             <li>
               <Typography sx={paragraphSx}>
-                Regulamin wchodzi w życie z dniem [DD.MM.RRRR].
+                Regulamin wchodzi w życie z dniem 01.03.2026.
               </Typography>
             </li>
           </Box>
