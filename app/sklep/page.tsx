@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Container, Stack, Typography } from "@mui/material";
+import { Container, Pagination, Stack, Typography } from "@mui/material";
 import { useCart } from "@/app/context/CartContext";
 import type { ShopProduct } from "@/app/types/commerce";
 import ShopFiltersPanel from "./components/ShopFiltersPanel";
@@ -29,6 +29,8 @@ const toPriceFilterFromQuery = (value: string | null): ShopFilters["price"] => {
   return "all";
 };
 
+const PAGE_SIZE = 9;
+
 const ShopPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,6 +40,7 @@ const ShopPageContent = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<ShopFilters>(() => ({
     ...defaultFilters(),
     price: toPriceFilterFromQuery(searchParams.get("price")),
@@ -83,6 +86,10 @@ const ShopPageContent = () => {
     );
   }, [searchParams]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters.query, filters.category, filters.level, filters.price]);
+
   const options = useMemo(
     () => getFilterOptions(products, categories),
     [products, categories],
@@ -91,7 +98,18 @@ const ShopPageContent = () => {
     () => filterProducts(products, filters),
     [products, filters],
   );
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const paginatedProducts = useMemo(() => {
+    const from = (currentPage - 1) * PAGE_SIZE;
+    return filteredProducts.slice(from, from + PAGE_SIZE);
+  }, [currentPage, filteredProducts]);
   const filtersActive = hasActiveFilters(filters);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const updateFilters = (partial: Partial<ShopFilters>) => {
     setFilters((prev) => ({ ...prev, ...partial }));
@@ -163,9 +181,22 @@ const ShopPageContent = () => {
 
       {!loading && !error && filteredProducts.length > 0 ? (
         <ShopProductsGrid
-          products={filteredProducts}
+          products={paginatedProducts}
           onPrimaryAction={handlePrimaryAction}
         />
+      ) : null}
+
+      {!loading && !error && filteredProducts.length > PAGE_SIZE ? (
+        <Stack sx={shopPageStyles.paginationWrap}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(_, page) => setCurrentPage(page)}
+            color="primary"
+            shape="rounded"
+            siblingCount={0}
+          />
+        </Stack>
       ) : null}
     </Container>
   );
