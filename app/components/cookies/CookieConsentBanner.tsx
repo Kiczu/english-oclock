@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { colors } from "@/app/theme/colors";
 
 type CookieConsentBannerProps = {
   onAcceptAll: () => void;
@@ -29,16 +30,24 @@ const CookieConsentBanner = ({
           borderRadius: 3,
           border: "1px solid",
           borderColor: "rgba(55, 67, 115, 0.2)",
-          p: { xs: 2, sm: 2.5 },
-          bgcolor: "background.paper",
+          p: { xs: 2.5, sm: 3.25, md: 3.5 },
+          bgcolor: colors.stickerBackground,
         }}
       >
-        <Stack spacing={1.5}>
-          <Typography sx={{ fontWeight: 800, color: "primary.main" }}>
+        <Stack spacing={2}>
+          <Typography
+            variant="h4"
+            sx={{
+              color: "primary.main",
+              fontWeight: 900,
+              fontSize: { xs: "1.4rem", sm: "1.7rem" },
+              lineHeight: 1.08,
+            }}
+          >
             Pliki cookies
           </Typography>
 
-          <Typography sx={{ opacity: 0.9, fontSize: { xs: "0.92rem", sm: "0.98rem" } }}>
+          <Typography sx={{ opacity: 0.9, fontSize: { xs: "0.95rem", sm: "1.02rem" } }}>
             Używamy cookies niezbędnych do działania sklepu (np. koszyk). Cookies
             analityczne i marketingowe uruchomimy tylko za Twoją zgodą.
           </Typography>
@@ -46,7 +55,7 @@ const CookieConsentBanner = ({
           <Stack
             direction={{ xs: "column", sm: "row" }}
             spacing={1}
-            sx={{ alignItems: { xs: "stretch", sm: "center" }, pt: 0.5 }}
+            sx={{ alignItems: { xs: "stretch", sm: "center" }, pt: 0.75 }}
           >
             <Button variant="contained" color="secondary" onClick={onAcceptAll}>
               Akceptuj wszystkie

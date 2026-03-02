@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { CookiePreferences } from "@/app/lib/cookieConsent";
+import { colors } from "@/app/theme/colors";
 
 type CookieConsentSettingsDialogProps = {
   open: boolean;
@@ -29,7 +30,19 @@ const CookieConsentSettingsDialog = ({
   onSave,
 }: CookieConsentSettingsDialogProps) => {
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      disableScrollLock
+      keepMounted
+      PaperProps={{
+        sx: {
+          bgcolor: colors.stickerBackground,
+        },
+      }}
+    >
       <DialogTitle sx={{ fontWeight: 900, color: "primary.main" }}>
         Ustawienia cookies
       </DialogTitle>
@@ -92,4 +105,3 @@ const CookieConsentSettingsDialog = ({
 };
 
 export default CookieConsentSettingsDialog;
-
