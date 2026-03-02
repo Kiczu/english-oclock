@@ -66,11 +66,16 @@ const ProductsSection = ({
   );
 
   const [slideIndex, setSlideIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"next" | "prev">("next");
+  const [hasSlideInteraction, setHasSlideInteraction] = useState(false);
   const maxSlideIndex = Math.max(0, slides.length - 1);
   const activeSlideIndex = Math.min(slideIndex, maxSlideIndex);
 
   const goToSlide = (nextIndex: number) => {
     const safeIndex = Math.max(0, Math.min(maxSlideIndex, nextIndex));
+    if (safeIndex === activeSlideIndex) return;
+    setSlideDirection(safeIndex > activeSlideIndex ? "next" : "prev");
+    setHasSlideInteraction(true);
     setSlideIndex(safeIndex);
   };
 
@@ -96,32 +101,67 @@ const ProductsSection = ({
         {subtitle ? <Typography sx={productsSectionStyles.subtitle}>{subtitle}</Typography> : null}
       </Stack>
 
+      <Box sx={productsSectionStyles.sliderViewport}>
+        {useSlider && slides.length > 1 ? (
+          <IconButton
+            aria-label="Poprzedni slajd"
+            disabled={!canGoBack}
+            onClick={() => goToSlide(activeSlideIndex - 1)}
+            sx={productsSectionStyles.sliderNavButton("left")}
+          >
+            <ChevronLeftRoundedIcon />
+          </IconButton>
+        ) : null}
+
+        <Grid container spacing={3}>
+          {visibleProducts.map((product, order) => (
+            <Grid
+              key={`${product.id}-${activeSlideIndex}`}
+              size={{
+                xs: activeColumns.xs ?? 12,
+                sm: activeColumns.sm ?? 6,
+                md: activeColumns.md ?? 4,
+                lg: activeColumns.lg,
+              }}
+            >
+              <Box
+                sx={[
+                  productsSectionStyles.cardWrap(cardMaxWidth),
+                  productsSectionStyles.sliderCardMotion(
+                    slideDirection,
+                    hasSlideInteraction && useSlider && slides.length > 1,
+                    order,
+                    (order + activeSlideIndex) % 2 === 0 ? "left" : "right",
+                  ),
+                ]}
+              >
+                <ProductCard
+                  id={product.id}
+                  href={`/sklep/${product.slug}`}
+                  title={product.title}
+                  priceLabel={product.priceLabel}
+                  variant={getVariant(product)}
+                  onPrimaryAction={() => onPrimaryAction?.(product)}
+                />
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+
+        {useSlider && slides.length > 1 ? (
+          <IconButton
+            aria-label="Nastepny slajd"
+            disabled={!canGoNext}
+            onClick={() => goToSlide(activeSlideIndex + 1)}
+            sx={productsSectionStyles.sliderNavButton("right")}
+          >
+            <ChevronRightRoundedIcon />
+          </IconButton>
+        ) : null}
+      </Box>
+
       {useSlider && slides.length > 1 ? (
-        <>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={productsSectionStyles.sliderControlsRow}>
-            <IconButton
-              aria-label="Poprzedni slajd"
-              disabled={!canGoBack}
-              onClick={() => goToSlide(activeSlideIndex - 1)}
-              sx={productsSectionStyles.sliderNavButton}
-            >
-              <ChevronLeftRoundedIcon />
-            </IconButton>
-
-            <Typography sx={productsSectionStyles.sliderCounter}>
-              {activeSlideIndex + 1} / {slides.length}
-            </Typography>
-
-            <IconButton
-              aria-label="Nastepny slajd"
-              disabled={!canGoNext}
-              onClick={() => goToSlide(activeSlideIndex + 1)}
-              sx={productsSectionStyles.sliderNavButton}
-            >
-              <ChevronRightRoundedIcon />
-            </IconButton>
-          </Stack>
-
+        <Stack spacing={0.5} sx={productsSectionStyles.sliderMetaStack}>
           <Stack direction="row" spacing={1} sx={productsSectionStyles.sliderDotsRow}>
             {slides.map((_, index) => (
               <Box
@@ -130,33 +170,11 @@ const ProductsSection = ({
               />
             ))}
           </Stack>
-        </>
+          <Typography sx={productsSectionStyles.sliderCounter}>
+            {activeSlideIndex + 1} / {slides.length}
+          </Typography>
+        </Stack>
       ) : null}
-
-      <Grid container spacing={3}>
-        {visibleProducts.map((product) => (
-          <Grid
-            key={product.id}
-            size={{
-              xs: activeColumns.xs ?? 12,
-              sm: activeColumns.sm ?? 6,
-              md: activeColumns.md ?? 4,
-              lg: activeColumns.lg,
-            }}
-          >
-            <Box sx={productsSectionStyles.cardWrap(cardMaxWidth)}>
-              <ProductCard
-                id={product.id}
-                href={`/sklep/${product.slug}`}
-                title={product.title}
-                priceLabel={product.priceLabel}
-                variant={getVariant(product)}
-                onPrimaryAction={() => onPrimaryAction?.(product)}
-              />
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
     </Box>
   );
 };
