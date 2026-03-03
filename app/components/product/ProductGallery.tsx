@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useCallback, useState } from "react";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
@@ -22,13 +22,13 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
   const safeItems = items.length
     ? items
     : [{ src: FALLBACK_PREVIEW_SRC, label: "Podglad" }];
-  const [activeIndex, setActiveIndex] = React.useState(0);
-  const [thumbPageIndex, setThumbPageIndex] = React.useState(0);
-  const [brokenSources, setBrokenSources] = React.useState<Set<string>>(
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [thumbPageIndex, setThumbPageIndex] = useState(0);
+  const [brokenSources, setBrokenSources] = useState<Set<string>>(
     new Set(),
   );
 
-  const markImageAsBroken = React.useCallback((src?: string) => {
+  const markImageAsBroken = useCallback((src?: string) => {
     if (!src) return;
     setBrokenSources((prev) => {
       if (prev.has(src)) return prev;

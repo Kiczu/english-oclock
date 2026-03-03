@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Box,
@@ -42,8 +42,8 @@ const CartDrawer = ({
   onRemoveItem,
   onClear,
 }: CartDrawerProps) => {
-  const [checkoutPending, setCheckoutPending] = React.useState(false);
-  const [checkoutError, setCheckoutError] = React.useState<string | null>(null);
+  const [checkoutPending, setCheckoutPending] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const handleCheckout = async () => {
     setCheckoutError(null);
@@ -93,7 +93,7 @@ const CartDrawer = ({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) setCheckoutError(null);
   }, [open]);
 

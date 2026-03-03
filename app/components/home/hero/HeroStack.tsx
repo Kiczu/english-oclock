@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
@@ -43,10 +42,7 @@ const crownDrop = keyframes`
 `;
 
 const HeroStack = () => {
-  const [play, setPlay] = React.useState(false);
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
-
-  React.useEffect(() => setPlay(true), []);
 
   const scrollToNext = () => {
     document
@@ -56,7 +52,7 @@ const HeroStack = () => {
 
   const { circles, movers, decor } = heroLayout;
 
-  const canAnimate = play && !reducedMotion;
+  const canAnimate = !reducedMotion;
 
   return (
     <Box

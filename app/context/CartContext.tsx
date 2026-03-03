@@ -1,6 +1,14 @@
 "use client";
 
-import * as React from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 
 export type CartProduct = {
   id: string;
@@ -32,7 +40,7 @@ type CartContextValue = {
 
 const STORAGE_KEY = "english-oclock-cart";
 
-const CartContext = React.createContext<CartContextValue | null>(null);
+const CartContext = createContext<CartContextValue | null>(null);
 
 const parsePrice = (priceLabel: string, isFree?: boolean, unitPrice?: number) => {
   if (typeof unitPrice === "number" && Number.isFinite(unitPrice)) {
@@ -45,12 +53,12 @@ const parsePrice = (priceLabel: string, isFree?: boolean, unitPrice?: number) =>
   return Number.isFinite(value) ? value : 0;
 };
 
-export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [items, setItems] = React.useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = React.useState(false);
-  const [ready, setReady] = React.useState(false);
+export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [ready, setReady] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -66,12 +74,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!ready) return;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items, ready]);
 
-  const addItem = React.useCallback((item: CartProduct, quantity = 1) => {
+  const addItem = useCallback((item: CartProduct, quantity = 1) => {
     if (quantity <= 0) return;
     setItems((prev) => {
       const existing = prev.find((entry) => entry.id === item.id);
@@ -86,7 +94,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, []);
 
-  const incrementItem = React.useCallback((id: string) => {
+  const incrementItem = useCallback((id: string) => {
     setItems((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
@@ -94,7 +102,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }, []);
 
-  const decrementItem = React.useCallback((id: string) => {
+  const decrementItem = useCallback((id: string) => {
     setItems((prev) =>
       prev.flatMap((item) => {
         if (item.id !== id) return [item];
@@ -104,20 +112,20 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }, []);
 
-  const removeItem = React.useCallback((id: string) => {
+  const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  const clearCart = React.useCallback(() => setItems([]), []);
-  const openCart = React.useCallback(() => setIsCartOpen(true), []);
-  const closeCart = React.useCallback(() => setIsCartOpen(false), []);
+  const clearCart = useCallback(() => setItems([]), []);
+  const openCart = useCallback(() => setIsCartOpen(true), []);
+  const closeCart = useCallback(() => setIsCartOpen(false), []);
 
-  const totalItems = React.useMemo(
+  const totalItems = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
     [items],
   );
 
-  const totalAmount = React.useMemo(
+  const totalAmount = useMemo(
     () =>
       items.reduce(
         (sum, item) =>
@@ -127,7 +135,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     [items],
   );
 
-  const value = React.useMemo(
+  const value = useMemo(
     () => ({
       items,
       totalItems,
@@ -160,7 +168,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useCart = () => {
-  const context = React.useContext(CartContext);
+  const context = useContext(CartContext);
   if (!context) {
     throw new Error("useCart must be used inside CartProvider");
   }
