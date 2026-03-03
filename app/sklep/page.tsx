@@ -120,7 +120,7 @@ const ShopPageContent = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters.query, filters.category, filters.level, filters.price]);
+  }, [debouncedQuery, filters.category, filters.level, filters.price]);
 
   const totalPages = Math.max(1, Math.ceil(totalResults / PAGE_SIZE));
   const filtersActive = hasActiveFilters(filters);
