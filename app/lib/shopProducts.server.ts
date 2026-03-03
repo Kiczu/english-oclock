@@ -1,24 +1,36 @@
 import "server-only";
 
 import { isShopCategoryVisible, toShopProduct } from "@/app/helpers/shopProduct";
-import wooFetch from "@/app/lib/woo";
+import wooFetch, { wooFetchWithMeta } from "@/app/lib/woo";
 import { WC_ENABLED } from "@/app/lib/env";
 import type {
   ShopProduct,
   WooProduct,
+  WooProductAttribute,
+  WooProductAttributeTerm,
   WooProductCategory,
 } from "@/app/types/commerce";
+
+type ShopPriceFilter = "all" | "free" | "paid";
 
 type GetShopProductsOptions = {
   page?: number;
   perPage?: number;
   all?: boolean;
+  query?: string;
+  category?: string;
+  level?: string;
+  price?: ShopPriceFilter;
 };
 
 type ShopProductsResult = {
   source: "woo";
   items: ShopProduct[];
   categories: string[];
+  levels: string[];
+  total: number;
+  page: number;
+  perPage: number;
 };
 
 const clampPositiveInt = (value: number, min: number, max: number) =>
@@ -27,13 +39,61 @@ const clampPositiveInt = (value: number, min: number, max: number) =>
 const sortValues = (values: string[]) =>
   values.sort((a, b) => a.localeCompare(b, "pl", { sensitivity: "base" }));
 
-const fetchWooProducts = async (page: number, perPage: number): Promise<ShopProduct[]> => {
-  const products = await wooFetch<WooProduct[]>(
+const normalizeText = (value?: string) => (value ?? "").trim().toLowerCase();
+
+const toSearchText = (product: ShopProduct) =>
+  [
+    product.title,
+    product.subtitle ?? "",
+    product.description ?? "",
+    ...product.tags,
+    ...product.categories,
+    product.level ?? "",
+  ]
+    .join(" ")
+    .toLowerCase();
+
+const filterShopProducts = (
+  products: ShopProduct[],
+  filters: { query?: string; category?: string; level?: string; price: ShopPriceFilter },
+) => {
+  const normalizedQuery = normalizeText(filters.query);
+
+  return products.filter((product) => {
+    if (filters.category && !product.categories.some((category) => category === filters.category)) {
+      return false;
+    }
+
+    if (filters.level && product.level !== filters.level) {
+      return false;
+    }
+
+    if (filters.price === "free" && !product.isFree) {
+      return false;
+    }
+
+    if (filters.price === "paid" && product.isFree) {
+      return false;
+    }
+
+    if (normalizedQuery && !toSearchText(product).includes(normalizedQuery)) {
+      return false;
+    }
+
+    return true;
+  });
+};
+
+const fetchWooProductsPage = async (page: number, perPage: number) => {
+  const { data, meta } = await wooFetchWithMeta<WooProduct[]>(
     `/wp-json/wc/v3/products?status=publish&per_page=${perPage}&page=${page}`,
     { next: { revalidate: 300 } },
   );
 
-  return products.map(toShopProduct);
+  return {
+    items: data.map(toShopProduct),
+    total: meta.total,
+  };
 };
 
 const fetchAllWooProducts = async (perPage: number): Promise<ShopProduct[]> => {
@@ -42,10 +102,10 @@ const fetchAllWooProducts = async (perPage: number): Promise<ShopProduct[]> => {
 
   for (let page = 1; page <= 200; page += 1) {
     try {
-      const chunk = await fetchWooProducts(page, safePerPage);
-      items.push(...chunk);
+      const chunk = await fetchWooProductsPage(page, safePerPage);
+      items.push(...chunk.items);
 
-      if (chunk.length < safePerPage) {
+      if (chunk.items.length < safePerPage) {
         break;
       }
     } catch (error) {
@@ -68,6 +128,17 @@ const getCategoriesFromItems = (items: ShopProduct[]) =>
           .flatMap((item) => item.categories)
           .map((category) => category.trim())
           .filter(Boolean),
+      ),
+    ),
+  );
+
+const getLevelsFromItems = (items: ShopProduct[]) =>
+  sortValues(
+    Array.from(
+      new Set(
+        items
+          .map((item) => item.level?.trim())
+          .filter((value): value is string => Boolean(value)),
       ),
     ),
   );
@@ -96,6 +167,42 @@ const fetchWooCategories = async (): Promise<string[]> => {
   return sortValues(Array.from(new Set(names)));
 };
 
+const fetchWooLevels = async (): Promise<string[]> => {
+  const attributes = await wooFetch<WooProductAttribute[]>(
+    "/wp-json/wc/v3/products/attributes?per_page=100",
+    { next: { revalidate: 300 } },
+  );
+
+  const levelAttribute = attributes.find((attribute) =>
+    ["poziom", "level"].includes(normalizeText(attribute.name)),
+  );
+
+  if (!levelAttribute) {
+    return [];
+  }
+
+  const names: string[] = [];
+
+  for (let page = 1; page <= 200; page += 1) {
+    const terms = await wooFetch<WooProductAttributeTerm[]>(
+      `/wp-json/wc/v3/products/attributes/${levelAttribute.id}/terms?hide_empty=false&per_page=100&page=${page}`,
+      { next: { revalidate: 300 } },
+    );
+
+    names.push(
+      ...terms
+        .map((term) => term.name?.trim())
+        .filter((value): value is string => Boolean(value)),
+    );
+
+    if (terms.length < 100) {
+      break;
+    }
+  }
+
+  return sortValues(Array.from(new Set(names)));
+};
+
 const fetchWooProductBySlug = async (slug: string): Promise<ShopProduct | null> => {
   const products = await wooFetch<WooProduct[]>(
     `/wp-json/wc/v3/products?status=publish&slug=${encodeURIComponent(slug)}&per_page=1`,
@@ -111,17 +218,55 @@ export const getShopProducts = async (
   const safePage = clampPositiveInt(options.page ?? 1, 1, 9999);
   const safePerPage = clampPositiveInt(options.perPage ?? 24, 1, 100);
   const all = options.all ?? false;
+  const filters = {
+    query: options.query?.trim() || undefined,
+    category: options.category && options.category !== "all" ? options.category : undefined,
+    level: options.level && options.level !== "all" ? options.level : undefined,
+    price: options.price ?? "all",
+  } as const;
+  const hasFilters = Boolean(
+    filters.query || filters.category || filters.level || filters.price !== "all",
+  );
 
   if (!WC_ENABLED) {
     throw new Error("WooCommerce is not configured");
   }
 
-  const items = all
-    ? await fetchAllWooProducts(safePerPage)
-    : await fetchWooProducts(safePage, safePerPage);
-  const categories =
-    (await fetchWooCategories().catch(() => null)) ?? getCategoriesFromItems(items);
-  return { source: "woo", items, categories };
+  const [categories, levels] = await Promise.all([
+    fetchWooCategories().catch(() => null),
+    fetchWooLevels().catch(() => null),
+  ]);
+
+  if (all || hasFilters) {
+    const fullItems = await fetchAllWooProducts(100);
+    const filteredItems = filterShopProducts(fullItems, filters);
+    const total = filteredItems.length;
+    const items = all
+      ? filteredItems
+      : filteredItems.slice((safePage - 1) * safePerPage, safePage * safePerPage);
+
+    return {
+      source: "woo",
+      items,
+      categories: categories ?? getCategoriesFromItems(fullItems),
+      levels: levels ?? getLevelsFromItems(fullItems),
+      total,
+      page: safePage,
+      perPage: safePerPage,
+    };
+  }
+
+  const pagePayload = await fetchWooProductsPage(safePage, safePerPage);
+
+  return {
+    source: "woo",
+    items: pagePayload.items,
+    categories: categories ?? getCategoriesFromItems(pagePayload.items),
+    levels: levels ?? getLevelsFromItems(pagePayload.items),
+    total: pagePayload.total ?? pagePayload.items.length,
+    page: safePage,
+    perPage: safePerPage,
+  };
 };
 
 export const getShopProductBySlug = async (slug: string): Promise<ShopProduct | null> => {

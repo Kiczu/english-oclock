@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Pagination, Stack, Typography } from "@mui/material";
 import { useCart } from "@/app/context/CartContext";
@@ -11,12 +11,10 @@ import ShopProductsSkeleton from "./components/ShopProductsSkeleton";
 import ShopStateNotice from "./components/ShopStateNotice";
 import {
   defaultFilters,
-  filterProducts,
-  getFilterOptions,
   hasActiveFilters,
 } from "./helpers/filters";
 import { fetchShopProducts } from "./services/fetchShopProducts";
-import type { ShopFilters } from "./types";
+import type { ShopFilterOptions, ShopFilters } from "./types";
 import { shopPageStyles } from "./page.styles";
 
 const toErrorMessage = (error: unknown) => {
@@ -37,7 +35,11 @@ const ShopPageContent = () => {
   const { addItem, openCart } = useCart();
 
   const [products, setProducts] = useState<ShopProduct[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [options, setOptions] = useState<ShopFilterOptions>({
+    categories: [],
+    levels: [],
+  });
+  const [totalResults, setTotalResults] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,6 +47,15 @@ const ShopPageContent = () => {
     ...defaultFilters(),
     price: toPriceFilterFromQuery(searchParams.get("price")),
   }));
+  const [debouncedQuery, setDebouncedQuery] = useState(filters.query);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedQuery(filters.query);
+    }, 250);
+
+    return () => window.clearTimeout(timer);
+  }, [filters.query]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -54,13 +65,28 @@ const ShopPageContent = () => {
       setError(null);
 
       try {
-        const payload = await fetchShopProducts(controller.signal);
+        const payload = await fetchShopProducts({
+          page: currentPage,
+          perPage: PAGE_SIZE,
+          filters: {
+            query: debouncedQuery,
+            category: filters.category,
+            level: filters.level,
+            price: filters.price,
+          },
+          signal: controller.signal,
+        });
         setProducts(payload.items ?? []);
-        setCategories(payload.categories ?? []);
+        setOptions({
+          categories: payload.categories ?? [],
+          levels: payload.levels ?? [],
+        });
+        setTotalResults(payload.total ?? payload.items.length);
       } catch (loadError) {
         if (controller.signal.aborted) return;
         setProducts([]);
-        setCategories([]);
+        setOptions({ categories: [], levels: [] });
+        setTotalResults(0);
         setError(toErrorMessage(loadError));
       } finally {
         if (!controller.signal.aborted) {
@@ -72,7 +98,13 @@ const ShopPageContent = () => {
     void loadProducts();
 
     return () => controller.abort();
-  }, []);
+  }, [
+    currentPage,
+    filters.category,
+    filters.level,
+    filters.price,
+    debouncedQuery,
+  ]);
 
   useEffect(() => {
     const nextPrice = toPriceFilterFromQuery(searchParams.get("price"));
@@ -90,19 +122,7 @@ const ShopPageContent = () => {
     setCurrentPage(1);
   }, [filters.query, filters.category, filters.level, filters.price]);
 
-  const options = useMemo(
-    () => getFilterOptions(products, categories),
-    [products, categories],
-  );
-  const filteredProducts = useMemo(
-    () => filterProducts(products, filters),
-    [products, filters],
-  );
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
-  const paginatedProducts = useMemo(() => {
-    const from = (currentPage - 1) * PAGE_SIZE;
-    return filteredProducts.slice(from, from + PAGE_SIZE);
-  }, [currentPage, filteredProducts]);
+  const totalPages = Math.max(1, Math.ceil(totalResults / PAGE_SIZE));
   const filtersActive = hasActiveFilters(filters);
 
   useEffect(() => {
@@ -150,7 +170,7 @@ const ShopPageContent = () => {
       <ShopFiltersPanel
         filters={filters}
         options={options}
-        resultsCount={filteredProducts.length}
+        resultsCount={totalResults}
         hasActiveFilters={filtersActive}
         onQueryChange={(value) => updateFilters({ query: value })}
         onCategoryChange={(value) => updateFilters({ category: value })}
@@ -168,7 +188,7 @@ const ShopPageContent = () => {
         />
       ) : null}
 
-      {!loading && !error && filteredProducts.length === 0 ? (
+      {!loading && !error && totalResults === 0 ? (
         <ShopStateNotice
           title={filtersActive ? "Brak produktow dla wybranych filtrow." : "Brak produktow."}
           description={
@@ -179,14 +199,14 @@ const ShopPageContent = () => {
         />
       ) : null}
 
-      {!loading && !error && filteredProducts.length > 0 ? (
+      {!loading && !error && products.length > 0 ? (
         <ShopProductsGrid
-          products={paginatedProducts}
+          products={products}
           onPrimaryAction={handlePrimaryAction}
         />
       ) : null}
 
-      {!loading && !error && filteredProducts.length > PAGE_SIZE ? (
+      {!loading && !error && totalResults > PAGE_SIZE ? (
         <Stack sx={shopPageStyles.paginationWrap}>
           <Pagination
             count={totalPages}

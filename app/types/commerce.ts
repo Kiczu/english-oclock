@@ -48,6 +48,18 @@ export type WooProductCategory = {
     slug?: string;
 };
 
+export type WooProductAttribute = {
+    id: number;
+    name: string;
+    slug?: string;
+};
+
+export type WooProductAttributeTerm = {
+    id: number;
+    name: string;
+    slug?: string;
+};
+
 export type ShopProduct = {
     id: string;
     wooProductId: number;
@@ -74,5 +86,9 @@ export type ShopProductsResponseDTO = {
     source: "woo";
     items: ShopProduct[];
     categories?: string[];
+    levels?: string[];
+    total?: number;
+    page?: number;
+    perPage?: number;
 };
 
