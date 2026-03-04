@@ -35,9 +35,16 @@ const initialTouched: Record<FieldName, boolean> = {
 
 const visuallyHiddenSx = {
   position: "absolute",
-  width: 1,
-  height: 1,
+  top: 0,
+  left: 0,
+  width: "1px",
+  height: "1px",
+  margin: "-1px",
+  border: 0,
+  padding: 0,
   overflow: "hidden",
+  whiteSpace: "nowrap",
+  clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
 } as const;
 
@@ -113,7 +120,7 @@ const ContactSection = ({ id }: { id?: string }) => {
     <Box
       component="section"
       id={id}
-      sx={{ py: { xs: 6, md: 10 }, scrollMarginTop: { xs: 96, md: 112 } }}
+      sx={{ py: { xs: 6, md: 10 } }}
     >
       <Stack spacing={1.5} sx={{ mb: 4 }}>
         <Typography

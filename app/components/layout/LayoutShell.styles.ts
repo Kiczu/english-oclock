@@ -1,6 +1,6 @@
 export const layoutShellStyles = {
   shell: {
-    minHeight: "100dvh",
+    minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
   },
