@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getShopProductBySlug } from "@/app/lib/shopProducts.server";
+import {
+  WooNotConfiguredError,
+  getShopProductBySlug,
+} from "@/app/lib/shopProducts.server";
 import { WC_BASE_URL } from "@/app/lib/env";
 
 export const runtime = "nodejs";
@@ -259,7 +262,7 @@ export async function GET(req: Request) {
       );
     }
 
-    if (error instanceof Error && error.message === "WooCommerce is not configured") {
+    if (error instanceof WooNotConfiguredError) {
       return NextResponse.json(
         { error: "Free downloads are temporarily unavailable" },
         { status: 503 },

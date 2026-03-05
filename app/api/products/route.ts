@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getShopProducts } from "@/app/lib/shopProducts.server";
+import {
+  WooNotConfiguredError,
+  getShopProducts,
+} from "@/app/lib/shopProducts.server";
 
 export const runtime = "nodejs";
 
@@ -8,11 +11,8 @@ const toPriceFilter = (value: string | null): "all" | "free" | "paid" => {
   return "all";
 };
 
-const isWooNotConfiguredError = (error: unknown) =>
-  error instanceof Error && error.message === "WooCommerce is not configured";
-
 const toApiErrorResponse = (error: unknown) => {
-  if (isWooNotConfiguredError(error)) {
+  if (error instanceof WooNotConfiguredError) {
     return NextResponse.json(
       { error: "Products are temporarily unavailable" },
       { status: 503 },

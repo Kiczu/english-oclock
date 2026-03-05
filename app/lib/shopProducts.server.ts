@@ -1,5 +1,6 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { isShopCategoryVisible, toShopProduct } from "@/app/helpers/shopProduct";
 import wooFetch, { wooFetchWithMeta } from "@/app/lib/woo";
 import { WC_ENABLED } from "@/app/lib/env";
@@ -32,6 +33,13 @@ type ShopProductsResult = {
   page: number;
   perPage: number;
 };
+
+export class WooNotConfiguredError extends Error {
+  constructor() {
+    super("WooCommerce is not configured");
+    this.name = "WooNotConfiguredError";
+  }
+}
 
 const clampPositiveInt = (value: number, min: number, max: number) =>
   Math.min(Math.max(Number.isFinite(value) ? Math.floor(value) : min, min), max);
@@ -212,6 +220,24 @@ const fetchWooProductBySlug = async (slug: string): Promise<ShopProduct | null> 
   return products[0] ? toShopProduct(products[0]) : null;
 };
 
+const getCachedAllWooProducts = unstable_cache(
+  () => fetchAllWooProducts(100),
+  ["shop-products-all"],
+  { revalidate: 300 },
+);
+
+const getCachedWooCategories = unstable_cache(
+  fetchWooCategories,
+  ["shop-categories-all"],
+  { revalidate: 300 },
+);
+
+const getCachedWooLevels = unstable_cache(
+  fetchWooLevels,
+  ["shop-levels-all"],
+  { revalidate: 300 },
+);
+
 export const getShopProducts = async (
   options: GetShopProductsOptions = {},
 ): Promise<ShopProductsResult> => {
@@ -229,16 +255,16 @@ export const getShopProducts = async (
   );
 
   if (!WC_ENABLED) {
-    throw new Error("WooCommerce is not configured");
+    throw new WooNotConfiguredError();
   }
 
   const [categories, levels] = await Promise.all([
-    fetchWooCategories().catch(() => null),
-    fetchWooLevels().catch(() => null),
+    getCachedWooCategories().catch(() => null),
+    getCachedWooLevels().catch(() => null),
   ]);
 
   if (all || hasFilters) {
-    const fullItems = await fetchAllWooProducts(100);
+    const fullItems = await getCachedAllWooProducts();
     const filteredItems = filterShopProducts(fullItems, filters);
     const total = filteredItems.length;
     const items = all
@@ -271,7 +297,7 @@ export const getShopProducts = async (
 
 export const getShopProductBySlug = async (slug: string): Promise<ShopProduct | null> => {
   if (!WC_ENABLED) {
-    throw new Error("WooCommerce is not configured");
+    throw new WooNotConfiguredError();
   }
 
   return fetchWooProductBySlug(slug);
