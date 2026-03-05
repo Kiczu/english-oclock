@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Pagination, Stack, Typography } from "@mui/material";
 import { useCart } from "@/app/context/CartContext";
+import { toCartProduct } from "@/app/helpers/cartProduct";
 import type { ShopProduct } from "@/app/types/commerce";
 import ShopFiltersPanel from "./components/ShopFiltersPanel";
 import ShopProductsGrid from "./components/ShopProductsGrid";
@@ -143,15 +144,7 @@ const ShopPageContent = () => {
       return;
     }
 
-    addItem({
-      id: product.id,
-      wooProductId: product.wooProductId,
-      slug: product.slug,
-      title: product.title,
-      priceLabel: product.priceLabel,
-      unitPrice: product.price,
-      isFree: product.isFree,
-    });
+    addItem(toCartProduct(product));
     openCart();
   };
 

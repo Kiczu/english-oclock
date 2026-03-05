@@ -20,9 +20,7 @@ export type CartProduct = {
   isFree?: boolean;
 };
 
-export type CartItem = CartProduct & {
-  quantity: number;
-};
+export type CartItem = CartProduct;
 
 type CartContextValue = {
   items: CartItem[];
@@ -37,7 +35,6 @@ type CartContextValue = {
 };
 
 const STORAGE_KEY = "english-oclock-cart";
-const FIXED_CART_ITEM_QUANTITY = 1;
 
 const CartContext = createContext<CartContextValue | null>(null);
 
@@ -90,7 +87,6 @@ const normalizeCartItems = (value: unknown): CartItem[] => {
           ? item.unitPrice
           : undefined,
       isFree: item.isFree === true ? true : undefined,
-      quantity: FIXED_CART_ITEM_QUANTITY,
     });
 
     seen.add(item.id);
@@ -129,7 +125,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         return prev;
       }
 
-      return [...prev, { ...item, quantity: FIXED_CART_ITEM_QUANTITY }];
+      return [...prev, item];
     });
   }, []);
 
@@ -141,19 +137,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const openCart = useCallback(() => setIsCartOpen(true), []);
   const closeCart = useCallback(() => setIsCartOpen(false), []);
 
-  const totalItems = useMemo(
-    () => items.length,
-    [items],
-  );
-
-  const totalAmount = useMemo(
-    () =>
-      items.reduce(
-        (sum, item) =>
-          sum + parsePrice(item.priceLabel, item.isFree, item.unitPrice) * item.quantity,
-        0,
-      ),
-    [items],
+  const totalItems = items.length;
+  const totalAmount = items.reduce(
+    (sum, item) => sum + parsePrice(item.priceLabel, item.isFree, item.unitPrice),
+    0,
   );
 
   const value = useMemo(
