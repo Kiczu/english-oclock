@@ -1,10 +1,10 @@
 import { createHmac, randomBytes } from "node:crypto";
 import {
-    HEADLESS_CHECKOUT_MAX_AGE_SECONDS,
-    HEADLESS_SHARED_SECRET,
-    WC_BASE_URL,
-    WC_CHECKOUT_BASE_PATH,
-    WC_ENABLED,
+  HEADLESS_CHECKOUT_MAX_AGE_SECONDS,
+  HEADLESS_SHARED_SECRET,
+  WC_BASE_URL,
+  WC_CHECKOUT_BASE_PATH,
+  WC_ENABLED,
 } from "@/app/lib/env";
 import wooFetch from "@/app/lib/woo";
 import type { CartItemInput } from "@/app/types/commerce";
@@ -21,24 +21,30 @@ type WooProductProbe = {
 };
 
 class CheckoutValidationError extends Error {}
+const MAX_CHECKOUT_ITEMS = 100;
 
 const assertValidItems = (items: CartItemInput[]) => {
   if (!Array.isArray(items) || items.length === 0) {
     throw new CheckoutValidationError("Cart is empty");
   }
+  if (items.length > MAX_CHECKOUT_ITEMS) {
+    throw new CheckoutValidationError("Too many cart items");
+  }
+
+  const uniqueProductIds = new Set<number>();
 
   for (const item of items) {
     if (!Number.isInteger(item.productId) || item.productId <= 0) {
       throw new CheckoutValidationError("Invalid productId");
     }
-
-    if (
-      !Number.isInteger(item.quantity) ||
-      item.quantity <= 0 ||
-      item.quantity > 99
-    ) {
+    if (item.quantity !== 1) {
       throw new CheckoutValidationError("Invalid quantity");
     }
+    if (uniqueProductIds.has(item.productId)) {
+      throw new CheckoutValidationError("Duplicate productId");
+    }
+
+    uniqueProductIds.add(item.productId);
   }
 };
 
@@ -81,6 +87,27 @@ const toSignedCheckoutUrl = (items: CartItemInput[]) => {
   return checkoutUrl.toString();
 };
 
+const verifyPublishedProducts = async (items: CartItemInput[]) => {
+  const productIds = items.map((item) => item.productId);
+  const productsQuery = new URLSearchParams({
+    status: "publish",
+    include: productIds.join(","),
+    per_page: String(productIds.length),
+  });
+
+  const publishedProducts = await wooFetch<WooProductProbe[]>(
+    `/wp-json/wc/v3/products?${productsQuery.toString()}`,
+    {
+      next: { revalidate: 60 },
+    },
+  );
+
+  const publishedProductIds = new Set(publishedProducts.map((product) => product.id));
+  if (productIds.some((productId) => !publishedProductIds.has(productId))) {
+    throw new CheckoutValidationError("One or more products are unavailable");
+  }
+};
+
 export async function POST(req: Request) {
   if (!WC_BASE_URL || !HEADLESS_SHARED_SECRET) {
     console.error("[api/checkout-url] missing checkout configuration", {
@@ -99,24 +126,36 @@ export async function POST(req: Request) {
 
     if (WC_ENABLED) {
       try {
-        await Promise.all(
-          body.items.map((item) =>
-            wooFetch<WooProductProbe>(
-              `/wp-json/wc/v3/products/${item.productId}`,
-              {
-                next: { revalidate: 60 },
-              },
-            ),
-          ),
-        );
+        await verifyPublishedProducts(body.items);
       } catch (error) {
+        if (error instanceof CheckoutValidationError) {
+          throw error;
+        }
+
         console.error("[api/checkout-url] product verification failed", error);
         throw new Error("Checkout product verification failed");
       }
+    } else {
+      console.error("[api/checkout-url] product verification skipped", {
+        reason: "WC api credentials are missing",
+      });
+      return NextResponse.json(
+        { error: "Checkout is temporarily unavailable" },
+        { status: 503 },
+      );
     }
 
-    const checkoutUrl = toSignedCheckoutUrl(body.items);
-    return NextResponse.json({ checkoutUrl });
+    try {
+      const checkoutUrl = toSignedCheckoutUrl(body.items);
+      return NextResponse.json({ checkoutUrl });
+    } catch (error) {
+      if (error instanceof CheckoutValidationError) {
+        throw error;
+      }
+
+      console.error("[api/checkout-url] signing failed", error);
+      throw new Error("Checkout signing failed");
+    }
   } catch (error) {
     if (error instanceof CheckoutValidationError) {
       return NextResponse.json({ error: error.message }, { status: 400 });

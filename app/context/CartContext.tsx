@@ -31,14 +31,13 @@ type CartContextValue = {
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (item: CartProduct, quantity?: number) => void;
-  incrementItem: (id: string) => void;
-  decrementItem: (id: string) => void;
+  addItem: (item: CartProduct) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
 };
 
 const STORAGE_KEY = "english-oclock-cart";
+const FIXED_CART_ITEM_QUANTITY = 1;
 
 const CartContext = createContext<CartContextValue | null>(null);
 
@@ -53,6 +52,53 @@ const parsePrice = (priceLabel: string, isFree?: boolean, unitPrice?: number) =>
   return Number.isFinite(value) ? value : 0;
 };
 
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
+const normalizeCartItems = (value: unknown): CartItem[] => {
+  if (!Array.isArray(value)) return [];
+
+  const seen = new Set<string>();
+  const normalized: CartItem[] = [];
+
+  for (const rawItem of value) {
+    if (!rawItem || typeof rawItem !== "object") continue;
+
+    const item = rawItem as Partial<CartItem>;
+    if (!isNonEmptyString(item.id) || seen.has(item.id)) continue;
+    if (
+      !isNonEmptyString(item.slug) ||
+      !isNonEmptyString(item.title) ||
+      !isNonEmptyString(item.priceLabel)
+    ) {
+      continue;
+    }
+
+    normalized.push({
+      id: item.id,
+      wooProductId:
+        typeof item.wooProductId === "number" &&
+        Number.isInteger(item.wooProductId) &&
+        item.wooProductId > 0
+          ? item.wooProductId
+          : undefined,
+      slug: item.slug,
+      title: item.title,
+      priceLabel: item.priceLabel,
+      unitPrice:
+        typeof item.unitPrice === "number" && Number.isFinite(item.unitPrice)
+          ? item.unitPrice
+          : undefined,
+      isFree: item.isFree === true ? true : undefined,
+      quantity: FIXED_CART_ITEM_QUANTITY,
+    });
+
+    seen.add(item.id);
+  }
+
+  return normalized;
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -62,10 +108,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as CartItem[];
-        if (Array.isArray(parsed)) {
-          setItems(parsed.filter((item) => item?.id && item.quantity > 0));
-        }
+        const parsed = JSON.parse(raw) as unknown;
+        setItems(normalizeCartItems(parsed));
       }
     } catch {
       setItems([]);
@@ -79,37 +123,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items, ready]);
 
-  const addItem = useCallback((item: CartProduct, quantity = 1) => {
-    if (quantity <= 0) return;
+  const addItem = useCallback((item: CartProduct) => {
     setItems((prev) => {
-      const existing = prev.find((entry) => entry.id === item.id);
-      if (!existing) {
-        return [...prev, { ...item, quantity }];
+      if (prev.some((entry) => entry.id === item.id)) {
+        return prev;
       }
-      return prev.map((entry) =>
-        entry.id === item.id
-          ? { ...entry, quantity: entry.quantity + quantity }
-          : entry,
-      );
+
+      return [...prev, { ...item, quantity: FIXED_CART_ITEM_QUANTITY }];
     });
-  }, []);
-
-  const incrementItem = useCallback((id: string) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    );
-  }, []);
-
-  const decrementItem = useCallback((id: string) => {
-    setItems((prev) =>
-      prev.flatMap((item) => {
-        if (item.id !== id) return [item];
-        if (item.quantity <= 1) return [];
-        return [{ ...item, quantity: item.quantity - 1 }];
-      }),
-    );
   }, []);
 
   const removeItem = useCallback((id: string) => {
@@ -121,7 +142,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const closeCart = useCallback(() => setIsCartOpen(false), []);
 
   const totalItems = useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity, 0),
+    () => items.length,
     [items],
   );
 
@@ -144,8 +165,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       openCart,
       closeCart,
       addItem,
-      incrementItem,
-      decrementItem,
       removeItem,
       clearCart,
     }),
@@ -157,8 +176,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       openCart,
       closeCart,
       addItem,
-      incrementItem,
-      decrementItem,
       removeItem,
       clearCart,
     ],

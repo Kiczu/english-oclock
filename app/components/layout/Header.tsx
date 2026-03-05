@@ -16,8 +16,6 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
     isCartOpen,
     openCart,
     closeCart,
-    incrementItem,
-    decrementItem,
     removeItem,
     clearCart,
   } = useCart();
@@ -54,8 +52,6 @@ const Header = ({ hidden }: { hidden?: boolean }) => {
         totalItems={totalItems}
         totalAmountLabel={totalAmountLabel}
         onClose={closeCart}
-        onIncrementItem={incrementItem}
-        onDecrementItem={decrementItem}
         onRemoveItem={removeItem}
         onClear={clearCart}
       />
