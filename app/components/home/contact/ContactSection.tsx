@@ -1,15 +1,16 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import ContactForm from "./ContactForm";
 import ContactFaqCard from "./ContactFaqCard";
+import { contactSectionStyles } from "./ContactSection.styles";
 
 const ContactSection = ({ id }: { id?: string }) => {
   return (
-    <Box component="section" id={id} sx={{ py: { xs: 6, md: 10 } }}>
-      <Stack spacing={1.5} sx={{ mb: 4 }}>
-        <Typography variant="h3" sx={{ fontWeight: 900, color: "primary.main" }}>
+    <Box component="section" id={id} sx={contactSectionStyles.section}>
+      <Stack spacing={1.5} sx={contactSectionStyles.headingStack}>
+        <Typography variant="h3" sx={contactSectionStyles.title}>
           Kontakt
         </Typography>
-        <Typography sx={{ opacity: 0.8 }}>
+        <Typography sx={contactSectionStyles.subtitle}>
           Masz pytanie? Napisz - odpisze.
         </Typography>
       </Stack>

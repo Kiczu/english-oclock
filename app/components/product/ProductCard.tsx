@@ -76,7 +76,7 @@ const ProductCard = ({
           gap={productCardStyles.footerRow.gap}
         >
           <Typography variant="subtitle2" sx={productCardStyles.price}>
-            {variant === "free" ? "0 zł" : priceLabel ?? ""}
+            {variant === "free" ? "0 zl" : priceLabel ?? ""}
           </Typography>
           {onPrimaryAction ? (
             <Button
@@ -105,3 +105,4 @@ const ProductCard = ({
 };
 
 export default ProductCard;
+

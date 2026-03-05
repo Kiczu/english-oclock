@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
@@ -29,7 +29,7 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
     new Set(),
   );
 
-  const markImageAsBroken = useCallback((src?: string) => {
+  const markImageAsBroken = (src?: string) => {
     if (!src) return;
     setBrokenSources((prev) => {
       if (prev.has(src)) return prev;
@@ -37,7 +37,7 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
       next.add(src);
       return next;
     });
-  }, []);
+  };
 
   const maxActiveIndex = Math.max(0, safeItems.length - 1);
   const activeResolvedIndex = Math.min(activeIndex, maxActiveIndex);

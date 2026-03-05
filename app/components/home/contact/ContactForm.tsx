@@ -13,6 +13,7 @@ import type {
   SubmitStatus,
 } from "./contactForm.types";
 import { validateContactValues } from "./contactForm.validation";
+import { contactFormStyles } from "./ContactForm.styles";
 
 const EMPTY_STATUS_MESSAGE = "\u00A0";
 const SUCCESS_MESSAGE = "Dzieki! Wiadomosc poszla.";
@@ -31,21 +32,6 @@ const initialTouched: Record<FieldName, boolean> = {
   email: false,
   message: false,
 };
-
-const visuallyHiddenSx = {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "1px",
-  height: "1px",
-  margin: "-1px",
-  border: 0,
-  padding: 0,
-  overflow: "hidden",
-  whiteSpace: "nowrap",
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-} as const;
 
 const ContactForm = () => {
   const [values, setValues] = useState<ContactValues>(initialValues);
@@ -119,7 +105,7 @@ const ContactForm = () => {
 
   return (
     <Stack component="form" noValidate spacing={2} onSubmit={handleSubmit}>
-      <Box aria-hidden="true" sx={visuallyHiddenSx}>
+      <Box aria-hidden="true" sx={contactFormStyles.honeypot}>
         <label htmlFor="contact_company">Company</label>
         <input
           id="contact_company"
@@ -168,17 +154,13 @@ const ContactForm = () => {
         variant="contained"
         color="secondary"
         disabled={isSubmitting}
-        sx={{ px: 3, alignSelf: "flex-start" }}
+        sx={contactFormStyles.submitButton}
       >
         {isSubmitting ? "Wysylam..." : "Wyslij"}
       </Button>
 
       <Typography
-        sx={{
-          minHeight: 24,
-          fontWeight: 800,
-          color: status === "error" ? "#c24b4b" : "rgba(18,28,56,0.85)",
-        }}
+        sx={contactFormStyles.status(status === "error")}
         aria-live="polite"
       >
         {statusMessage}
