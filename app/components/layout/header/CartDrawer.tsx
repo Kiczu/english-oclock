@@ -15,6 +15,7 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import type { CartItem } from "@/app/context/CartContext";
+import { toCheckoutItems } from "@/app/helpers/cartCheckout";
 import { cartDrawerStyles } from "./CartDrawer.styles";
 
 type CartDrawerProps = {
@@ -42,25 +43,7 @@ const CartDrawer = ({
   const handleCheckout = async () => {
     setCheckoutError(null);
 
-    const orderItems = items
-      .map((item) => {
-        const productIdFromItem =
-          typeof item.wooProductId === "number" &&
-          Number.isInteger(item.wooProductId)
-            ? item.wooProductId
-            : Number(item.id);
-        const isValidProductId =
-          Number.isInteger(productIdFromItem) && productIdFromItem > 0;
-        if (!isValidProductId) return null;
-
-        return {
-          productId: productIdFromItem,
-          quantity: 1,
-        };
-      })
-      .filter((item): item is { productId: number; quantity: number } =>
-        Boolean(item),
-      );
+    const orderItems = toCheckoutItems(items);
 
     if (orderItems.length === 0) {
       setCheckoutError("Brak produktow do rozliczenia.");
