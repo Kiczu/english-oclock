@@ -1,6 +1,14 @@
 "use client";
 
-import * as React from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import CookieConsentBanner from "@/app/components/cookies/CookieConsentBanner";
 import CookieConsentSettingsDialog from "@/app/components/cookies/CookieConsentSettingsDialog";
 import {
@@ -18,21 +26,22 @@ type CookieConsentContextValue = {
   savePreferences: (preferences: CookiePreferences) => void;
 };
 
-const CookieConsentContext = React.createContext<CookieConsentContextValue | null>(null);
+const CookieConsentContext = createContext<CookieConsentContextValue | null>(null);
 
 const DEFAULT_PREFERENCES: CookiePreferences = {
   analytics: false,
   marketing: false,
 };
 
-export const CookieConsentProvider = ({ children }: { children: React.ReactNode }) => {
-  const [consent, setConsent] = React.useState<CookieConsentState | null>(null);
-  const [ready, setReady] = React.useState(false);
-  const [isBannerOpen, setIsBannerOpen] = React.useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
-  const [preferences, setPreferences] = React.useState<CookiePreferences>(DEFAULT_PREFERENCES);
+export const CookieConsentProvider = ({ children }: { children: ReactNode }) => {
+  const [consent, setConsent] = useState<CookieConsentState | null>(null);
+  const [ready, setReady] = useState(false);
+  const [isBannerOpen, setIsBannerOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [preferences, setPreferences] = useState<CookiePreferences>(DEFAULT_PREFERENCES);
 
-  React.useEffect(() => {
+  /* eslint-disable react-hooks/set-state-in-effect -- cookie consent is read from browser cookies after mount. */
+  useEffect(() => {
     const storedConsent = readCookieConsent();
     setConsent(storedConsent);
     if (storedConsent) {
@@ -46,8 +55,9 @@ export const CookieConsentProvider = ({ children }: { children: React.ReactNode 
     }
     setReady(true);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
-  const acceptAll = React.useCallback(() => {
+  const acceptAll = useCallback(() => {
     const next = saveCookieConsent({ analytics: true, marketing: true });
     setConsent(next);
     setPreferences({
@@ -58,7 +68,7 @@ export const CookieConsentProvider = ({ children }: { children: React.ReactNode 
     setIsSettingsOpen(false);
   }, []);
 
-  const rejectOptional = React.useCallback(() => {
+  const rejectOptional = useCallback(() => {
     const next = saveCookieConsent({ analytics: false, marketing: false });
     setConsent(next);
     setPreferences({
@@ -69,7 +79,7 @@ export const CookieConsentProvider = ({ children }: { children: React.ReactNode 
     setIsSettingsOpen(false);
   }, []);
 
-  const savePreferences = React.useCallback((nextPreferences: CookiePreferences) => {
+  const savePreferences = useCallback((nextPreferences: CookiePreferences) => {
     const next = saveCookieConsent(nextPreferences);
     setConsent(next);
     setPreferences({
@@ -80,15 +90,15 @@ export const CookieConsentProvider = ({ children }: { children: React.ReactNode 
     setIsSettingsOpen(false);
   }, []);
 
-  const openSettings = React.useCallback(() => {
+  const openSettings = useCallback(() => {
     setIsSettingsOpen(true);
   }, []);
 
-  const closeSettings = React.useCallback(() => {
+  const closeSettings = useCallback(() => {
     setIsSettingsOpen(false);
   }, []);
 
-  const value = React.useMemo<CookieConsentContextValue>(
+  const value = useMemo<CookieConsentContextValue>(
     () => ({
       consent,
       openSettings,
@@ -125,7 +135,7 @@ export const CookieConsentProvider = ({ children }: { children: React.ReactNode 
 };
 
 export const useCookieConsent = () => {
-  const context = React.useContext(CookieConsentContext);
+  const context = useContext(CookieConsentContext);
   if (!context) {
     throw new Error("useCookieConsent must be used inside CookieConsentProvider");
   }

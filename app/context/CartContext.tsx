@@ -1,6 +1,15 @@
 "use client";
 
-import * as React from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import { normalizeCartItems, parsePrice } from "./cartStorage";
 
 export type CartProduct = {
   id: string;
@@ -12,9 +21,7 @@ export type CartProduct = {
   isFree?: boolean;
 };
 
-export type CartItem = CartProduct & {
-  quantity: number;
-};
+export type CartItem = CartProduct;
 
 type CartContextValue = {
   items: CartItem[];
@@ -23,41 +30,26 @@ type CartContextValue = {
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
-  addItem: (item: CartProduct, quantity?: number) => void;
-  incrementItem: (id: string) => void;
-  decrementItem: (id: string) => void;
+  addItem: (item: CartProduct) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
 };
 
 const STORAGE_KEY = "english-oclock-cart";
 
-const CartContext = React.createContext<CartContextValue | null>(null);
+const CartContext = createContext<CartContextValue | null>(null);
 
-const parsePrice = (priceLabel: string, isFree?: boolean, unitPrice?: number) => {
-  if (typeof unitPrice === "number" && Number.isFinite(unitPrice)) {
-    return Math.max(unitPrice, 0);
-  }
-  if (isFree) return 0;
-  const match = priceLabel.match(/-?\d+(?:[.,]\d+)?/);
-  if (!match) return 0;
-  const value = Number(match[0].replace(",", "."));
-  return Number.isFinite(value) ? value : 0;
-};
+export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [ready, setReady] = useState(false);
 
-export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [items, setItems] = React.useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = React.useState(false);
-  const [ready, setReady] = React.useState(false);
-
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as CartItem[];
-        if (Array.isArray(parsed)) {
-          setItems(parsed.filter((item) => item?.id && item.quantity > 0));
-        }
+        const parsed = JSON.parse(raw) as unknown;
+        setItems(normalizeCartItems(parsed));
       }
     } catch {
       setItems([]);
@@ -66,68 +58,36 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!ready) return;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items, ready]);
 
-  const addItem = React.useCallback((item: CartProduct, quantity = 1) => {
-    if (quantity <= 0) return;
+  const addItem = useCallback((item: CartProduct) => {
     setItems((prev) => {
-      const existing = prev.find((entry) => entry.id === item.id);
-      if (!existing) {
-        return [...prev, { ...item, quantity }];
+      if (prev.some((entry) => entry.id === item.id)) {
+        return prev;
       }
-      return prev.map((entry) =>
-        entry.id === item.id
-          ? { ...entry, quantity: entry.quantity + quantity }
-          : entry,
-      );
+
+      return [...prev, item];
     });
   }, []);
 
-  const incrementItem = React.useCallback((id: string) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    );
-  }, []);
-
-  const decrementItem = React.useCallback((id: string) => {
-    setItems((prev) =>
-      prev.flatMap((item) => {
-        if (item.id !== id) return [item];
-        if (item.quantity <= 1) return [];
-        return [{ ...item, quantity: item.quantity - 1 }];
-      }),
-    );
-  }, []);
-
-  const removeItem = React.useCallback((id: string) => {
+  const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  const clearCart = React.useCallback(() => setItems([]), []);
-  const openCart = React.useCallback(() => setIsCartOpen(true), []);
-  const closeCart = React.useCallback(() => setIsCartOpen(false), []);
+  const clearCart = useCallback(() => setItems([]), []);
+  const openCart = useCallback(() => setIsCartOpen(true), []);
+  const closeCart = useCallback(() => setIsCartOpen(false), []);
 
-  const totalItems = React.useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity, 0),
-    [items],
+  const totalItems = items.length;
+  const totalAmount = items.reduce(
+    (sum, item) => sum + parsePrice(item.priceLabel, item.isFree, item.unitPrice),
+    0,
   );
 
-  const totalAmount = React.useMemo(
-    () =>
-      items.reduce(
-        (sum, item) =>
-          sum + parsePrice(item.priceLabel, item.isFree, item.unitPrice) * item.quantity,
-        0,
-      ),
-    [items],
-  );
-
-  const value = React.useMemo(
+  const value = useMemo(
     () => ({
       items,
       totalItems,
@@ -136,8 +96,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       openCart,
       closeCart,
       addItem,
-      incrementItem,
-      decrementItem,
       removeItem,
       clearCart,
     }),
@@ -149,8 +107,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       openCart,
       closeCart,
       addItem,
-      incrementItem,
-      decrementItem,
       removeItem,
       clearCart,
     ],
@@ -160,7 +116,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useCart = () => {
-  const context = React.useContext(CartContext);
+  const context = useContext(CartContext);
   if (!context) {
     throw new Error("useCart must be used inside CartProvider");
   }

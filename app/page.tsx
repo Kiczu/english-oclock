@@ -16,7 +16,6 @@ const HomePage = async () => {
       <HeroStack />
       <Container maxWidth="xl">
         <Box id="home-next" />
-        <Box id="kategorie" sx={{ scrollMarginTop: { xs: 96, md: 112 } }} />
         <FreeProductsSection id="darmowe" products={freeProducts} />
         <BestSellersSection id="bestsellery" products={bestsellerProducts} />
         <AboutSection id="o-mnie" />

@@ -60,14 +60,6 @@ export const cartDrawerStyles = {
   deleteIcon: {
     color: "primary.main",
   },
-  quantityRow: {
-    mt: 1.25,
-  },
-  quantityValue: {
-    minWidth: 20,
-    textAlign: "center",
-    fontWeight: 700,
-  },
   footerBox: {
     p: 2,
     mt: "auto",
