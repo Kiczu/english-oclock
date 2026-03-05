@@ -31,10 +31,12 @@ export const productGalleryStyles = {
       ? { xs: "90%", sm: "70%", md: "60%" }
       : { xs: 140, sm: 160, md: 180 },
     height: hasImage ? "94%" : { xs: 140, sm: 160, md: 180 },
-    objectFit: "contain",
-    opacity: hasImage ? 0.98 : 0.85,
     position: "relative",
     zIndex: 0,
+  }),
+  mainImageElement: (hasImage: boolean) => ({
+    objectFit: "contain" as const,
+    opacity: hasImage ? 0.98 : 0.85,
   }),
   thumbsGrid: {
     width: "100%",
@@ -115,9 +117,11 @@ export const productGalleryStyles = {
   thumbImage: (thumbHasImage: boolean) => ({
     width: thumbHasImage ? "78%" : { xs: 58, sm: 66 },
     height: thumbHasImage ? "90%" : { xs: 58, sm: 66 },
-    objectFit: "contain",
-    opacity: thumbHasImage ? 0.98 : 0.85,
     position: "relative",
     zIndex: 0,
+  }),
+  thumbImageElement: (thumbHasImage: boolean) => ({
+    objectFit: "contain" as const,
+    opacity: thumbHasImage ? 0.98 : 0.85,
   }),
 } as const;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Image from "next/image";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
@@ -73,13 +74,16 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
   return (
     <Stack spacing={productGalleryStyles.rootStack.spacing}>
       <Box sx={productGalleryStyles.mainFrame(frame)}>
-        <Box
-          component="img"
-          src={hasImage ? active.src : FALLBACK_PREVIEW_SRC}
-          alt={active.label || title}
-          onError={() => markImageAsBroken(active.src)}
-          sx={productGalleryStyles.mainImage(hasImage)}
-        />
+        <Box sx={productGalleryStyles.mainImage(hasImage)}>
+          <Image
+            src={hasImage ? active.src : FALLBACK_PREVIEW_SRC}
+            alt={active.label || title}
+            onError={() => markImageAsBroken(active.src)}
+            fill
+            sizes="(max-width: 900px) 90vw, 52vw"
+            style={productGalleryStyles.mainImageElement(hasImage)}
+          />
+        </Box>
       </Box>
 
       <Box sx={productGalleryStyles.thumbsViewport}>
@@ -119,12 +123,17 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
                 sx={productGalleryStyles.thumbButton(isActive, thumbFrame)}
               >
                 <Box
-                  component="img"
-                  src={thumbHasImage ? item.src : FALLBACK_PREVIEW_SRC}
-                  alt={item.label || title}
-                  onError={() => markImageAsBroken(item.src)}
                   sx={productGalleryStyles.thumbImage(thumbHasImage)}
-                />
+                >
+                  <Image
+                    src={thumbHasImage ? item.src : FALLBACK_PREVIEW_SRC}
+                    alt={item.label || title}
+                    onError={() => markImageAsBroken(item.src)}
+                    fill
+                    sizes="(max-width: 900px) 30vw, 18vw"
+                    style={productGalleryStyles.thumbImageElement(thumbHasImage)}
+                  />
+                </Box>
               </Box>
             );
           })}
