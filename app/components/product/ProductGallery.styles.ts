@@ -26,17 +26,30 @@ export const productGalleryStyles = {
       zIndex: 2,
     },
   }),
-  mainImage: (hasImage: boolean) => ({
+  mainImage: (hasImage: boolean, isZoomed: boolean) => ({
     width: hasImage
       ? { xs: "90%", sm: "70%", md: "60%" }
       : { xs: 140, sm: 160, md: 180 },
     height: hasImage ? "94%" : { xs: 140, sm: 160, md: 180 },
     position: "relative",
     zIndex: 0,
+    cursor: hasImage ? (isZoomed ? "zoom-out" : "zoom-in") : "default",
+    "&:focus-visible": {
+      outline: "2px solid rgba(55,67,115,0.8)",
+      outlineOffset: 2,
+    },
   }),
-  mainImageElement: (hasImage: boolean) => ({
+  mainImageElement: (
+    hasImage: boolean,
+    isZoomed: boolean,
+    zoomOrigin: string,
+  ) => ({
     objectFit: "contain" as const,
     opacity: hasImage ? 0.98 : 0.85,
+    transform: isZoomed ? "scale(1.9)" : "scale(1)",
+    transformOrigin: zoomOrigin,
+    transition: "transform 180ms ease",
+    willChange: "transform",
   }),
   thumbsGrid: {
     width: "100%",

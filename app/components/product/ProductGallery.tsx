@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import Image from "next/image";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
@@ -10,9 +10,12 @@ import { hash01, roughFrameA, roughFrameB } from "@/app/helpers/productCard";
 import { productGalleryStyles } from "./ProductGallery.styles";
 
 const FALLBACK_PREVIEW_SRC = "/images/file.svg";
+const DEFAULT_ZOOM_ORIGIN = "50% 50%";
 
 const canRenderImage = (src?: string, brokenSources?: Set<string>) =>
   Boolean(src && src !== FALLBACK_PREVIEW_SRC && !brokenSources?.has(src));
+
+const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 
 type ProductGalleryProps = {
   items: ShopProduct["gallery"];
@@ -25,6 +28,8 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
     : [{ src: FALLBACK_PREVIEW_SRC, label: "Podglad" }];
   const [activeIndex, setActiveIndex] = useState(0);
   const [thumbPageIndex, setThumbPageIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState(DEFAULT_ZOOM_ORIGIN);
   const [brokenSources, setBrokenSources] = useState<Set<string>>(
     new Set(),
   );
@@ -66,22 +71,72 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
     setThumbPageIndex(safePage);
   };
 
+  const resetZoom = () => {
+    setIsZoomed(false);
+    setZoomOrigin(DEFAULT_ZOOM_ORIGIN);
+  };
+
   const goToImage = (nextIndex: number) => {
     const safeIndex = Math.max(0, Math.min(maxActiveIndex, nextIndex));
+    resetZoom();
     setActiveIndex(safeIndex);
+  };
+
+  const toggleZoom = () => {
+    if (!hasImage) return;
+    setIsZoomed((prev) => !prev);
+  };
+
+  const handleMainImageMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    if (!isZoomed) return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return;
+
+    const x = clampPercent(((event.clientX - bounds.left) / bounds.width) * 100);
+    const y = clampPercent(((event.clientY - bounds.top) / bounds.height) * 100);
+    setZoomOrigin(`${x}% ${y}%`);
   };
 
   return (
     <Stack spacing={productGalleryStyles.rootStack.spacing}>
       <Box sx={productGalleryStyles.mainFrame(frame)}>
-        <Box sx={productGalleryStyles.mainImage(hasImage)}>
+        <Box
+          role={hasImage ? "button" : undefined}
+          tabIndex={hasImage ? 0 : undefined}
+          aria-label={
+            hasImage
+              ? isZoomed
+                ? "Pomniejsz podglad produktu"
+                : "Przybliz podglad produktu"
+              : undefined
+          }
+          onClick={hasImage ? toggleZoom : undefined}
+          onMouseMove={hasImage ? handleMainImageMouseMove : undefined}
+          onMouseLeave={isZoomed ? resetZoom : undefined}
+          onKeyDown={
+            hasImage
+              ? (event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleZoom();
+                  }
+                }
+              : undefined
+          }
+          sx={productGalleryStyles.mainImage(hasImage, isZoomed)}
+        >
           <Image
             src={hasImage ? active.src : FALLBACK_PREVIEW_SRC}
             alt={active.label || title}
             onError={() => markImageAsBroken(active.src)}
             fill
             sizes="(max-width: 900px) 90vw, 52vw"
-            style={productGalleryStyles.mainImageElement(hasImage)}
+            style={productGalleryStyles.mainImageElement(
+              hasImage,
+              isZoomed,
+              zoomOrigin,
+            )}
           />
         </Box>
       </Box>
