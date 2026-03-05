@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useState, type FormEvent } from "react";
 import StickerField from "../../stickerField/StickerField";
 import {
   isContactEmailConfigured,
@@ -57,7 +57,7 @@ const ContactForm = () => {
   const [statusMessage, setStatusMessage] =
     useState<string>(EMPTY_STATUS_MESSAGE);
 
-  const errors = useMemo(() => validateContactValues(values), [values]);
+  const errors = validateContactValues(values);
 
   const showError = (field: FieldName) =>
     touched[field] ? errors[field] : undefined;
@@ -78,7 +78,9 @@ const ContactForm = () => {
     setTouched((prev) => ({ ...prev, [name]: true }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     setTouched({ ...initialTouched, name: true, email: true, message: true });
 
     const validationErrors = validateContactValues(values);
@@ -116,7 +118,7 @@ const ContactForm = () => {
   };
 
   return (
-    <Stack spacing={2}>
+    <Stack component="form" noValidate spacing={2} onSubmit={handleSubmit}>
       <Box aria-hidden="true" sx={visuallyHiddenSx}>
         <label htmlFor="contact_company">Company</label>
         <input
@@ -162,11 +164,11 @@ const ContactForm = () => {
       />
 
       <Button
+        type="submit"
         variant="contained"
         color="secondary"
         disabled={isSubmitting}
         sx={{ px: 3, alignSelf: "flex-start" }}
-        onClick={handleSubmit}
       >
         {isSubmitting ? "Wysylam..." : "Wyslij"}
       </Button>

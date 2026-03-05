@@ -1,5 +1,3 @@
-"use client";
-
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import ContactForm from "./ContactForm";
 import ContactFaqCard from "./ContactFaqCard";
