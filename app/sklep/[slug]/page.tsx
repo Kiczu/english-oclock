@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Box, Button, Chip, Container, Divider, Grid, Stack, Typography } from "@mui/material";
 
-import ProductGallery from "@/app/components/product/ProductGallery";
+import ProductGallery from "@/app/components/product/gallery/ProductGallery";
 import AddToCartButton from "@/app/components/product/AddToCartButton";
 import { toCartProduct } from "@/app/helpers/cartProduct";
 import { getVariant } from "@/app/helpers/productCard";
