@@ -17,6 +17,18 @@ const canRenderImage = (src?: string, brokenSources?: Set<string>) =>
 
 const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
 
+const toFrameMask = (encodedFrame: string) => {
+  const rawSvg = decodeURIComponent(encodedFrame);
+  const filledShapeSvg = rawSvg
+    .replace(/fill="none"/g, 'fill="white"')
+    .replace(/stroke="#[^"]+"/g, 'stroke="none"')
+    .replace(/stroke-width="[^"]+"/g, "")
+    .replace(/stroke-linecap="[^"]+"/g, "")
+    .replace(/stroke-linejoin="[^"]+"/g, "");
+
+  return encodeURIComponent(filledShapeSvg);
+};
+
 type ProductGalleryProps = {
   items: ShopProduct["gallery"];
   title: string;
@@ -65,6 +77,7 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" preserveAspectRatio="none">',
     )
     .replace('stroke-width="6"', 'stroke-width="12"');
+  const frameMask = toFrameMask(frameBase);
 
   const goToThumbPage = (nextPage: number) => {
     const safePage = Math.max(0, Math.min(maxThumbPageIndex, nextPage));
@@ -101,43 +114,45 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
   return (
     <Stack spacing={productGalleryStyles.rootStack.spacing}>
       <Box sx={productGalleryStyles.mainFrame(frame)}>
-        <Box
-          role={hasImage ? "button" : undefined}
-          tabIndex={hasImage ? 0 : undefined}
-          aria-label={
-            hasImage
-              ? isZoomed
-                ? "Pomniejsz podglad produktu"
-                : "Przybliz podglad produktu"
-              : undefined
-          }
-          onClick={hasImage ? toggleZoom : undefined}
-          onMouseMove={hasImage ? handleMainImageMouseMove : undefined}
-          onMouseLeave={isZoomed ? resetZoom : undefined}
-          onKeyDown={
-            hasImage
-              ? (event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    toggleZoom();
+        <Box sx={productGalleryStyles.mainImageClip(frameMask)}>
+          <Box
+            role={hasImage ? "button" : undefined}
+            tabIndex={hasImage ? 0 : undefined}
+            aria-label={
+              hasImage
+                ? isZoomed
+                  ? "Pomniejsz podglad produktu"
+                  : "Przybliz podglad produktu"
+                : undefined
+            }
+            onClick={hasImage ? toggleZoom : undefined}
+            onMouseMove={hasImage ? handleMainImageMouseMove : undefined}
+            onMouseLeave={isZoomed ? resetZoom : undefined}
+            onKeyDown={
+              hasImage
+                ? (event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      toggleZoom();
+                    }
                   }
-                }
-              : undefined
-          }
-          sx={productGalleryStyles.mainImage(hasImage, isZoomed)}
-        >
-          <Image
-            src={hasImage ? active.src : FALLBACK_PREVIEW_SRC}
-            alt={active.label || title}
-            onError={() => markImageAsBroken(active.src)}
-            fill
-            sizes="(max-width: 900px) 90vw, 52vw"
-            style={productGalleryStyles.mainImageElement(
-              hasImage,
-              isZoomed,
-              zoomOrigin,
-            )}
-          />
+                : undefined
+            }
+            sx={productGalleryStyles.mainImage(hasImage, isZoomed)}
+          >
+            <Image
+              src={hasImage ? active.src : FALLBACK_PREVIEW_SRC}
+              alt={active.label || title}
+              onError={() => markImageAsBroken(active.src)}
+              fill
+              sizes="(max-width: 900px) 90vw, 52vw"
+              style={productGalleryStyles.mainImageElement(
+                hasImage,
+                isZoomed,
+                zoomOrigin,
+              )}
+            />
+          </Box>
         </Box>
       </Box>
 

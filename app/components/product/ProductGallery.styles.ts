@@ -4,6 +4,7 @@ export const productGalleryStyles = {
   },
   mainFrame: (frame: string) => ({
     position: "relative",
+    isolation: "isolate",
     borderRadius: 2,
     p: 0,
     bgcolor: "#f5efe7",
@@ -12,7 +13,7 @@ export const productGalleryStyles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
+    overflow: "visible",
     boxShadow: "0 16px 30px rgba(55,67,115,0.15)",
     "&::before": {
       content: '""',
@@ -26,9 +27,26 @@ export const productGalleryStyles = {
       zIndex: 2,
     },
   }),
+  mainImageClip: (frameMask: string) => ({
+    position: "absolute",
+    inset: 0,
+    zIndex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    WebkitMaskImage: `url("data:image/svg+xml,${frameMask}")`,
+    WebkitMaskRepeat: "no-repeat",
+    WebkitMaskSize: "100% 100%",
+    WebkitMaskPosition: "center",
+    maskImage: `url("data:image/svg+xml,${frameMask}")`,
+    maskRepeat: "no-repeat",
+    maskSize: "100% 100%",
+    maskPosition: "center",
+  }),
   mainImage: (hasImage: boolean, isZoomed: boolean) => ({
     width: hasImage
-      ? { xs: "90%", sm: "70%", md: "60%" }
+      ? { xs: "90%", sm: "70%", md: "70%" }
       : { xs: 140, sm: 160, md: 180 },
     height: hasImage ? "94%" : { xs: 140, sm: 160, md: 180 },
     position: "relative",
