@@ -48,6 +48,24 @@ const sortValues = (values: string[]) =>
   values.sort((a, b) => a.localeCompare(b, "pl", { sensitivity: "base" }));
 
 const normalizeText = (value?: string) => (value ?? "").trim().toLowerCase();
+const hasItems = (value: string[] | null): value is string[] =>
+  Boolean(value && value.length > 0);
+const toPreferredOptions = (value: string[] | null, fallback: string[]) =>
+  hasItems(value) ? value : fallback;
+const isLevelAttribute = (attribute: WooProductAttribute) => {
+  const normalizedName = normalizeText(attribute.name);
+  const normalizedSlug = normalizeText(attribute.slug);
+
+  return (
+    normalizedName === "poziom" ||
+    normalizedName === "level" ||
+    normalizedSlug === "poziom" ||
+    normalizedSlug === "level" ||
+    normalizedSlug === "pa_poziom" ||
+    normalizedSlug === "pa-level" ||
+    normalizedSlug === "pa_level"
+  );
+};
 
 const toSearchText = (product: ShopProduct) =>
   [
@@ -181,9 +199,7 @@ const fetchWooLevels = async (): Promise<string[]> => {
     { next: { revalidate: 300 } },
   );
 
-  const levelAttribute = attributes.find((attribute) =>
-    ["poziom", "level"].includes(normalizeText(attribute.name)),
-  );
+  const levelAttribute = attributes.find(isLevelAttribute);
 
   if (!levelAttribute) {
     return [];
@@ -266,6 +282,8 @@ export const getShopProducts = async (
   if (all || hasFilters) {
     const fullItems = await getCachedAllWooProducts();
     const filteredItems = filterShopProducts(fullItems, filters);
+    const categoryOptions = getCategoriesFromItems(fullItems);
+    const levelOptions = getLevelsFromItems(fullItems);
     const total = filteredItems.length;
     const items = all
       ? filteredItems
@@ -274,8 +292,8 @@ export const getShopProducts = async (
     return {
       source: "woo",
       items,
-      categories: categories ?? getCategoriesFromItems(fullItems),
-      levels: levels ?? getLevelsFromItems(fullItems),
+      categories: toPreferredOptions(categories, categoryOptions),
+      levels: toPreferredOptions(levels, levelOptions),
       total,
       page: safePage,
       perPage: safePerPage,
@@ -283,12 +301,14 @@ export const getShopProducts = async (
   }
 
   const pagePayload = await fetchWooProductsPage(safePage, safePerPage);
+  const categoryOptions = getCategoriesFromItems(pagePayload.items);
+  const levelOptions = getLevelsFromItems(pagePayload.items);
 
   return {
     source: "woo",
     items: pagePayload.items,
-    categories: categories ?? getCategoriesFromItems(pagePayload.items),
-    levels: levels ?? getLevelsFromItems(pagePayload.items),
+    categories: toPreferredOptions(categories, categoryOptions),
+    levels: toPreferredOptions(levels, levelOptions),
     total: pagePayload.total ?? pagePayload.items.length,
     page: safePage,
     perPage: safePerPage,
