@@ -3,6 +3,12 @@ export const contactFormStyles = {
     px: 3,
     alignSelf: "flex-start",
   },
+  turnstileLabel: {
+    alignSelf: "flex-start",
+    fontWeight: 700,
+    color: "#1a254f",
+    lineHeight: 1.2,
+  },
   status: (isError: boolean) => ({
     minHeight: 24,
     fontWeight: 800,
@@ -21,5 +27,10 @@ export const contactFormStyles = {
     whiteSpace: "nowrap",
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",
+  },
+  turnstileMount: {
+    width: "100%",
+    maxWidth: 420,
+    alignSelf: "flex-start",
   },
 } as const;
