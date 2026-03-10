@@ -18,6 +18,9 @@ export const TURNSTILE_SECRET_KEY =
   process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY ??
   "";
 
+export const TURNSTILE_SITE_KEY =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? process.env.TURNSTILE_SITE_KEY ?? "";
+
 export const EMAILJS_SEND_URL = "https://api.emailjs.com/api/v1.0/email/send";
 export const TURNSTILE_VERIFY_URL =
   "https://challenges.cloudflare.com/turnstile/v0/siteverify";

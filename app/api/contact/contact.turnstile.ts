@@ -1,9 +1,26 @@
-import { TURNSTILE_SECRET_KEY, TURNSTILE_VERIFY_URL } from "./contact.config";
+import {
+  TURNSTILE_SECRET_KEY,
+  TURNSTILE_SITE_KEY,
+  TURNSTILE_VERIFY_URL,
+} from "./contact.config";
 import { CONTACT_ERRORS, ContactRequestError } from "./contact.errors";
 import type { TurnstileVerifyPayload } from "./contact.types";
 
 export const verifyTurnstile = async (token: string, ip: string) => {
-  if (!TURNSTILE_SECRET_KEY) return;
+  const hasSiteKey = Boolean(TURNSTILE_SITE_KEY);
+  const hasSecretKey = Boolean(TURNSTILE_SECRET_KEY);
+
+  // Turnstile is optional only when both keys are missing.
+  if (!hasSiteKey && !hasSecretKey) return;
+
+  // If one key is missing, configuration is broken and protection is unreliable.
+  if (hasSiteKey !== hasSecretKey) {
+    console.error("[api/contact] turnstile config mismatch", {
+      hasSiteKey,
+      hasSecretKey,
+    });
+    throw new ContactRequestError(CONTACT_ERRORS.serviceUnavailable, 503);
+  }
 
   if (!token) {
     throw new ContactRequestError(CONTACT_ERRORS.antiSpamFailed, 400);

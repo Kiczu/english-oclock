@@ -13,13 +13,13 @@ export async function POST(req: Request) {
   try {
     const body = await parseContactBody(req);
     assertFormTiming(body.formStartedAt);
+    assertRateLimit(ip);
 
     // Silent success for bots that fill honeypot.
     if (body.honeyPot.length > 0) {
       return NextResponse.json({ ok: true });
     }
 
-    assertRateLimit(ip);
     await verifyTurnstile(body.turnstileToken, ip);
 
     await sendEmailWithEmailJs({

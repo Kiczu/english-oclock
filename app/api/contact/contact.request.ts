@@ -33,7 +33,9 @@ export const getClientIp = (req: Request) => {
 
 export const assertFormTiming = (formStartedAt: unknown) => {
   const timestamp = asTimestamp(formStartedAt);
-  if (timestamp === null) return;
+  if (timestamp === null) {
+    throw new ContactRequestError(CONTACT_ERRORS.invalidPayload, 400);
+  }
 
   const elapsed = Date.now() - timestamp;
   if (elapsed < MIN_FORM_FILL_TIME_MS) {
