@@ -1,23 +1,36 @@
-import emailjs from "@emailjs/browser";
 import type { ContactValues } from "./contactForm.types";
 
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? "";
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? "";
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? "";
+type ContactSubmitMeta = {
+  honeyPot: string;
+  formStartedAt: number;
+  turnstileToken?: string;
+};
 
-export const isContactEmailConfigured = () =>
-  Boolean(EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY);
+const CONTACT_API_URL = "/api/contact";
 
-export const sendContactEmail = async (values: ContactValues) => {
-  await emailjs.send(
-    EMAILJS_SERVICE_ID,
-    EMAILJS_TEMPLATE_ID,
-    {
-      from_name: values.name.trim(),
-      reply_to: values.email.trim(),
+export const sendContactEmail = async (
+  values: ContactValues,
+  meta: ContactSubmitMeta,
+) => {
+  const response = await fetch(CONTACT_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: values.name.trim(),
+      email: values.email.trim(),
       message: values.message.trim(),
-      page_url: typeof window === "undefined" ? "" : window.location.href,
-    },
-    EMAILJS_PUBLIC_KEY,
-  );
+      honeyPot: meta.honeyPot.trim(),
+      formStartedAt: meta.formStartedAt,
+      turnstileToken: meta.turnstileToken ?? "",
+      pageUrl: typeof window === "undefined" ? "" : window.location.href,
+    }),
+  });
+
+  const payload = (await response.json().catch(() => null)) as
+    | { error?: string }
+    | null;
+
+  if (!response.ok) {
+    throw new Error(payload?.error || "Nie udalo sie wyslac formularza.");
+  }
 };
