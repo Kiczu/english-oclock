@@ -1,33 +1,21 @@
 "use client";
 
 import { Button } from "@mui/material";
-import { useCart } from "@/app/context/CartContext";
+import { useCart, type CartProduct } from "@/app/context/CartContext";
 
 type AddToCartButtonProps = {
-  id: string;
-  wooProductId?: number;
-  slug: string;
-  title: string;
-  priceLabel: string;
-  unitPrice?: number;
-  isFree?: boolean;
+  product: CartProduct;
   label?: string;
 };
 
 const AddToCartButton = ({
-  id,
-  wooProductId,
-  slug,
-  title,
-  priceLabel,
-  unitPrice,
-  isFree,
+  product,
   label = "Do koszyka",
 }: AddToCartButtonProps) => {
   const { addItem, openCart } = useCart();
 
   const handleClick = () => {
-    addItem({ id, wooProductId, slug, title, priceLabel, unitPrice, isFree });
+    addItem(product);
     openCart();
   };
 

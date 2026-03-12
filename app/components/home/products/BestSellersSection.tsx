@@ -2,6 +2,7 @@
 
 import ProductsSection from "./ProductsSection";
 import { useCart } from "@/app/context/CartContext";
+import { toCartProduct } from "@/app/helpers/cartProduct";
 import type { ShopProduct } from "@/app/types/commerce";
 
 type BestsellersSectionProps = {
@@ -20,15 +21,7 @@ const BestsellersSection = ({ id, products }: BestsellersSectionProps) => {
       products={products}
       useSlider
       onPrimaryAction={(p) => {
-        addItem({
-          id: p.id,
-          wooProductId: p.wooProductId,
-          slug: p.slug,
-          title: p.title,
-          priceLabel: p.priceLabel,
-          unitPrice: p.price,
-          isFree: p.isFree,
-        });
+        addItem(toCartProduct(p));
         openCart();
       }}
     />

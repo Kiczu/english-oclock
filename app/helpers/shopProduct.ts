@@ -2,6 +2,7 @@ import type { ShopProduct, WooProduct } from "@/app/types/commerce";
 
 const stripHtml = (value?: string) =>
   value ? value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
+const normalizeText = (value?: string) => (value ?? "").trim().toLowerCase();
 
 const parsePrice = (value?: string) => {
   if (!value) return 0;
@@ -17,10 +18,21 @@ export const toPriceLabel = (price: number) => {
 };
 
 const pickAttributeValue = (product: WooProduct, names: string[]) => {
+  const acceptedNames = new Set<string>();
+  for (const name of names) {
+    const normalized = normalizeText(name);
+    if (!normalized) continue;
+    acceptedNames.add(normalized);
+    acceptedNames.add(`pa_${normalized}`);
+    acceptedNames.add(`pa-${normalized}`);
+  }
+
   const attribute = product.attributes?.find((entry) =>
-    names.some((name) => entry.name.toLowerCase() === name.toLowerCase()),
+    acceptedNames.has(normalizeText(entry.name)),
   );
-  return attribute?.options?.[0];
+
+  const rawOption = attribute?.options?.[0];
+  return typeof rawOption === "string" ? rawOption.trim() || undefined : undefined;
 };
 
 const getMetaString = (product: WooProduct, key: string) => {

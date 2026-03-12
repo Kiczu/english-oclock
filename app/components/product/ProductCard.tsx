@@ -8,6 +8,7 @@ import {
   roughFrameA,
   roughFrameB,
 } from "@/app/helpers/productCard";
+import { productCardStyles } from "./ProductCard.styles";
 
 type ProductVariant = "paid" | "free" | "bestseller";
 
@@ -45,113 +46,58 @@ const ProductCard = ({
   const safePadding = 45;
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        borderRadius: 3,
-        background: "#f5efe7",
-        overflow: "hidden",
-        boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
-        transform: { xs: "none", md: `rotate(${tiltDeg}deg)` },
-        transition: "transform 220ms ease, box-shadow 220ms ease",
-        "&:hover": {
-          transform: { xs: "none", md: "rotate(0deg) translateY(-6px)" },
-          boxShadow: "0 16px 30px rgba(0,0,0,0.16)",
-        },
-        aspectRatio: "300 / 220",
-
-        "&::before": {
-          content: '""',
-          pointerEvents: "none",
-          position: "absolute",
-          inset: frameInset,
-          backgroundImage: `url("data:image/svg+xml,${frame}")`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "100% 100%",
-          zIndex: 0,
-        },
-      }}
-    >
-      <Stack
+    <Box sx={productCardStyles.root(tiltDeg, frame, frameInset)}>
+      <Box
         component={Link}
         href={href}
-        sx={{
-          textDecoration: "none",
-          color: "inherit",
-          position: "relative",
-          zIndex: 1,
-          height: "100%",
-          p: `${safePadding}px`,
-          justifyContent: "center",
-          gap: 4,
-        }}
-      >
+        aria-label={`Przejdz do produktu: ${title}`}
+        sx={productCardStyles.cardLinkOverlay}
+      />
+
+      <Stack sx={productCardStyles.contentStack(safePadding)}>
         <Stack
-          direction="row"
-          justifyContent="center"
-          alignItems="flex-start"
-          gap={2}
+          direction={productCardStyles.titleRow.direction}
+          justifyContent={productCardStyles.titleRow.justifyContent}
+          alignItems={productCardStyles.titleRow.alignItems}
+          gap={productCardStyles.titleRow.gap}
         >
-          <Typography
-            variant="subtitle1"
-            sx={{
-              fontSize: 18,
-              fontWeight: 900,
-              lineHeight: 1.1,
-              letterSpacing: 0.2,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
+          <Typography variant="subtitle1" sx={productCardStyles.title}>
             {title}
           </Typography>
 
           {badge ? (
-            <Chip
-              label={badge}
-              size="small"
-              sx={{
-                fontWeight: 900,
-                letterSpacing: 0.6,
-                borderRadius: 2,
-                height: 24,
-                mt: 0.25,
-                background:
-                  badge === "FREE"
-                    ? "rgba(60,150,140,0.16)"
-                    : "rgba(240,160,80,0.18)",
-              }}
-            />
+            <Chip label={badge} size="small" sx={productCardStyles.badgeChip(badge)} />
           ) : null}
         </Stack>
         <Stack
-          direction="row"
-          justifyContent="center"
-          alignItems="center"
-          gap={2}
+          direction={productCardStyles.footerRow.direction}
+          justifyContent={productCardStyles.footerRow.justifyContent}
+          alignItems={productCardStyles.footerRow.alignItems}
+          gap={productCardStyles.footerRow.gap}
         >
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 900, fontSize: 20 }}
-          >
-            {variant === "free" ? "0 zł" : priceLabel ?? ""}
+          <Typography variant="subtitle2" sx={productCardStyles.price}>
+            {variant === "free" ? "0 zl" : priceLabel ?? ""}
           </Typography>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={(e) => {
-              e.preventDefault();
-              onPrimaryAction?.();
-            }}
-            sx={{
-              px: 2.9,
-              minWidth: 120,
-            }}
-          >
-            {cta}
-          </Button>
+          {onPrimaryAction ? (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={onPrimaryAction}
+              sx={productCardStyles.ctaButton}
+            >
+              {cta}
+            </Button>
+          ) : (
+            <Button
+              component={Link}
+              href={href}
+              variant="contained"
+              color="secondary"
+              sx={productCardStyles.ctaButton}
+            >
+              {cta}
+            </Button>
+          )}
         </Stack>
       </Stack>
     </Box>
@@ -159,3 +105,4 @@ const ProductCard = ({
 };
 
 export default ProductCard;
+
