@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 import { normalizeCartItems, parsePrice } from "./cartStorage";
 
 export type CartProduct = {
@@ -36,6 +37,40 @@ type CartContextValue = {
 };
 
 const STORAGE_KEY = "english-oclock-cart";
+const CHECKOUT_SUCCESS_COOKIE = "its_checkout_success";
+const CHECKOUT_SUCCESS_QUERY_PARAM = "checkout";
+const CHECKOUT_SUCCESS_QUERY_VALUE = "success";
+
+const hasCheckoutSuccessCookie = () =>
+  document.cookie
+    .split(";")
+    .map((entry) => entry.trim())
+    .some((entry) => entry === `${CHECKOUT_SUCCESS_COOKIE}=1`);
+
+const clearCheckoutSuccessCookie = () => {
+  const expires = "expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  document.cookie = `${CHECKOUT_SUCCESS_COOKIE}=; ${expires}; path=/`;
+
+  const { hostname } = window.location;
+  if (hostname && hostname !== "localhost") {
+    document.cookie = `${CHECKOUT_SUCCESS_COOKIE}=; ${expires}; path=/; domain=${hostname}`;
+  }
+};
+
+const removeCheckoutSuccessParam = (searchParams: URLSearchParams) => {
+  if (!searchParams.has(CHECKOUT_SUCCESS_QUERY_PARAM)) {
+    return;
+  }
+
+  searchParams.delete(CHECKOUT_SUCCESS_QUERY_PARAM);
+
+  const nextQuery = searchParams.toString();
+  const nextUrl = `${window.location.pathname}${
+    nextQuery ? `?${nextQuery}` : ""
+  }${window.location.hash}`;
+
+  window.history.replaceState(window.history.state, "", nextUrl);
+};
 
 const CartContext = createContext<CartContextValue | null>(null);
 
@@ -43,6 +78,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     try {
@@ -62,6 +98,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     if (!ready) return;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items, ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const checkoutStatus =
+      searchParams.get(CHECKOUT_SUCCESS_QUERY_PARAM) ===
+      CHECKOUT_SUCCESS_QUERY_VALUE;
+    const checkoutCookie = hasCheckoutSuccessCookie();
+
+    if (!checkoutStatus && !checkoutCookie) {
+      return;
+    }
+
+    setItems([]);
+    clearCheckoutSuccessCookie();
+
+    if (checkoutStatus) {
+      removeCheckoutSuccessParam(searchParams);
+    }
+  }, [pathname, ready]);
 
   const addItem = useCallback((item: CartProduct) => {
     setItems((prev) => {
