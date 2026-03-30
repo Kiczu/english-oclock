@@ -1,226 +1,93 @@
-"use client";
-
-import { Suspense, useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Container, Pagination, Stack, Typography } from "@mui/material";
-import { useCart } from "@/app/context/CartContext";
-import type { ShopProduct } from "@/app/types/commerce";
-import ShopFiltersPanel from "./components/ShopFiltersPanel";
-import ShopProductsGrid from "./components/ShopProductsGrid";
-import ShopProductsSkeleton from "./components/ShopProductsSkeleton";
-import ShopStateNotice from "./components/ShopStateNotice";
 import {
-  defaultFilters,
-  filterProducts,
-  getFilterOptions,
-  hasActiveFilters,
-} from "./helpers/filters";
-import { fetchShopProducts } from "./services/fetchShopProducts";
-import type { ShopFilters } from "./types";
-import { shopPageStyles } from "./page.styles";
+  WooNotConfiguredError,
+  getShopProducts,
+} from "@/app/lib/shopProducts.server";
+import type { ShopProduct } from "@/app/types/commerce";
+import ShopPageClient from "./ShopPageClient";
+import type { ShopFilterOptions, ShopFilters } from "./types";
 
-const toErrorMessage = (error: unknown) => {
-  if (error instanceof Error) return error.message;
-  return "Nie udalo sie pobrac listy produktow.";
-};
+const PAGE_SIZE = 9;
 
-const toPriceFilterFromQuery = (value: string | null): ShopFilters["price"] => {
+type ShopPageSearchParams = Record<string, string | string[] | undefined>;
+
+const toParam = (value: string | string[] | undefined) =>
+  Array.isArray(value) ? value[0] : value;
+
+const toPriceFilter = (value: string | undefined): ShopFilters["price"] => {
   if (value === "free" || value === "paid") return value;
   return "all";
 };
 
-const PAGE_SIZE = 9;
-
-const ShopPageContent = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { addItem, openCart } = useCart();
-
-  const [products, setProducts] = useState<ShopProduct[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState<ShopFilters>(() => ({
-    ...defaultFilters(),
-    price: toPriceFilterFromQuery(searchParams.get("price")),
-  }));
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const loadProducts = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const payload = await fetchShopProducts(controller.signal);
-        setProducts(payload.items ?? []);
-        setCategories(payload.categories ?? []);
-      } catch (loadError) {
-        if (controller.signal.aborted) return;
-        setProducts([]);
-        setCategories([]);
-        setError(toErrorMessage(loadError));
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadProducts();
-
-    return () => controller.abort();
-  }, []);
-
-  useEffect(() => {
-    const nextPrice = toPriceFilterFromQuery(searchParams.get("price"));
-    setFilters((prev) =>
-      prev.price === nextPrice
-        ? prev
-        : {
-            ...prev,
-            price: nextPrice,
-          },
-    );
-  }, [searchParams]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [filters.query, filters.category, filters.level, filters.price]);
-
-  const options = useMemo(
-    () => getFilterOptions(products, categories),
-    [products, categories],
-  );
-  const filteredProducts = useMemo(
-    () => filterProducts(products, filters),
-    [products, filters],
-  );
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
-  const paginatedProducts = useMemo(() => {
-    const from = (currentPage - 1) * PAGE_SIZE;
-    return filteredProducts.slice(from, from + PAGE_SIZE);
-  }, [currentPage, filteredProducts]);
-  const filtersActive = hasActiveFilters(filters);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
-
-  const updateFilters = (partial: Partial<ShopFilters>) => {
-    setFilters((prev) => ({ ...prev, ...partial }));
-  };
-
-  const clearFilters = () => setFilters(defaultFilters());
-
-  const handlePrimaryAction = (product: ShopProduct) => {
-    if (product.isFree) {
-      router.push(`/sklep/${product.slug}`);
-      return;
-    }
-
-    addItem({
-      id: product.id,
-      wooProductId: product.wooProductId,
-      slug: product.slug,
-      title: product.title,
-      priceLabel: product.priceLabel,
-      unitPrice: product.price,
-      isFree: product.isFree,
-    });
-    openCart();
-  };
-
-  return (
-    <Container maxWidth="xl" sx={shopPageStyles.container}>
-      <Stack spacing={1.5} sx={shopPageStyles.headingStack}>
-        <Typography variant="h2" sx={shopPageStyles.title}>
-          Sklep
-        </Typography>
-        <Typography sx={shopPageStyles.subtitle}>
-          Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
-          przefiltrowac darmowe lub platne produkty.
-        </Typography>
-      </Stack>
-
-      <ShopFiltersPanel
-        filters={filters}
-        options={options}
-        resultsCount={filteredProducts.length}
-        hasActiveFilters={filtersActive}
-        onQueryChange={(value) => updateFilters({ query: value })}
-        onCategoryChange={(value) => updateFilters({ category: value })}
-        onLevelChange={(value) => updateFilters({ level: value })}
-        onPriceChange={(value) => updateFilters({ price: value })}
-        onClear={clearFilters}
-      />
-
-      {loading ? <ShopProductsSkeleton count={9} /> : null}
-
-      {!loading && error ? (
-        <ShopStateNotice
-          title="Nie udalo sie pobrac produktow."
-          description={error}
-        />
-      ) : null}
-
-      {!loading && !error && filteredProducts.length === 0 ? (
-        <ShopStateNotice
-          title={filtersActive ? "Brak produktow dla wybranych filtrow." : "Brak produktow."}
-          description={
-            filtersActive
-              ? "Sprobuj zmienic poziom lub usunac czesc filtrow."
-              : "Nie znaleziono produktow w WooCommerce."
-          }
-        />
-      ) : null}
-
-      {!loading && !error && filteredProducts.length > 0 ? (
-        <ShopProductsGrid
-          products={paginatedProducts}
-          onPrimaryAction={handlePrimaryAction}
-        />
-      ) : null}
-
-      {!loading && !error && filteredProducts.length > PAGE_SIZE ? (
-        <Stack sx={shopPageStyles.paginationWrap}>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={(_, page) => setCurrentPage(page)}
-            color="primary"
-            shape="rounded"
-            siblingCount={0}
-          />
-        </Stack>
-      ) : null}
-    </Container>
-  );
+const toPage = (value: string | undefined) => {
+  const parsed = Number(value ?? 1);
+  if (!Number.isFinite(parsed)) return 1;
+  const normalized = Math.floor(parsed);
+  return normalized > 0 ? normalized : 1;
 };
 
-const ShopPageFallback = () => (
-  <Container maxWidth="xl" sx={shopPageStyles.container}>
-    <Stack spacing={1.5} sx={shopPageStyles.headingStack}>
-      <Typography variant="h2" sx={shopPageStyles.title}>
-        Sklep
-      </Typography>
-      <Typography sx={shopPageStyles.subtitle}>
-        Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
-        przefiltrowac darmowe lub platne produkty.
-      </Typography>
-    </Stack>
-    <ShopProductsSkeleton count={9} />
-  </Container>
-);
+const toFiltersFromSearchParams = (searchParams: ShopPageSearchParams): ShopFilters => ({
+  query: toParam(searchParams.q)?.trim() ?? "",
+  category: toParam(searchParams.category)?.trim() || "all",
+  level: toParam(searchParams.level)?.trim() || "all",
+  price: toPriceFilter(toParam(searchParams.price)?.trim()),
+});
 
-const ShopPage = () => (
-  <Suspense fallback={<ShopPageFallback />}>
-    <ShopPageContent />
-  </Suspense>
-);
+const toLoadErrorMessage = (error: unknown) => {
+  if (error instanceof WooNotConfiguredError) {
+    return "Sklep jest chwilowo niedostepny.";
+  }
+
+  return "Nie udalo sie pobrac produktow.";
+};
+
+const ShopPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<ShopPageSearchParams>;
+}) => {
+  const resolvedSearchParams = await searchParams;
+  const page = toPage(toParam(resolvedSearchParams.page));
+  const filters = toFiltersFromSearchParams(resolvedSearchParams);
+
+  let products: ShopProduct[] = [];
+  let options: ShopFilterOptions = { categories: [], levels: [] };
+  let totalResults = 0;
+  let currentPage = page;
+  let loadError: string | null = null;
+
+  try {
+    const payload = await getShopProducts({
+      page,
+      perPage: PAGE_SIZE,
+      query: filters.query || undefined,
+      category: filters.category !== "all" ? filters.category : undefined,
+      level: filters.level !== "all" ? filters.level : undefined,
+      price: filters.price,
+    });
+
+    products = payload.items ?? [];
+    options = {
+      categories: payload.categories ?? [],
+      levels: payload.levels ?? [],
+    };
+    totalResults = payload.total ?? products.length;
+    currentPage = payload.page ?? page;
+  } catch (error) {
+    loadError = toLoadErrorMessage(error);
+  }
+
+  return (
+    <ShopPageClient
+      key={`${filters.query}|${filters.category}|${filters.level}|${filters.price}|${currentPage}`}
+      products={products}
+      options={options}
+      totalResults={totalResults}
+      currentPage={currentPage}
+      filters={filters}
+      pageSize={PAGE_SIZE}
+      loadError={loadError}
+    />
+  );
+};
 
 export default ShopPage;

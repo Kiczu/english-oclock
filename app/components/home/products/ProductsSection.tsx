@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import {
@@ -42,6 +42,12 @@ const toSlides = (items: ShopProduct[], perSlide: number) => {
   return slides;
 };
 
+const getSlideColumns = (cardsPerSlide: number) => {
+  if (cardsPerSlide === 1) return { xs: 12, sm: 12, md: 12, lg: 12 };
+  if (cardsPerSlide === 2) return { xs: 12, sm: 6, md: 6, lg: 6 };
+  return { xs: 12, sm: 6, md: 4, lg: 4 };
+};
+
 const ProductsSection = ({
   id,
   title,
@@ -59,11 +65,7 @@ const ProductsSection = ({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"), { noSsr: true });
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"), { noSsr: true });
   const cardsPerSlide = useSlider ? (isMobile ? 1 : isTablet ? 2 : 3) : Math.max(1, list.length);
-
-  const slides = useMemo(
-    () => (useSlider ? toSlides(list, cardsPerSlide) : [list]),
-    [useSlider, list, cardsPerSlide],
-  );
+  const slides = useSlider ? toSlides(list, cardsPerSlide) : [list];
 
   const [slideIndex, setSlideIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"next" | "prev">("next");
@@ -83,12 +85,7 @@ const ProductsSection = ({
   const canGoBack = activeSlideIndex > 0;
   const canGoNext = activeSlideIndex < maxSlideIndex;
 
-  const slideColumns =
-    cardsPerSlide === 1
-      ? { xs: 12, sm: 12, md: 12, lg: 12 }
-      : cardsPerSlide === 2
-        ? { xs: 12, sm: 6, md: 6, lg: 6 }
-        : { xs: 12, sm: 6, md: 4, lg: 4 };
+  const slideColumns = getSlideColumns(cardsPerSlide);
 
   const activeColumns = useSlider ? slideColumns : columns;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Box,
@@ -12,11 +12,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import type { CartItem } from "@/app/context/CartContext";
+import { toCheckoutItems } from "@/app/helpers/cartCheckout";
 import { cartDrawerStyles } from "./CartDrawer.styles";
 
 type CartDrawerProps = {
@@ -25,8 +24,6 @@ type CartDrawerProps = {
   totalItems: number;
   totalAmountLabel: string;
   onClose: () => void;
-  onIncrementItem: (id: string) => void;
-  onDecrementItem: (id: string) => void;
   onRemoveItem: (id: string) => void;
   onClear: () => void;
 };
@@ -37,32 +34,16 @@ const CartDrawer = ({
   totalItems,
   totalAmountLabel,
   onClose,
-  onIncrementItem,
-  onDecrementItem,
   onRemoveItem,
   onClear,
 }: CartDrawerProps) => {
-  const [checkoutPending, setCheckoutPending] = React.useState(false);
-  const [checkoutError, setCheckoutError] = React.useState<string | null>(null);
+  const [checkoutPending, setCheckoutPending] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const handleCheckout = async () => {
     setCheckoutError(null);
 
-    const orderItems = items
-      .map((item) => {
-        const productIdFromItem =
-          typeof item.wooProductId === "number" && Number.isInteger(item.wooProductId)
-            ? item.wooProductId
-            : Number(item.id);
-        const isValidProductId = Number.isInteger(productIdFromItem) && productIdFromItem > 0;
-        if (!isValidProductId) return null;
-
-        return {
-          productId: productIdFromItem,
-          quantity: item.quantity,
-        };
-      })
-      .filter((item): item is { productId: number; quantity: number } => Boolean(item));
+    const orderItems = toCheckoutItems(items);
 
     if (orderItems.length === 0) {
       setCheckoutError("Brak produktow do rozliczenia.");
@@ -77,23 +58,29 @@ const CartDrawer = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: orderItems }),
       });
-      const payload = (await response.json()) as { checkoutUrl?: string; error?: string };
+      const payload = (await response.json()) as {
+        checkoutUrl?: string;
+        error?: string;
+      };
 
       if (!response.ok || !payload.checkoutUrl) {
-        throw new Error(payload.error || "Nie udalo sie przygotowac checkoutu.");
+        throw new Error(
+          payload.error || "Nie udalo sie przygotowac checkoutu.",
+        );
       }
 
       onClose();
       window.location.assign(payload.checkoutUrl);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Nieznany blad checkoutu.";
+      const message =
+        error instanceof Error ? error.message : "Nieznany blad checkoutu.";
       setCheckoutError(message);
     } finally {
       setCheckoutPending(false);
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) setCheckoutError(null);
   }, [open]);
 
@@ -118,7 +105,9 @@ const CartDrawer = ({
 
       {items.length === 0 ? (
         <Box sx={cartDrawerStyles.emptyState}>
-          <Typography sx={cartDrawerStyles.emptyTitle}>Twoj koszyk jest pusty.</Typography>
+          <Typography sx={cartDrawerStyles.emptyTitle}>
+            Twoj koszyk jest pusty.
+          </Typography>
           <Button
             component={Link}
             href="/sklep"
@@ -148,34 +137,15 @@ const CartDrawer = ({
                       {item.priceLabel}
                     </Typography>
                   </Box>
-                  <IconButton aria-label="Usun z koszyka" onClick={() => onRemoveItem(item.id)} size="small">
-                    <DeleteOutlineRoundedIcon sx={cartDrawerStyles.deleteIcon} />
+                  <IconButton
+                    aria-label="Usun z koszyka"
+                    onClick={() => onRemoveItem(item.id)}
+                    size="small"
+                  >
+                    <DeleteOutlineRoundedIcon
+                      sx={cartDrawerStyles.deleteIcon}
+                    />
                   </IconButton>
-                </Stack>
-
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={cartDrawerStyles.quantityRow}
-                >
-                  <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <IconButton
-                      aria-label="Zmniejsz ilosc"
-                      onClick={() => onDecrementItem(item.id)}
-                      size="small"
-                    >
-                      <RemoveRoundedIcon fontSize="small" color="primary" />
-                    </IconButton>
-                    <Typography sx={cartDrawerStyles.quantityValue}>{item.quantity}</Typography>
-                    <IconButton
-                      aria-label="Zwieksz ilosc"
-                      onClick={() => onIncrementItem(item.id)}
-                      size="small"
-                    >
-                      <AddRoundedIcon fontSize="small" color="primary" />
-                    </IconButton>
-                  </Stack>
                 </Stack>
               </Box>
             ))}
@@ -183,12 +153,22 @@ const CartDrawer = ({
 
           <Box sx={cartDrawerStyles.footerBox}>
             <Divider sx={cartDrawerStyles.footerDivider} />
-            <Stack direction="row" justifyContent="space-between" sx={cartDrawerStyles.totalRow}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              sx={cartDrawerStyles.totalRow}
+            >
               <Typography sx={cartDrawerStyles.totalLabel}>Razem</Typography>
-              <Typography sx={cartDrawerStyles.totalValue}>{totalAmountLabel}</Typography>
+              <Typography sx={cartDrawerStyles.totalValue}>
+                {totalAmountLabel}
+              </Typography>
             </Stack>
             <Stack direction="row" spacing={1}>
-              <Button variant="outlined" onClick={onClear} sx={cartDrawerStyles.actionButton}>
+              <Button
+                variant="outlined"
+                onClick={onClear}
+                sx={cartDrawerStyles.actionButton}
+              >
                 Wyczysc
               </Button>
               <Button

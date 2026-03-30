@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { Box, Button, Chip, Container, Divider, Grid, Stack, Typography } from "@mui/material";
 
-import ProductGallery from "@/app/components/product/ProductGallery";
+import ProductGallery from "@/app/components/product/gallery/ProductGallery";
 import AddToCartButton from "@/app/components/product/AddToCartButton";
+import { toCartProduct } from "@/app/helpers/cartProduct";
 import { getVariant } from "@/app/helpers/productCard";
 import { getShopProductBySlug } from "@/app/lib/shopProducts.server";
 import { productPageStyles } from "./page.styles";
@@ -91,13 +92,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                   )
                 ) : (
                   <AddToCartButton
-                    id={mapped.id}
-                    wooProductId={mapped.wooProductId}
-                    slug={mapped.slug}
-                    title={mapped.title}
-                    priceLabel={mapped.priceLabel}
-                    unitPrice={mapped.price}
-                    isFree={mapped.isFree}
+                    product={toCartProduct(mapped)}
                     label={ctaLabel}
                   />
                 )}
