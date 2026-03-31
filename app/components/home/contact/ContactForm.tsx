@@ -2,11 +2,15 @@
 
 import Script from "next/script";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import StickerField from "../../stickerField/StickerField";
 import {
-  sendContactEmail,
-} from "./contactEmail.service";
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
+import StickerField from "../../stickerField/StickerField";
+import { sendContactEmail } from "./contactEmail.service";
 import type {
   ContactValues,
   FieldName,
@@ -215,13 +219,11 @@ const ContactForm = () => {
       </Box>
 
       {isTurnstileRequired ? (
-        <>
-          <Script
-            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-            strategy="afterInteractive"
-            onLoad={initTurnstileWidget}
-          />
-        </>
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+          onLoad={initTurnstileWidget}
+        />
       ) : null}
 
       <StickerField
@@ -256,26 +258,25 @@ const ContactForm = () => {
         error={showError("message")}
       />
 
-      {isTurnstileRequired ? (
-        <>
-          <Typography component="p" sx={contactFormStyles.turnstileLabel}>
-            Potwierdź, że jesteś człowiekiem
-          </Typography>
-          <Box sx={contactFormStyles.turnstileMount}>
-            <div ref={turnstileContainerRef} />
-          </Box>
-        </>
-      ) : null}
+      <Box sx={contactFormStyles.actionsRow}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          disabled={isSubmitting || !isTurnstileVerified}
+          sx={contactFormStyles.submitButton}
+        >
+          {isSubmitting ? "Wysyłam..." : "Wyślij"}
+        </Button>
 
-      <Button
-        type="submit"
-        variant="contained"
-        color="secondary"
-        disabled={isSubmitting || !isTurnstileVerified}
-        sx={contactFormStyles.submitButton}
-      >
-        {isSubmitting ? "Wysyłam..." : "Wyślij"}
-      </Button>
+        {isTurnstileRequired ? (
+          <Box sx={contactFormStyles.turnstileWrap}>
+            <Box sx={contactFormStyles.turnstileMount}>
+              <div ref={turnstileContainerRef} />
+            </Box>
+          </Box>
+        ) : null}
+      </Box>
 
       <Typography
         sx={contactFormStyles.status(status === "error")}
