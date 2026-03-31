@@ -1,5 +1,14 @@
 import { notFound } from "next/navigation";
-import { Box, Button, Chip, Container, Divider, Grid, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Container,
+  Divider,
+  Grid,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 import ProductGallery from "@/app/components/product/gallery/ProductGallery";
 import AddToCartButton from "@/app/components/product/AddToCartButton";
@@ -8,7 +17,11 @@ import { getVariant } from "@/app/helpers/productCard";
 import { getShopProductBySlug } from "@/app/lib/shopProducts.server";
 import { productPageStyles } from "./page.styles";
 
-const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+const ProductPage = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
   const { slug } = await params;
   const mapped = await getShopProductBySlug(slug);
   if (!mapped) notFound();
@@ -20,7 +33,8 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
   const secondaryHref = mapped.isFree ? "/sklep?price=free" : "/sklep";
   const secondaryLabel = mapped.isFree ? "Zobacz darmowe" : "Wróć do sklepu";
   const freeDownloadHref = `/api/free-download?slug=${encodeURIComponent(mapped.slug)}`;
-  const isFreeDownloadAvailable = mapped.isFree && Boolean(mapped.freeDownloadUrl);
+  const isFreeDownloadAvailable =
+    mapped.isFree && Boolean(mapped.freeDownloadUrl);
 
   const highlights = mapped.highlights ?? [
     mapped.level ? `Poziom ${mapped.level}` : "Różne poziomy",
@@ -33,7 +47,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
       <Stack spacing={4}>
         <Box>
           <Button href="/sklep" sx={productPageStyles.backButton}>
-            {"<- Wróć do sklepu"}
+            {"<- Wr\u00f3\u0107 do sklepu"}
           </Button>
         </Box>
 
@@ -48,13 +62,35 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 <Typography variant="h3" sx={productPageStyles.title}>
                   {mapped.title}
                 </Typography>
-                {mapped.subtitle ? <Typography sx={productPageStyles.subtitle}>{mapped.subtitle}</Typography> : null}
+                {mapped.subtitle ? (
+                  <Typography sx={productPageStyles.subtitle}>
+                    {mapped.subtitle}
+                  </Typography>
+                ) : null}
               </Stack>
 
-              <Stack direction="row" spacing={1} sx={productPageStyles.chipsRow}>
-                {variant === "free" ? <Chip label="FREE" size="small" sx={productPageStyles.badgeChip} /> : null}
-                {variant === "bestseller" ? <Chip label="TOP" size="small" sx={productPageStyles.badgeChip} /> : null}
-                {mapped.level ? <Chip label={`Poziom ${mapped.level}`} size="small" /> : null}
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={productPageStyles.chipsRow}
+              >
+                {variant === "free" ? (
+                  <Chip
+                    label="FREE"
+                    size="small"
+                    sx={productPageStyles.badgeChip}
+                  />
+                ) : null}
+                {variant === "bestseller" ? (
+                  <Chip
+                    label="TOP"
+                    size="small"
+                    sx={productPageStyles.badgeChip}
+                  />
+                ) : null}
+                {mapped.level ? (
+                  <Chip label={`Poziom ${mapped.level}`} size="small" />
+                ) : null}
                 {mapped.categories.map((category) => (
                   <Chip key={category} label={category} size="small" />
                 ))}
@@ -79,7 +115,12 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 </Typography>
               )}
 
-              <Stack direction="row" spacing={{ xs: 1.25, sm: 2 }} useFlexGap sx={productPageStyles.actionsRow}>
+              <Stack
+                direction="row"
+                spacing={{ xs: 1.25, sm: 2 }}
+                useFlexGap
+                sx={productPageStyles.actionsRow}
+              >
                 {mapped.isFree ? (
                   isFreeDownloadAvailable ? (
                     <Button
@@ -93,8 +134,13 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                       {ctaLabel}
                     </Button>
                   ) : (
-                    <Button variant="contained" color="secondary" disabled sx={productPageStyles.freeActionButton}>
-                      Plik chwilowo niedostępny
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      disabled
+                      sx={productPageStyles.freeActionButton}
+                    >
+                      Plik chwilowo niedost\u0119pny
                     </Button>
                   )
                 ) : (
@@ -126,4 +172,3 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
 };
 
 export default ProductPage;
-

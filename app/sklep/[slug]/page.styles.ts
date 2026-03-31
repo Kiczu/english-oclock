@@ -27,6 +27,7 @@ export const productPageStyles = {
   },
   description: {
     opacity: 0.85,
+    whiteSpace: "pre-line",
     "& p": {
       m: 0,
     },
