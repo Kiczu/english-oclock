@@ -16,11 +16,11 @@ import { validateContactValues } from "./contactForm.validation";
 import { contactFormStyles } from "./ContactForm.styles";
 
 const EMPTY_STATUS_MESSAGE = "\u00A0";
-const SUCCESS_MESSAGE = "Dzieki! Wiadomosc poszla.";
-const ERROR_MESSAGE = "Cos nie poszlo. Sprobuj ponownie.";
-const TURNSTILE_REQUIRED_MESSAGE = "Potwierdz zabezpieczenie antyspamowe.";
+const SUCCESS_MESSAGE = "Dzięki! Wiadomość została wysłana.";
+const ERROR_MESSAGE = "Coś poszło nie tak. Spróbuj ponownie.";
+const TURNSTILE_REQUIRED_MESSAGE = "Potwierdź zabezpieczenie antyspamowe.";
 const TURNSTILE_FAILED_MESSAGE =
-  "Nie udalo sie potwierdzic zabezpieczenia antyspamowego. Sprobuj ponownie.";
+  "Nie udało się potwierdzić zabezpieczenia antyspamowego. Spróbuj ponownie.";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 type TurnstileWidgetId = string | number;
@@ -227,7 +227,7 @@ const ContactForm = () => {
       <StickerField
         id="contact_name"
         name="name"
-        placeholder="Twoje imie"
+        placeholder="Twoje imię"
         value={values.name}
         onChange={handleChange}
         onBlur={handleBlur}
@@ -247,7 +247,7 @@ const ContactForm = () => {
       <StickerField
         id="contact_message"
         name="message"
-        placeholder="Napisz, w czym pomoc..."
+        placeholder="Napisz, w czym pomóc..."
         multiline
         minRows={6}
         value={values.message}
@@ -259,7 +259,7 @@ const ContactForm = () => {
       {isTurnstileRequired ? (
         <>
           <Typography component="p" sx={contactFormStyles.turnstileLabel}>
-            Potwierdz, ze jestes czlowiekiem
+            Potwierdź, że jesteś człowiekiem
           </Typography>
           <Box sx={contactFormStyles.turnstileMount}>
             <div ref={turnstileContainerRef} />
@@ -274,7 +274,7 @@ const ContactForm = () => {
         disabled={isSubmitting || !isTurnstileVerified}
         sx={contactFormStyles.submitButton}
       >
-        {isSubmitting ? "Wysylam..." : "Wyslij"}
+        {isSubmitting ? "Wysyłam..." : "Wyślij"}
       </Button>
 
       <Typography

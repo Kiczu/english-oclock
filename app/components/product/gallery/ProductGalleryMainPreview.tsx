@@ -43,8 +43,8 @@ const ProductGalleryMainPreview = ({
 
   const interactionAriaLabel = hasImage
     ? isZoomed
-      ? "Pomniejsz podglad produktu"
-      : "Przybliz podglad produktu"
+      ? "Pomniejsz podgląd produktu"
+      : "Przybliż podgląd produktu"
     : undefined;
 
   return (

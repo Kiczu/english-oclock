@@ -107,8 +107,8 @@ const ShopPageClient = ({
           Sklep
         </Typography>
         <Typography sx={shopPageStyles.subtitle}>
-          Wybierz materialy po temacie, poziomie i kategorii. Mozesz szybko
-          przefiltrowac darmowe lub platne produkty.
+          Wybierz materiały po temacie, poziomie i kategorii. Możesz szybko
+          przefiltrować darmowe lub płatne produkty.
         </Typography>
       </Stack>
 
@@ -137,16 +137,16 @@ const ShopPageClient = ({
       {isPending ? <ShopProductsSkeleton count={pageSize} /> : null}
 
       {!isPending && loadError ? (
-        <ShopStateNotice title="Nie udalo sie pobrac produktow." description={loadError} />
+        <ShopStateNotice title="Nie udało się pobrać produktów." description={loadError} />
       ) : null}
 
       {!isPending && !loadError && totalResults === 0 ? (
         <ShopStateNotice
-          title={filtersActive ? "Brak produktow dla wybranych filtrow." : "Brak produktow."}
+          title={filtersActive ? "Brak produktów dla wybranych filtrów." : "Brak produktów."}
           description={
             filtersActive
-              ? "Sprobuj zmienic poziom lub usunac czesc filtrow."
-              : "Nie znaleziono produktow w WooCommerce."
+              ? "Spróbuj zmienić poziom lub usunąć część filtrów."
+              : "Nie znaleziono produktów w WooCommerce."
           }
         />
       ) : null}

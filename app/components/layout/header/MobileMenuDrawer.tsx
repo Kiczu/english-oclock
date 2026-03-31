@@ -108,7 +108,7 @@ const MobileMenuDrawer = ({
         <Divider sx={{ my: 1.5 }} />
         <ListItemButton component={Link} href="/" onClick={onClose} sx={{ borderRadius: 2 }}>
           <ListItemText
-            primary="Strona glowna"
+            primary="Strona główna"
             slotProps={{
               primary: {
                 sx: {

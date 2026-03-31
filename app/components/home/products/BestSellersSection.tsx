@@ -17,7 +17,7 @@ const BestsellersSection = ({ id, products }: BestsellersSectionProps) => {
     <ProductsSection
       id={id}
       title="Bestsellers"
-      subtitle="Najczesciej wybierane materialy"
+      subtitle="Najczęściej wybierane materiały"
       products={products}
       useSlider
       onPrimaryAction={(p) => {

@@ -34,10 +34,10 @@ const toFiltersFromSearchParams = (searchParams: ShopPageSearchParams): ShopFilt
 
 const toLoadErrorMessage = (error: unknown) => {
   if (error instanceof WooNotConfiguredError) {
-    return "Sklep jest chwilowo niedostepny.";
+    return "Sklep jest chwilowo niedostępny.";
   }
 
-  return "Nie udalo sie pobrac produktow.";
+  return "Nie udało się pobrać produktów.";
 };
 
 const ShopPage = async ({

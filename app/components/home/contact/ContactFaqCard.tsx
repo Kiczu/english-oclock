@@ -3,19 +3,19 @@ import { contactFaqCardStyles } from "./ContactFaqCard.styles";
 
 const faqItems = [
   {
-    question: "1) Dla kogo sa materialy?",
+    question: "1) Dla kogo są materiały?",
     answer:
-      "Dla nauczycieli, korepetytorow oraz uczniow, ktorzy chca uczyc sie samodzielnie. Do kazdego zadania dolaczony jest klucz odpowiedzi.",
+      "Dla nauczycieli, korepetytorów oraz uczniów, którzy chcą uczyć się samodzielnie. Do każdego zadania dołączony jest klucz odpowiedzi.",
   },
   {
-    question: "2) Gdzie znajde zakupione materialy?",
+    question: "2) Gdzie znajdę zakupione materiały?",
     answer:
-      "Zakupione pliki PDF beda dostepne do pobrania od razu po zakupie na stronie. Otrzymasz je rowniez na adres e-mail podany przy zamowieniu.",
+      "Zakupione pliki PDF będą dostępne do pobrania od razu po zakupie na stronie. Otrzymasz je również na adres e-mail podany przy zamówieniu.",
   },
   {
-    question: "3) Czy dostane dowod zakupu?",
+    question: "3) Czy dostanę dowód zakupu?",
     answer:
-      "Tak. Faktura zostanie wygenerowana automatycznie i przeslana na podany adres e-mail.",
+      "Tak. Faktura zostanie wygenerowana automatycznie i przesłana na podany adres e-mail.",
   },
 ] as const;
 

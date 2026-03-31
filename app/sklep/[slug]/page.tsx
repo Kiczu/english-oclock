@@ -18,14 +18,14 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
   const priceLabel = mapped.priceLabel;
   const ctaLabel = mapped.isFree ? "Pobierz za darmo" : "Do koszyka";
   const secondaryHref = mapped.isFree ? "/sklep?price=free" : "/sklep";
-  const secondaryLabel = mapped.isFree ? "Zobacz darmowe" : "Wroc do sklepu";
+  const secondaryLabel = mapped.isFree ? "Zobacz darmowe" : "Wróć do sklepu";
   const freeDownloadHref = `/api/free-download?slug=${encodeURIComponent(mapped.slug)}`;
   const isFreeDownloadAvailable = mapped.isFree && Boolean(mapped.freeDownloadUrl);
 
   const highlights = mapped.highlights ?? [
-    mapped.level ? `Poziom ${mapped.level}` : "Rozne poziomy",
-    "Material cyfrowy",
-    mapped.isFree ? "Darmowy dostep" : "Natychmiastowy dostep",
+    mapped.level ? `Poziom ${mapped.level}` : "Różne poziomy",
+    "Materiał cyfrowy",
+    mapped.isFree ? "Darmowy dostęp" : "Natychmiastowy dostęp",
   ];
 
   return (
@@ -33,7 +33,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
       <Stack spacing={4}>
         <Box>
           <Button href="/sklep" sx={productPageStyles.backButton}>
-            {"<- Wroc do sklepu"}
+            {"<- Wróć do sklepu"}
           </Button>
         </Box>
 
@@ -75,7 +75,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
               ) : (
                 <Typography sx={productPageStyles.description}>
                   {mapped.description ??
-                    "Praktyczny material do nauki angielskiego. Gotowy do druku i natychmiastowego uzycia."}
+                    "Praktyczny materiał do nauki angielskiego. Gotowy do druku i natychmiastowego użycia."}
                 </Typography>
               )}
 
@@ -94,7 +94,7 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                     </Button>
                   ) : (
                     <Button variant="contained" color="secondary" disabled sx={productPageStyles.freeActionButton}>
-                      Plik chwilowo niedostepny
+                      Plik chwilowo niedostępny
                     </Button>
                   )
                 ) : (

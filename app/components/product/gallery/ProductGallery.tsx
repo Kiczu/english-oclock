@@ -113,7 +113,7 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
       <Box sx={productGalleryStyles.thumbsViewport}>
         {totalThumbPages > 1 ? (
           <IconButton
-            aria-label="Poprzednie podglady"
+            aria-label="Poprzednie podglądy"
             disabled={!canGoBack}
             onClick={() => goToThumbPage(activeThumbPageIndex - 1)}
             sx={productGalleryStyles.thumbsNavButton("left")}
@@ -157,7 +157,7 @@ const ProductGallery = ({ items, title }: ProductGalleryProps) => {
 
         {totalThumbPages > 1 ? (
           <IconButton
-            aria-label="Nastepne podglady"
+            aria-label="Następne podglądy"
             disabled={!canGoNext}
             onClick={() => goToThumbPage(activeThumbPageIndex + 1)}
             sx={productGalleryStyles.thumbsNavButton("right")}

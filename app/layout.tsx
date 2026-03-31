@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     default: "It's English O'Clock",
     template: "%s | It's English O'Clock",
   },
-  description: "Materialy do angielskiego A1-C2",
+  description: "Materiały do angielskiego A1-C2",
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {

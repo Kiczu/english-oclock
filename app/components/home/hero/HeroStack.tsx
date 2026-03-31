@@ -61,7 +61,7 @@ const HeroStack = () => {
     {
       key: "arrow",
       src: heroAssets.arrowDecor,
-      alt: "Dekoracyjna strzalka",
+      alt: "Dekoracyjna strzałka",
       width: 600,
       height: 400,
       position: decor.arrowDecor,
@@ -140,7 +140,7 @@ const HeroStack = () => {
 
         <Box
           role="button"
-          aria-label="Przewin w dol"
+          aria-label="Przewiń w dół"
           onClick={scrollToNext}
           sx={heroStackStyles.scrollButton}
         >
