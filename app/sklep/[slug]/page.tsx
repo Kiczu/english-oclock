@@ -67,10 +67,17 @@ const ProductPage = async ({ params }: { params: Promise<{ slug: string }> }) =>
                 {priceLabel}
               </Typography>
 
-              <Typography sx={productPageStyles.description}>
-                {mapped.description ??
-                  "Praktyczny material do nauki angielskiego. Gotowy do druku i natychmiastowego uzycia."}
-              </Typography>
+              {mapped.descriptionHtml ? (
+                <Box
+                  sx={productPageStyles.description}
+                  dangerouslySetInnerHTML={{ __html: mapped.descriptionHtml }}
+                />
+              ) : (
+                <Typography sx={productPageStyles.description}>
+                  {mapped.description ??
+                    "Praktyczny material do nauki angielskiego. Gotowy do druku i natychmiastowego uzycia."}
+                </Typography>
+              )}
 
               <Stack direction="row" spacing={{ xs: 1.25, sm: 2 }} useFlexGap sx={productPageStyles.actionsRow}>
                 {mapped.isFree ? (

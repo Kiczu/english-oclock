@@ -3,16 +3,19 @@ import { contactFaqCardStyles } from "./ContactFaqCard.styles";
 
 const faqItems = [
   {
-    question: "1) Co dostaje po zakupie?",
-    answer: "PDF do pobrania (docelowo przez WooCommerce).",
+    question: "1) Dla kogo sa materialy?",
+    answer:
+      "Dla nauczycieli, korepetytorow oraz uczniow, ktorzy chca uczyc sie samodzielnie. Do kazdego zadania dolaczony jest klucz odpowiedzi.",
   },
   {
-    question: "2) Czy darmowki sa bez konta?",
-    answer: "Tak. Docelowo klik i PDF otworzy sie w nowej karcie.",
+    question: "2) Gdzie znajde zakupione materialy?",
+    answer:
+      "Zakupione pliki PDF beda dostepne do pobrania od razu po zakupie na stronie. Otrzymasz je rowniez na adres e-mail podany przy zamowieniu.",
   },
   {
-    question: "3) Dla kogo sa materialy?",
-    answer: "Dla uczniow, nauczycieli i do nauki solo - wybierz kategorie.",
+    question: "3) Czy dostane dowod zakupu?",
+    answer:
+      "Tak. Faktura zostanie wygenerowana automatycznie i przeslana na podany adres e-mail.",
   },
 ] as const;
 
