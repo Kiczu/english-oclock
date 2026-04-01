@@ -91,7 +91,7 @@ export const productCardStyles = {
     borderRadius: 2,
     height: 24,
     mt: 0.25,
-    backgroundColor: "#F5EDE9",
+    backgroundColor: "#DCEBF8",
     color: "primary.main",
   },
   ctaButton: {
