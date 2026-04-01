@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Box } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
+import FloatingFacebookButton from "./FloatingFacebookButton";
 import { layoutShellStyles } from "./LayoutShell.styles";
 
 const LayoutShell = ({ children }: { children: ReactNode }) => {
@@ -30,6 +31,7 @@ const LayoutShell = ({ children }: { children: ReactNode }) => {
       <Box component="main" sx={layoutShellStyles.main}>
         {children}
       </Box>
+      <FloatingFacebookButton />
       <Footer />
     </Box>
   );

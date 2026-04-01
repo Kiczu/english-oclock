@@ -4,5 +4,6 @@ export const colors = {
     coral: "#F09D85",
     ink: "#181F24",
     white: "#FFFFFF",
+    powderBlue: "#DCEBF8",
     stickerBackground: "#f5efe7",
 };
