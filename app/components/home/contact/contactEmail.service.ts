@@ -31,6 +31,6 @@ export const sendContactEmail = async (
     | null;
 
   if (!response.ok) {
-    throw new Error(payload?.error || "Nie udalo sie wyslac formularza.");
+    throw new Error(payload?.error || "Nie udało się wysłać formularza.");
   }
 };

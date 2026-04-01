@@ -137,6 +137,7 @@ const ProductsSection = ({
                   href={`/sklep/${product.slug}`}
                   title={product.title}
                   priceLabel={product.priceLabel}
+                  level={product.level}
                   variant={getVariant(product)}
                   onPrimaryAction={() => onPrimaryAction?.(product)}
                 />

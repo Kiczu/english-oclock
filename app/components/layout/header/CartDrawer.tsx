@@ -46,7 +46,7 @@ const CartDrawer = ({
     const orderItems = toCheckoutItems(items);
 
     if (orderItems.length === 0) {
-      setCheckoutError("Brak produktow do rozliczenia.");
+      setCheckoutError("Brak produktów do rozliczenia.");
       return;
     }
 
@@ -65,7 +65,7 @@ const CartDrawer = ({
 
       if (!response.ok || !payload.checkoutUrl) {
         throw new Error(
-          payload.error || "Nie udalo sie przygotowac checkoutu.",
+          payload.error || "Nie udało się przygotować checkoutu.",
         );
       }
 
@@ -73,7 +73,7 @@ const CartDrawer = ({
       window.location.assign(payload.checkoutUrl);
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Nieznany blad checkoutu.";
+        error instanceof Error ? error.message : "Nieznany błąd checkoutu.";
       setCheckoutError(message);
     } finally {
       setCheckoutPending(false);
@@ -106,7 +106,7 @@ const CartDrawer = ({
       {items.length === 0 ? (
         <Box sx={cartDrawerStyles.emptyState}>
           <Typography sx={cartDrawerStyles.emptyTitle}>
-            Twoj koszyk jest pusty.
+            Twój koszyk jest pusty.
           </Typography>
           <Button
             component={Link}
@@ -115,7 +115,7 @@ const CartDrawer = ({
             onClick={onClose}
             sx={cartDrawerStyles.emptyButton}
           >
-            Przejdz do sklepu
+            Przejdź do sklepu
           </Button>
         </Box>
       ) : (
@@ -138,7 +138,7 @@ const CartDrawer = ({
                     </Typography>
                   </Box>
                   <IconButton
-                    aria-label="Usun z koszyka"
+                    aria-label="Usuń z koszyka"
                     onClick={() => onRemoveItem(item.id)}
                     size="small"
                   >
@@ -169,7 +169,7 @@ const CartDrawer = ({
                 onClick={onClear}
                 sx={cartDrawerStyles.actionButton}
               >
-                Wyczysc
+                Wyczyść
               </Button>
               <Button
                 variant="contained"

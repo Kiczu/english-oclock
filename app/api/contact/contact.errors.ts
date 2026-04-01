@@ -1,13 +1,13 @@
 export const CONTACT_ERRORS = {
-  invalidPayload: "Nieprawidlowe dane formularza.",
-  invalidFields: "Formularz zawiera bledy.",
-  formTooFast: "Wyslij formularz po chwili od jego otwarcia.",
-  antiSpamFailed: "Nie udalo sie potwierdzic zabezpieczenia antyspamowego.",
-  sendTooFast: "Wysylasz za szybko. Sprobuj ponownie za chwile.",
-  tooManyAttempts: "Za duzo prob. Sprobuj ponownie pozniej.",
+  invalidPayload: "Nieprawidłowe dane formularza.",
+  invalidFields: "Formularz zawiera błędy.",
+  formTooFast: "Wyślij formularz po chwili od jego otwarcia.",
+  antiSpamFailed: "Nie udało się potwierdzić zabezpieczenia antyspamowego.",
+  sendTooFast: "Wysyłasz za szybko. Spróbuj ponownie za chwilę.",
+  tooManyAttempts: "Za dużo prób. Spróbuj ponownie później.",
   serviceUnavailable:
-    "Kontakt chwilowo niedostepny. Sprobuj ponownie pozniej.",
-  sendFailed: "Nie udalo sie wyslac formularza. Sprobuj ponownie.",
+    "Kontakt chwilowo niedostępny. Spróbuj ponownie później.",
+  sendFailed: "Nie udało się wysłać formularza. Spróbuj ponownie.",
 } as const;
 
 export class ContactRequestError extends Error {

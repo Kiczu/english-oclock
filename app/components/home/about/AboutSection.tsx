@@ -23,22 +23,22 @@ const AboutSection = ({ id }: { id?: string }) => {
             </Typography>
 
             <Typography sx={aboutSectionStyles.paragraph}>
-              Czesc! Mam na imie Wiola i od ponad 10 lat ucze jezyka
-              angielskiego. Tworze materialy edukacyjne zarowno dla nauczycieli,
-              jak i dla uczniow, ktorzy chca uczyc sie samodzielnie. Na co dzien
-              aktywnie ucze, wiec wiem, czego potrzebuja uczniowie.
+              Cześć! Mam na imię Wiola i od ponad 10 lat uczę języka
+              angielskiego. Tworzę materiały edukacyjne zarówno dla nauczycieli,
+              jak i dla uczniów, którzy chcą uczyć się samodzielnie. Na co dzień
+              aktywnie uczę, więc wiem, czego potrzebują uczniowie.
             </Typography>
 
             <Typography sx={aboutSectionStyles.paragraph}>
-              Ukonczylam filologie angielska, a moja pasja jest kultura Wielkiej
-              Brytanii - dlatego angielski to dla mnie cos wiecej niz tylko
-              przedmiot. Stawiam na nieszablonowe, praktyczne materialy, ktore
-              realnie pomagaja w nauce.
+              Ukończyłam filologię angielską, a moją pasją jest kultura Wielkiej
+              Brytanii - dlatego angielski to dla mnie coś więcej niż tylko
+              przedmiot. Stawiam na nieszablonowe, praktyczne materiały, które
+              realnie pomagają w nauce.
             </Typography>
 
             <Typography sx={aboutSectionStyles.paragraph}>
-              Jesli szukasz materialow, ktore oszczedzaja czas i daja efekty,
-              jestes w dobrym miejscu!
+              Jeśli szukasz materiałów, które oszczędzają czas i dają efekty,
+              jesteś w dobrym miejscu!
             </Typography>
 
             <Stack
@@ -52,11 +52,11 @@ const AboutSection = ({ id }: { id?: string }) => {
                 href="/sklep?price=free"
                 sx={aboutSectionStyles.primaryButton}
               >
-                Zobacz darmowe materialy
+                Zobacz darmowe materiały
               </Button>
 
               <Button variant="text" href="/sklep" sx={aboutSectionStyles.secondaryButton}>
-                Przejdz do sklepu
+                Przejdź do sklepu
               </Button>
             </Stack>
           </Stack>

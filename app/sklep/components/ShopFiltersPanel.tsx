@@ -128,7 +128,7 @@ const ShopFiltersPanel = ({
               clickable
             />
             <Chip
-              label="Platne"
+              label="Płatne"
               color={filters.price === "paid" ? "secondary" : "default"}
               onClick={() => onPriceChange("paid")}
               clickable
@@ -157,7 +157,7 @@ const ShopFiltersPanel = ({
             !hasActiveFilters && shopFiltersPanelStyles.clearButtonHidden,
           ]}
         >
-          Wyczysc filtry
+          Wyczyść filtry
         </Button>
       </Stack>
     </Box>

@@ -2,11 +2,15 @@
 
 import Script from "next/script";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import StickerField from "../../stickerField/StickerField";
 import {
-  sendContactEmail,
-} from "./contactEmail.service";
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
+import StickerField from "../../stickerField/StickerField";
+import { sendContactEmail } from "./contactEmail.service";
 import type {
   ContactValues,
   FieldName,
@@ -16,11 +20,11 @@ import { validateContactValues } from "./contactForm.validation";
 import { contactFormStyles } from "./ContactForm.styles";
 
 const EMPTY_STATUS_MESSAGE = "\u00A0";
-const SUCCESS_MESSAGE = "Dzieki! Wiadomosc poszla.";
-const ERROR_MESSAGE = "Cos nie poszlo. Sprobuj ponownie.";
-const TURNSTILE_REQUIRED_MESSAGE = "Potwierdz zabezpieczenie antyspamowe.";
+const SUCCESS_MESSAGE = "Dzięki! Wiadomość została wysłana.";
+const ERROR_MESSAGE = "Coś poszło nie tak. Spróbuj ponownie.";
+const TURNSTILE_REQUIRED_MESSAGE = "Potwierdź zabezpieczenie antyspamowe.";
 const TURNSTILE_FAILED_MESSAGE =
-  "Nie udalo sie potwierdzic zabezpieczenia antyspamowego. Sprobuj ponownie.";
+  "Nie udało się potwierdzić zabezpieczenia antyspamowego. Spróbuj ponownie.";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 type TurnstileWidgetId = string | number;
@@ -215,19 +219,17 @@ const ContactForm = () => {
       </Box>
 
       {isTurnstileRequired ? (
-        <>
-          <Script
-            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-            strategy="afterInteractive"
-            onLoad={initTurnstileWidget}
-          />
-        </>
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+          onLoad={initTurnstileWidget}
+        />
       ) : null}
 
       <StickerField
         id="contact_name"
         name="name"
-        placeholder="Twoje imie"
+        placeholder="Twoje imię"
         value={values.name}
         onChange={handleChange}
         onBlur={handleBlur}
@@ -247,7 +249,7 @@ const ContactForm = () => {
       <StickerField
         id="contact_message"
         name="message"
-        placeholder="Napisz, w czym pomoc..."
+        placeholder="Napisz, w czym pomóc..."
         multiline
         minRows={6}
         value={values.message}
@@ -256,26 +258,25 @@ const ContactForm = () => {
         error={showError("message")}
       />
 
-      {isTurnstileRequired ? (
-        <>
-          <Typography component="p" sx={contactFormStyles.turnstileLabel}>
-            Potwierdz, ze jestes czlowiekiem
-          </Typography>
-          <Box sx={contactFormStyles.turnstileMount}>
-            <div ref={turnstileContainerRef} />
-          </Box>
-        </>
-      ) : null}
+      <Box sx={contactFormStyles.actionsRow}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          disabled={isSubmitting || !isTurnstileVerified}
+          sx={contactFormStyles.submitButton}
+        >
+          {isSubmitting ? "Wysyłam..." : "Wyślij"}
+        </Button>
 
-      <Button
-        type="submit"
-        variant="contained"
-        color="secondary"
-        disabled={isSubmitting || !isTurnstileVerified}
-        sx={contactFormStyles.submitButton}
-      >
-        {isSubmitting ? "Wysylam..." : "Wyslij"}
-      </Button>
+        {isTurnstileRequired ? (
+          <Box sx={contactFormStyles.turnstileWrap}>
+            <Box sx={contactFormStyles.turnstileMount}>
+              <div ref={turnstileContainerRef} />
+            </Box>
+          </Box>
+        ) : null}
+      </Box>
 
       <Typography
         sx={contactFormStyles.status(status === "error")}

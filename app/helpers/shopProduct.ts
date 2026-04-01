@@ -3,6 +3,20 @@ import type { ShopProduct, WooProduct } from "@/app/types/commerce";
 const stripHtml = (value?: string) =>
   value ? value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
 const normalizeText = (value?: string) => (value ?? "").trim().toLowerCase();
+const sanitizeRichHtml = (value?: string) => {
+  if (!value) return undefined;
+
+  const sanitized = value
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+    .replace(/<(iframe|object|embed|form|input|button)[^>]*>[\s\S]*?<\/\1>/gi, "")
+    .replace(/<(iframe|object|embed|form|input|button)[^>]*\/?>/gi, "")
+    .replace(/\son\w+=(["']).*?\1/gi, "")
+    .replace(/\son\w+=([^\s>]+)/gi, "")
+    .replace(/\s(href|src)=(["'])javascript:[^"']*\2/gi, "");
+
+  return stripHtml(sanitized) ? sanitized : undefined;
+};
 
 const parsePrice = (value?: string) => {
   if (!value) return 0;
@@ -144,6 +158,8 @@ export const toShopProduct = (product: WooProduct): ShopProduct => {
       ? downloadFromMeta
       : undefined;
   const freeDownloadUrl = safeDownloadFromMeta || downloadFromWoo;
+  const descriptionHtml =
+    sanitizeRichHtml(product.description) ?? sanitizeRichHtml(product.short_description);
 
   return {
     id: String(product.id),
@@ -152,6 +168,7 @@ export const toShopProduct = (product: WooProduct): ShopProduct => {
     title: product.name,
     subtitle: stripHtml(product.short_description),
     description: stripHtml(product.description) || stripHtml(product.short_description),
+    descriptionHtml,
     price,
     priceLabel: toPriceLabel(price),
     isFree,

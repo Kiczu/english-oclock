@@ -1,10 +1,23 @@
 export const contactFormStyles = {
+  actionsRow: {
+    display: "flex",
+    flexDirection: { xs: "column", md: "row" },
+    justifyContent: "space-between",
+    alignItems: { xs: "flex-start", md: "center" },
+    gap: 2,
+  },
   submitButton: {
     px: 3,
-    alignSelf: "flex-start",
+    alignSelf: { xs: "flex-start", md: "auto" },
+  },
+  turnstileWrap: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 1,
+    alignItems: { xs: "flex-start", md: "flex-end" },
+    width: { xs: "100%", md: "auto" },
   },
   turnstileLabel: {
-    alignSelf: "flex-start",
     fontWeight: 700,
     color: "#1a254f",
     lineHeight: 1.2,
@@ -31,6 +44,5 @@ export const contactFormStyles = {
   turnstileMount: {
     width: "100%",
     maxWidth: 420,
-    alignSelf: "flex-start",
   },
 } as const;

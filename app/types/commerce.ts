@@ -67,6 +67,7 @@ export type ShopProduct = {
     title: string;
     subtitle?: string;
     description?: string;
+    descriptionHtml?: string;
     price: number;
     priceLabel: string;
     isFree: boolean;

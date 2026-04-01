@@ -6,7 +6,7 @@ import { useCookieConsent } from "@/app/context/CookieConsentContext";
 
 const legalLinks = [
   { href: "/regulamin", label: "Regulamin" },
-  { href: "/polityka-prywatnosci", label: "Polityka prywatnosci" },
+  { href: "/polityka-prywatnosci", label: "Polityka prywatności" },
   { href: "/#kontakt", label: "Kontakt" },
 ];
 

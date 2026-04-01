@@ -11,7 +11,7 @@ const ContactSection = ({ id }: { id?: string }) => {
           Kontakt
         </Typography>
         <Typography sx={contactSectionStyles.subtitle}>
-          Masz pytanie? Napisz - odpisze.
+          Masz pytanie? Napisz - chętnie odpowiem.
         </Typography>
       </Stack>
 
