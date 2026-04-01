@@ -23,10 +23,10 @@ const FloatingFacebookButton = () => {
           </Box>
 
           <Box sx={floatingFacebookButtonStyles.textStack}>
-            <Typography component="span" sx={floatingFacebookButtonStyles.eyebrow}>
-              Social
-            </Typography>
-            <Typography component="span" sx={floatingFacebookButtonStyles.label}>
+            <Typography
+              component="span"
+              sx={floatingFacebookButtonStyles.label}
+            >
               Facebook
             </Typography>
           </Box>
