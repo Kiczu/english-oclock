@@ -17,6 +17,7 @@ export type ProductCardProps = {
   href: string;
   title: string;
   priceLabel?: string;
+  level?: string;
   variant?: ProductVariant;
   onPrimaryAction?: () => void;
   primaryLabel?: string;
@@ -27,6 +28,7 @@ const ProductCard = ({
   href,
   title,
   priceLabel,
+  level,
   variant = "paid",
   onPrimaryAction,
   primaryLabel,
@@ -41,6 +43,7 @@ const ProductCard = ({
     variant === "free" ? "FREE" : variant === "bestseller" ? "TOP" : undefined;
 
   const cta = primaryLabel ?? (variant === "free" ? "Pobierz" : "Do koszyka");
+  const levelLabel = level?.trim().toUpperCase();
 
   const frameInset = 3;
   const safePadding = 45;
@@ -65,8 +68,15 @@ const ProductCard = ({
             {title}
           </Typography>
 
-          {badge ? (
-            <Chip label={badge} size="small" sx={productCardStyles.badgeChip(badge)} />
+          {(badge || levelLabel) ? (
+            <Stack direction="row" spacing={1} sx={productCardStyles.badgesRow}>
+              {badge ? (
+                <Chip label={badge} size="small" sx={productCardStyles.badgeChip(badge)} />
+              ) : null}
+              {levelLabel ? (
+                <Chip label={levelLabel} size="small" sx={productCardStyles.levelChip} />
+              ) : null}
+            </Stack>
           ) : null}
         </Stack>
         <Stack
@@ -99,6 +109,7 @@ const ProductCard = ({
             </Button>
           )}
         </Stack>
+
       </Stack>
     </Box>
   );

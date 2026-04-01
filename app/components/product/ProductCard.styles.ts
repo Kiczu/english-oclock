@@ -39,7 +39,7 @@ export const productCardStyles = {
     height: "100%",
     p: `${safePadding}px`,
     justifyContent: "center",
-    gap: 4,
+    gap: 3,
     pointerEvents: "none",
   }),
   titleRow: {
@@ -47,6 +47,13 @@ export const productCardStyles = {
     justifyContent: "center",
     alignItems: "flex-start",
     gap: 2,
+    flexWrap: "wrap",
+  },
+  badgesRow: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    rowGap: 0.75,
   },
   title: {
     fontSize: 18,
@@ -76,6 +83,16 @@ export const productCardStyles = {
   price: {
     fontWeight: 900,
     fontSize: 20,
+  },
+  levelChip: {
+    fontWeight: 900,
+    fontSize: 12,
+    letterSpacing: 0.5,
+    borderRadius: 2,
+    height: 24,
+    mt: 0.25,
+    backgroundColor: "#F5EDE9",
+    color: "primary.main",
   },
   ctaButton: {
     px: 2.9,
