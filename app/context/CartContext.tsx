@@ -47,13 +47,33 @@ const hasCheckoutSuccessCookie = () =>
     .map((entry) => entry.trim())
     .some((entry) => entry === `${CHECKOUT_SUCCESS_COOKIE}=1`);
 
+const getCookieDomainsForClear = (hostname: string) => {
+  const normalizedHostname = hostname.trim().toLowerCase();
+  if (
+    !normalizedHostname ||
+    normalizedHostname === "localhost" ||
+    /^\d{1,3}(?:\.\d{1,3}){3}$/.test(normalizedHostname)
+  ) {
+    return [];
+  }
+
+  const labels = normalizedHostname.split(".").filter(Boolean);
+  if (labels.length < 2) {
+    return [];
+  }
+
+  return labels
+    .map((_, index) => labels.slice(index).join("."))
+    .filter((domain, index, domains) => domains.indexOf(domain) === index);
+};
+
 const clearCheckoutSuccessCookie = () => {
   const expires = "expires=Thu, 01 Jan 1970 00:00:00 GMT";
   document.cookie = `${CHECKOUT_SUCCESS_COOKIE}=; ${expires}; path=/`;
 
   const { hostname } = window.location;
-  if (hostname && hostname !== "localhost") {
-    document.cookie = `${CHECKOUT_SUCCESS_COOKIE}=; ${expires}; path=/; domain=${hostname}`;
+  for (const domain of getCookieDomainsForClear(hostname)) {
+    document.cookie = `${CHECKOUT_SUCCESS_COOKIE}=; ${expires}; path=/; domain=${domain}`;
   }
 };
 
@@ -102,9 +122,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!ready) return;
 
-    const searchParams = new URLSearchParams(window.location.search);
+    const currentSearchParams = new URLSearchParams(window.location.search);
     const checkoutStatus =
-      searchParams.get(CHECKOUT_SUCCESS_QUERY_PARAM) ===
+      currentSearchParams.get(CHECKOUT_SUCCESS_QUERY_PARAM) ===
       CHECKOUT_SUCCESS_QUERY_VALUE;
     const checkoutCookie = hasCheckoutSuccessCookie();
 
@@ -116,7 +136,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     clearCheckoutSuccessCookie();
 
     if (checkoutStatus) {
-      removeCheckoutSuccessParam(searchParams);
+      removeCheckoutSuccessParam(currentSearchParams);
     }
   }, [pathname, ready]);
 

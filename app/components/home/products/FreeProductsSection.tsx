@@ -16,7 +16,7 @@ const FreeProductsSection = ({ id, products }: FreeProductsSectionProps) => {
     <ProductsSection
       id={id}
       title="Freebies"
-      subtitle="Pobierz za darmo i sprawdź, czy to dla Ciebie."
+      subtitle="Pobierz bezpłatne materiały i przekonaj się, czy spełnią Twoje oczekiwania."
       products={products}
       cardMaxWidth={520}
       useSlider
