@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Stack, Typography, Button } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { aboutSectionStyles } from "./AboutSection.styles";
 
 const AboutSection = ({ id }: { id?: string }) => {
@@ -55,7 +55,12 @@ const AboutSection = ({ id }: { id?: string }) => {
                 Zobacz darmowe materiały
               </Button>
 
-              <Button variant="text" href="/sklep" sx={aboutSectionStyles.secondaryButton}>
+              <Button
+                variant="outlined"
+                color="primary"
+                href="/sklep"
+                sx={aboutSectionStyles.secondaryButton}
+              >
                 Przejdź do sklepu
               </Button>
             </Stack>
