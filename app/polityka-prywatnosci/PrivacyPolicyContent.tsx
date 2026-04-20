@@ -127,8 +127,9 @@ const PrivacyPolicyPage = () => {
             </li>
             <li>
               <Typography sx={paragraphSx}>
-                Obsługa płatności elektronicznych (Autopay) – art. 6 ust. 1 lit.
-                b RODO.
+                Obsługa płatności elektronicznych oraz ewentualnych zwrotów
+                środków realizowanych za pośrednictwem operatora płatności
+                Autopay – art. 6 ust. 1 lit. b RODO.
               </Typography>
             </li>
             <li>
@@ -207,6 +208,14 @@ const PrivacyPolicyPage = () => {
               <Typography sx={paragraphSx}>
                 Podmioty te przetwarzają dane na podstawie umów powierzenia, gdy
                 jest to wymagane.
+              </Typography>
+            </li>
+            <li>
+              <Typography sx={paragraphSx}>
+                W związku z realizacją płatności elektronicznych dane Klienta
+                mogą być przekazywane operatorowi płatności Autopay w zakresie
+                niezbędnym do obsługi płatności, rozpatrywania reklamacji oraz
+                realizacji ewentualnego zwrotu środków.
               </Typography>
             </li>
           </Box>
