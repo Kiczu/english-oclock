@@ -21,6 +21,13 @@ const alphaListSx = {
   listStyleType: "lower-alpha",
   "& li + li": { mt: 0.6 },
 };
+const discListSx = {
+  pl: 3,
+  mt: 0.75,
+  mb: 0,
+  listStyleType: "disc",
+  "& li + li": { mt: 0.35 },
+};
 
 const RegulaminPage = () => {
   return (
@@ -309,6 +316,28 @@ const RegulaminPage = () => {
             </li>
             <li>
               <Typography sx={paragraphSx}>
+                Dostępne formy płatności:
+              </Typography>
+              <Box component="ul" sx={discListSx}>
+                <li>
+                  <Typography sx={paragraphSx}>Visa,</Typography>
+                </li>
+                <li>
+                  <Typography sx={paragraphSx}>Visa Electron,</Typography>
+                </li>
+                <li>
+                  <Typography sx={paragraphSx}>Mastercard,</Typography>
+                </li>
+                <li>
+                  <Typography sx={paragraphSx}>MasterCard Electronic,</Typography>
+                </li>
+                <li>
+                  <Typography sx={paragraphSx}>Maestro.</Typography>
+                </li>
+              </Box>
+            </li>
+            <li>
+              <Typography sx={paragraphSx}>
                 Przed złożeniem zamówienia Klient jest informowany o łącznej
                 cenie oraz ewentualnych dodatkowych kosztach (jeśli występują).
               </Typography>
@@ -460,6 +489,22 @@ const RegulaminPage = () => {
               <Typography sx={paragraphSx}>
                 Wzór formularza odstąpienia stanowi Załącznik nr 1 do
                 Regulaminu.
+              </Typography>
+            </li>
+            <li>
+              <Typography sx={paragraphSx}>
+                W przypadku powstania obowiązku zwrotu środków na rzecz Klienta,
+                Sprzedawca dokonuje zwrotu przy użyciu takiego samego sposobu
+                płatności, jakiego użył Konsument, chyba że Konsument wyraźnie
+                zgodził się na inny sposób zwrotu, który nie wiąże się dla niego
+                z żadnymi kosztami.
+              </Typography>
+            </li>
+            <li>
+              <Typography sx={paragraphSx}>
+                W przypadku płatności dokonanej kartą płatniczą zwrot środków
+                następuje na rachunek karty płatniczej użytej przez Klienta do
+                dokonania płatności.
               </Typography>
             </li>
           </Box>
