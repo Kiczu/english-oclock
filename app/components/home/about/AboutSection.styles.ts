@@ -46,7 +46,16 @@ export const aboutSectionStyles = {
     px: { xs: 3.5, md: 4.25 },
   },
   secondaryButton: {
+    width: { xs: "100%", sm: "auto" },
+    minWidth: { sm: 220 },
     textTransform: "none",
     fontWeight: 900,
+    borderRadius: 3,
+    bgcolor: "rgba(255,255,255,0.62)",
+    borderColor: "primary.main",
+    "&:hover": {
+      bgcolor: "rgba(255,255,255)",
+      borderColor: "primary.main",
+    },
   },
 } as const;
