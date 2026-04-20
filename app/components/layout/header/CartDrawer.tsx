@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Box,
   Button,
@@ -163,6 +164,24 @@ const CartDrawer = ({
                 {totalAmountLabel}
               </Typography>
             </Stack>
+            <Box sx={cartDrawerStyles.paymentMethodsBox}>
+              <Typography sx={cartDrawerStyles.paymentMethodsTitle}>
+                Płatności online
+              </Typography>
+              <Typography sx={cartDrawerStyles.paymentMethodsCaption}>
+                Bezpieczne płatności obsługuje Autopay.
+              </Typography>
+              <Box sx={cartDrawerStyles.paymentBannerWrap}>
+                <Image
+                  src="/images/payments/autopay-banner-wide.png"
+                  alt="Autopay oraz akceptowane metody płatności, w tym Visa, Mastercard, Apple Pay i Google Pay"
+                  width={800}
+                  height={132}
+                  sizes="(max-width: 599px) calc(100vw - 48px), 372px"
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+              </Box>
+            </Box>
             <Stack direction="row" spacing={1}>
               <Button
                 variant="outlined"

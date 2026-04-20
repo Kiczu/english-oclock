@@ -78,6 +78,30 @@ export const cartDrawerStyles = {
     fontWeight: 900,
     color: "primary.main",
   },
+  paymentMethodsBox: {
+    mt: 2,
+    mb: 2,
+    display: "grid",
+    gap: 0.75,
+  },
+  paymentMethodsTitle: {
+    color: "primary.main",
+    fontWeight: 800,
+    fontSize: "0.95rem",
+  },
+  paymentMethodsCaption: {
+    mt: 0.5,
+    color: "primary.main",
+    opacity: 0.72,
+    fontSize: "0.8rem",
+  },
+  paymentBannerWrap: {
+    width: "100%",
+    borderRadius: 2,
+    overflow: "hidden",
+    boxShadow: "0 10px 24px rgba(24,31,36,0.08)",
+    bgcolor: colors.white,
+  },
   actionButton: {
     flex: 1,
   },
