@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import LayoutShell from "./components/layout/LayoutShell";
 import { CartProvider } from "./context/CartContext";
 import { CookieConsentProvider } from "./context/CookieConsentContext";
@@ -26,6 +27,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             </CartProvider>
           </CookieConsentProvider>
         </ThemeRegistry>
+        <Analytics />
       </body>
     </html>
   );
