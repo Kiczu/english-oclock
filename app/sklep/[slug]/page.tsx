@@ -47,7 +47,7 @@ const ProductPage = async ({
       <Stack spacing={4}>
         <Box>
           <Button href="/sklep" sx={productPageStyles.backButton}>
-            {"<- Wr\u00f3\u0107 do sklepu"}
+            {"<- Wróć do sklepu"}
           </Button>
         </Box>
 
@@ -109,7 +109,7 @@ const ProductPage = async ({
                   dangerouslySetInnerHTML={{ __html: mapped.descriptionHtml }}
                 />
               ) : (
-                <Typography sx={productPageStyles.description}>
+                <Typography sx={productPageStyles.descriptionPlain}>
                   {mapped.description ??
                     "Praktyczny materiał do nauki angielskiego. Gotowy do druku i natychmiastowego użycia."}
                 </Typography>

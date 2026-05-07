@@ -26,21 +26,35 @@ export const productPageStyles = {
     color: "secondary.main",
   },
   description: {
-    opacity: 0.85,
-    whiteSpace: "pre-line",
     "& p": {
-      m: 0,
-    },
-    "& p + p": {
-      mt: 1.5,
-    },
-    "& ul, & ol": {
-      my: 1.5,
-      pl: 3,
-    },
-    "& li + li": {
       mt: 0.5,
     },
+    "& p + p": {
+      mt: 3.75,
+    },
+    "& ul, & ol": {
+      my: 0.75,
+      pl: 3,
+    },
+    "& li": {
+      m: 0,
+    },
+    "& li + li": {
+      mt: 0.2,
+    },
+    "& strong, & b": {
+      fontWeight: 800,
+    },
+    "& em, & i": {
+      fontStyle: "italic",
+    },
+    "& a": {
+      color: "secondary.main",
+      textDecoration: "underline",
+    },
+  },
+  descriptionPlain: {
+    whiteSpace: "pre-line",
     "& strong, & b": {
       fontWeight: 800,
     },
